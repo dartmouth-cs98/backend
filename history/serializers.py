@@ -1,11 +1,22 @@
 from rest_framework import serializers
 from history.models import Category, Page
+from django.contrib.auth.models import User
+
+class UserSerializer(serializers.ModelSerializer):
+    pages = serializers.PrimaryKeyRelatedField(many=True, queryset=Page.objects.all())
+    categories = serializers.PrimaryKeyRelatedField(many=True, queryset=Category.objects.all())
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'pages', 'categories')
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('id', 'title', 'created')
+        fields = ('id', 'title', 'created', 'owner')
+    owner = serializers.ReadOnlyField(source='owner.username')
+
 
     def create(self, validated_data):
         """
@@ -24,13 +35,14 @@ class CategorySerializer(serializers.ModelSerializer):
 class PageSerializer(serializers.Serializer):
     # class Meta:
     #     model = Page
-    #     fields = ('id', 'title', 'url', 'star', 'categories', 'created')
+    #     fields = ('id', 'title', 'url', 'star', 'categories', 'created', 'owner')
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(required=True, allow_blank=False, max_length=100)
     url = serializers.CharField(required=True, allow_blank=False, max_length=1000)
     star = serializers.BooleanField()
     categories = CategorySerializer(many=True)
     created = serializers.DateTimeField()
+    owner = serializers.ReadOnlyField(source='owner.username')
 
     def create(self, validated_data):
         """

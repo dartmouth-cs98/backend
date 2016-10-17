@@ -1,15 +1,48 @@
 from history.models import Category, Page
-from history.serializers import CategorySerializer, PageSerializer
+from history.serializers import CategorySerializer, PageSerializer, UserSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.models import User
+from rest_framework import permissions, generics
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class CategoryList(APIView):
+    """
+    List all code snippets, or create a new snippet.
+    """
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get(self, request, format=None):
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class PageList(APIView):
     """
     List all code snippets, or create a new snippet.
     """
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
     def get(self, request, format=None):
         pages = Page.objects.all()
         serializer = PageSerializer(pages, many=True)
@@ -22,11 +55,16 @@ class PageList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class PageDetail(APIView):
     """
     Retrieve, update or delete a code snippet.
     """
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
     def get_object(self, id):
         try:
             return Page.objects.get(id=id)
