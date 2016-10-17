@@ -22,6 +22,9 @@ class CategorySerializer(serializers.ModelSerializer):
         return instance
 
 class PageSerializer(serializers.Serializer):
+    # class Meta:
+    #     model = Page
+    #     fields = ('id', 'title', 'url', 'star', 'categories', 'created')
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(required=True, allow_blank=False, max_length=100)
     url = serializers.CharField(required=True, allow_blank=False, max_length=1000)
@@ -33,7 +36,17 @@ class PageSerializer(serializers.Serializer):
         """
         Create and return a new `Category` instance, given the validated data.
         """
-        return Page.objects.create(**validated_data)
+        category_data = validated_data.pop('categories')
+        p = Page.objects.create(**validated_data)
+        for c in category_data:
+            cat = Category.objects.filter(title=c['title'])
+            if cat:
+                p.categories.add(cat[0])
+            else:
+                cat = Category.objects.create(**c)
+                p.categories.add(cat)
+        p.save()
+        return p
 
     def update(self, instance, validated_data):
         """

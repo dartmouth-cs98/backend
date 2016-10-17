@@ -17,7 +17,7 @@ class Page(models.Model):
     title = models.CharField(max_length=100)
     url = models.CharField(max_length=1000)
     star = models.BooleanField(default=False)
-    categories = models.ManyToManyField(Category)
+    categories = models.ManyToManyField(Category, blank=True)
 
     def __str__(self):
         return self.title
