@@ -21,9 +21,13 @@ pip install djangorestframework
 ## Deployment
 
 after initial setup, to start virtual env: `source env/bin/activate`
+
 start server: `python manage.py runserver`
+
 make migrations: `python manage.py makemigrations`
+
 migrate: `python manage.py migrate`
+
 shell: `python manage.py shell`
 
 close virtual env: `deactivate`
