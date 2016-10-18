@@ -35,9 +35,13 @@ close virtual env: `deactivate`
 ## Authors
 
 Grace Miller
+
 Shelley Garg
+
 Tommy Kiernan
+
 Wanda Czerwinski
+
 Zach Tannenbaum
 
 ## Acknowledgments
