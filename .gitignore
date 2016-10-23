@@ -6,6 +6,7 @@ db.sqlite3
 
 #pyc files
 *.pyc
+__pycache__
 
 ### Git ###
 .git

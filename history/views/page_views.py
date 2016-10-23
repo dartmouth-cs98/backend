@@ -1,5 +1,5 @@
-from history.models import Category, Page
-from history.serializers import CategorySerializer, PageSerializer
+from history.models import Page
+from history.serializers import PageSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,7 +8,7 @@ from rest_framework import status
 
 class PageList(APIView):
     """
-    List all code snippets, or create a new snippet.
+    List all Pages, or create a new Page.
     """
     def get(self, request, format=None):
         pages = Page.objects.all()
@@ -25,7 +25,7 @@ class PageList(APIView):
 
 class PageDetail(APIView):
     """
-    Retrieve, update or delete a code snippet.
+    Retrieve, update or delete a Page.
     """
     def get_object(self, id):
         try:
