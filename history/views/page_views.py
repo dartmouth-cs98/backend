@@ -1,5 +1,10 @@
+<<<<<<< HEAD:history/views.py
 from history.models import Category, Page
 from history.serializers import CategorySerializer, PageSerializer, UserSerializer
+=======
+from history.models import Page
+from history.serializers import PageSerializer
+>>>>>>> 4cbeb61562478bfcf0c14ea4abb62b60472cf271:history/views/page_views.py
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,7 +44,7 @@ class CategoryList(APIView):
 
 class PageList(APIView):
     """
-    List all code snippets, or create a new snippet.
+    List all Pages, or create a new Page.
     """
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
@@ -61,7 +66,7 @@ class PageList(APIView):
 
 class PageDetail(APIView):
     """
-    Retrieve, update or delete a code snippet.
+    Retrieve, update or delete a Page.
     """
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
