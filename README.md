@@ -14,8 +14,7 @@ create virtual env:
 ```
 virtualenv env
 source env/bin/activate
-pip install django
-pip install djangorestframework
+pip install -r requirements.txt
 ```
 
 ## Deployment
