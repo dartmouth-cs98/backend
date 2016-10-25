@@ -10,9 +10,10 @@ TODO:  descriptions of code organization and tools and libraries used
 
 ## Setup
 
+make sure you have python3 installed by calling `which python3` in terminal and copy the path returned
 create virtual env: 
 ```
-virtualenv env
+virtualenv env -p [path to python3]
 source env/bin/activate
 pip install -r requirements.txt
 ```
