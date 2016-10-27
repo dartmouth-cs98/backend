@@ -28,23 +28,23 @@ class PageSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     title = serializers.CharField(required=True, allow_blank=False, max_length=100)
     url = serializers.CharField(required=True, allow_blank=False, max_length=1000)
-    star = serializers.BooleanField()
-    categories = CategorySerializer(many=True)
-    created = serializers.DateTimeField()
+    star = serializers.BooleanField(required=False)
+    categories = CategorySerializer(many=True, required=False)
+    created = serializers.DateTimeField(required=False)
 
     def create(self, validated_data):
         """
         Create and return a new `Category` instance, given the validated data.
         """
-        category_data = validated_data.pop('categories')
+        # category_data = validated_data.pop('categories')
         p = Page.objects.create(**validated_data)
-        for c in category_data:
-            cat = Category.objects.filter(title=c['title'])
-            if cat:
-                p.categories.add(cat[0])
-            else:
-                cat = Category.objects.create(**c)
-                p.categories.add(cat)
+        # for c in category_data:
+        #     cat = Category.objects.filter(title=c['title'])
+        #     if cat:
+        #         p.categories.add(cat[0])
+        #     else:
+        #         cat = Category.objects.create(**c)
+        #         p.categories.add(cat)
         p.save()
         return p
 
