@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'history.apps.HistoryConfig',
     'corsheaders',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
