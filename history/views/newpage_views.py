@@ -1,4 +1,4 @@
-from history.models import Tab, Domain, Page, PageVisit
+from history.models import Tab, Domain, Page, PageVisit, TimeActive
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -19,10 +19,23 @@ class NewPage(APIView):
         url = request.data['url']
         base_url = urlparse(url).netloc
 
+        import ipdb; ipdb.set_trace()
+
+        ta = TimeActive.objects.filter(end__isnull=True)
+        if ta.exists():
+            ta = ta.first()
+
         t = Tab.objects.filter(tab_id=t_id, closed__isnull=True)
         if t.exists():
             t=t[0]
+            #shouldn't be needed but just in case
+            if ta.domain_set.first().tab != t:
+                ta.end = timezone.now()
+                ta.save()
         else:
+            if ta:
+                ta.end = timezone.now()
+                ta.save()
             t = Tab(tab_id=t_id)
             t.save()
 
@@ -36,11 +49,17 @@ class NewPage(APIView):
 
             if close_domain.exists():
                 close_domain = close_domain[0]
+                ta.end = timezone.now()
+                ta.save()
                 close_domain.closed = timezone.now()
                 close_domain.save()
 
+
             d = Domain(title=domain_title, tab=t, base_url=base_url)
             d.save()
+            new_ta = TimeActive()
+            new_ta.save()
+            d.active_times.add(new_ta)
 
         p = Page.objects.filter(url=url)
 
@@ -53,3 +72,32 @@ class NewPage(APIView):
         pv = PageVisit(page=p, domain=d)
         pv.save()
         return Response(status=status.HTTP_201_CREATED)
+
+class UpdateActive(APIView):
+    """
+    Updates the domain that is active
+    """
+    def post(self, request, format=None):
+
+        t_id = request.data['tab']
+        
+        try:
+            t = Tab.objects.get(tab_id=t_id)
+        except Tab.DoesNotExist:
+            return Response(status=status.HTTP_200_OK)
+
+        d = t.domain_set.get(closed__isnull=True)
+
+        ta = TimeActive.objects.get(end__isnull=True)
+
+        if ta.domain_set.first().tab != t:
+
+            ta.end = timezone.now()
+            ta.save()
+
+            new_ta = TimeActive()
+            new_ta.save()
+
+            d.active_times.add(new_ta)
+
+        return Response(status=status.HTTP_200_OK)

@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^categories/$', category_views.CategoryList.as_view()),
     url(r'^categories/(?P<id>[0-9]+)/$', category_views.CategoryDetail.as_view()),
     url(r'^newpage/$', newpage_views.NewPage.as_view()),
+    url(r'^active/$', newpage_views.UpdateActive.as_view()),
     url(r'^addcategorypage/$', update_categories.AddCategoryPage.as_view()),
     url(r'^deletecategorypage/$', update_categories.DeleteCategoryPage.as_view()),
     url(r'^addcategory/$', update_categories.AddCategory.as_view()),
