@@ -17,7 +17,10 @@ class CloseTab(APIView):
         t_id = request.data['tab']
         time = timezone.now()
 
-        t = Tab.objects.get(tab_id=t_id, closed__isnull=True)
+        try:
+            t = Tab.objects.get(tab_id=t_id, closed__isnull=True)
+        except Tab.DoesNotExist:
+            return Response(status=status.HTTP_200_OK)
 
         d = t.domain_set.get(closed__isnull=True)
 
