@@ -4,11 +4,8 @@ env
 # local db
 db.sqlite3
 
-#pyc files
-*.pyc
-__pycache__
-history/__pycache__
-hindsite/__pycache__
+## python compiled
+*.py[cod]
 
 ### Git ###
 .git
