@@ -80,8 +80,11 @@ class UpdateActive(APIView):
     def post(self, request, format=None):
 
         t_id = request.data['tab']
-
-        t = Tab.objects.get(tab_id=t_id)
+        
+        try:
+            t = Tab.objects.get(tab_id=t_id)
+        except Tab.DoesNotExist:
+            return Response(status=status.HTTP_200_OK)
 
         d = t.domain_set.get(closed__isnull=True)
 
