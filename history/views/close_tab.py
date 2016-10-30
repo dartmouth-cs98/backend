@@ -15,8 +15,6 @@ class CloseTab(APIView):
     def post(self, request, format=None):
 
         t_id = request.data['tab']
-        url = request.data['url']
-        base_url = urlparse(url).netloc
         time = timezone.now()
 
         t = Tab.objects.get(tab_id=t_id, closed__isnull=True)
