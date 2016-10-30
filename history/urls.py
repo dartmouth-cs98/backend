@@ -1,6 +1,12 @@
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
-from history.views import page_views, category_views, newpage_views, update_categories
+from history.views import (
+                            page_views,
+                            category_views,
+                            newpage_views,
+                            update_categories,
+                            close_tab
+                            )
 
 urlpatterns = [
     url(r'^pages/$', page_views.PageList.as_view()),
@@ -13,6 +19,7 @@ urlpatterns = [
     url(r'^addcategory/$', update_categories.AddCategory.as_view()),
     url(r'^deletecategory/$', update_categories.DeleteCategory.as_view()),
     url(r'^updatestar/$', update_categories.UpdateStar.as_view()),
+    url(r'^closetab/$', close_tab.CloseTab.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
