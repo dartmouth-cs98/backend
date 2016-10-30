@@ -11,6 +11,13 @@ class Category(models.Model):
     class Meta:
         ordering = ('created',)
 
+class TimeActive(models.Model):
+    start = models.DateTimeField(auto_now_add=True)
+    end = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        ordering = ('start',)
+
 class Tab(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     tab_id = models.IntegerField()
@@ -29,6 +36,7 @@ class Domain(models.Model):
     favicon = models.CharField(max_length=1000, blank=True, default='')
     tab = models.ForeignKey('Tab')
     closed = models.DateTimeField(blank=True, null=True)
+    active_times = models.ManyToManyField(TimeActive, blank=True)
 
     def __str__(self):
         return self.title

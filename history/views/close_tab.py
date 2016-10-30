@@ -21,6 +21,10 @@ class CloseTab(APIView):
 
         d = t.domain_set.get(closed__isnull=True)
 
+        ta = d.active_times.get(end__isnull=True)
+        ta.end = time
+        ta.save()
+
         t.closed = time
         t.save()
 

@@ -36,11 +36,18 @@ class NewPage(APIView):
 
             if close_domain.exists():
                 close_domain = close_domain[0]
+                ta = close_domain.timeactive_set.get(end__isnull=True)
+                ta.end = timezone.now()
+                ta.save()
                 close_domain.closed = timezone.now()
                 close_domain.save()
 
+
             d = Domain(title=domain_title, tab=t, base_url=base_url)
             d.save()
+            new_ta = TimeActive()
+            new_ta.save()
+            d.active_times.add(new_ta)
 
         p = Page.objects.filter(url=url)
 
@@ -53,3 +60,26 @@ class NewPage(APIView):
         pv = PageVisit(page=p, domain=d)
         pv.save()
         return Response(status=status.HTTP_201_CREATED)
+
+class UpdateActive(APIView):
+    """
+    Updates the domain that is active
+    """
+    def post(self, request, format=None):
+
+        t_id = request.data['tab']
+
+        t = Tab.objects.get(tab_id=t_id)
+
+        d = t.domain_set.get(closed__isnull=True)
+
+        ta = TimeActive.objects.get(end__isnull=True)
+        ta.end = timezone.now()
+        ta.save()
+
+        new_ta = TimeActive()
+        new_ta.save()
+
+        d.active_times.add(new_ta)
+
+        return Response(status=status.HTTP_200_OK)
