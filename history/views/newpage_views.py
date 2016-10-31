@@ -19,8 +19,6 @@ class NewPage(APIView):
         url = request.data['url']
         base_url = urlparse(url).netloc
 
-        import ipdb; ipdb.set_trace()
-
         ta = TimeActive.objects.filter(end__isnull=True)
         if ta.exists():
             ta = ta.first()
@@ -80,7 +78,7 @@ class UpdateActive(APIView):
     def post(self, request, format=None):
 
         t_id = request.data['tab']
-        
+
         try:
             t = Tab.objects.get(tab_id=t_id)
         except Tab.DoesNotExist:
