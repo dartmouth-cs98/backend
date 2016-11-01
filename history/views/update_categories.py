@@ -5,6 +5,24 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+
+class CheckPageCategories(APIView):
+    """
+    Return categories and starred for a page
+    """
+    def post(self, request, format=None):
+        url = request.data['url']
+
+        try:
+            p = Page.objects.get(url=url)
+        except Page.DoesNotExist:
+            return Response(status=status.HTTP_200_OK)
+
+        page = PageSerializer(p)
+
+        return Response(page.data)
+
+
 class AddCategoryPage(APIView):
     """
     Add Category to Page
