@@ -19,17 +19,15 @@ class NewPage(APIView):
         url = request.data['url']
         base_url = urlparse(url).netloc
 
+        # Get the currently active TimeActive (can only be one if exists)
         ta = TimeActive.objects.filter(end__isnull=True)
         if ta.exists():
             ta = ta.first()
 
+        # Check if a tab exists with this id that is open in this session
         t = Tab.objects.filter(tab_id=t_id, closed__isnull=True)
         if t.exists():
             t=t[0]
-            #shouldn't be needed but just in case
-            if ta.domain_set.first().tab != t:
-                ta.end = timezone.now()
-                ta.save()
         else:
             if ta:
                 ta.end = timezone.now()
@@ -70,6 +68,7 @@ class NewPage(APIView):
         pv = PageVisit(page=p, domain=d)
         pv.save()
         return Response(status=status.HTTP_201_CREATED)
+
 
 class UpdateActive(APIView):
     """
