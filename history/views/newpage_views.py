@@ -24,6 +24,12 @@ class NewPage(APIView):
         if ta.exists():
             ta = ta.first()
 
+        # if 'chrome://' in url or 'file:///' in url:
+        #     if ta:
+        #         ta.end = timezone.now()
+        #         ta.save()
+        #         return Response(status=status.HTTP_200_OK)
+
         # Check if a tab exists with this id that is open in this session
         t = Tab.objects.filter(tab_id=t_id, closed__isnull=True)
         if t.exists():
@@ -32,8 +38,12 @@ class NewPage(APIView):
             if ta:
                 ta.end = timezone.now()
                 ta.save()
-            t = Tab(tab_id=t_id)
-            t.save()
+
+            if 'chrome://' not in url and 'file:///' not in url:
+                t = Tab(tab_id=t_id)
+                t.save()
+            else:
+                return Response(status=status.HTTP_200_OK)
 
         domains = t.domain_set.all()
 
@@ -50,12 +60,14 @@ class NewPage(APIView):
                 close_domain.closed = timezone.now()
                 close_domain.save()
 
-
-            d = Domain(title=domain_title, tab=t, base_url=base_url)
-            d.save()
-            new_ta = TimeActive()
-            new_ta.save()
-            d.active_times.add(new_ta)
+            if 'chrome://' not in url and 'file:///' not in url:
+                d = Domain(title=domain_title, tab=t, base_url=base_url)
+                d.save()
+                new_ta = TimeActive()
+                new_ta.save()
+                d.active_times.add(new_ta)
+            else:
+                return Response(status=status.HTTP_200_OK)
 
         p = Page.objects.filter(url=url)
 
@@ -78,23 +90,37 @@ class UpdateActive(APIView):
 
         t_id = request.data['tab']
 
+        ta = TimeActive.objects.filter(end__isnull=True)
+
+        if ta.exists():
+            ta = ta[0]
+
         try:
             t = Tab.objects.get(tab_id=t_id)
         except Tab.DoesNotExist:
+            if ta:
+                ta.end = timezone.now()
+                ta.save()
             return Response(status=status.HTTP_200_OK)
 
-        d = t.domain_set.get(closed__isnull=True)
 
-        ta = TimeActive.objects.get(end__isnull=True)
 
-        if ta.domain_set.first().tab != t:
+        d = t.domain_set.filter(closed__isnull=True)
 
+        # means that the current page is a chrome:// or file:/// page
+        if not d.exists():
+            if ta:
+                ta.end = timezone.now()
+                ta.save()
+            return Response(status=status.HTTP_200_OK)
+
+        if ta:
             ta.end = timezone.now()
             ta.save()
 
-            new_ta = TimeActive()
-            new_ta.save()
+        new_ta = TimeActive()
+        new_ta.save()
 
-            d.active_times.add(new_ta)
+        d.active_times.add(new_ta)
 
         return Response(status=status.HTTP_200_OK)
