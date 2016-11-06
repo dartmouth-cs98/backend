@@ -16,6 +16,7 @@ class NewPage(APIView):
         t_id = request.data['tab']
         page_title = request.data['title']
         domain_title = request.data['domain']
+        favicon = request.data['favicon']
         url = request.data['url']
         base_url = urlparse(url).netloc
 
@@ -55,7 +56,7 @@ class NewPage(APIView):
                 close_domain.save()
 
             if 'chrome://' not in url and 'file:///' not in url:
-                d = Domain(title=domain_title, tab=t, base_url=base_url)
+                d = Domain(title=domain_title, tab=t, base_url=base_url, favicon=favicon)
                 d.save()
                 new_ta = TimeActive()
                 new_ta.save()
