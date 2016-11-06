@@ -107,6 +107,8 @@ class UpdateActive(APIView):
                 ta.end = timezone.now()
                 ta.save()
             return Response(status=status.HTTP_200_OK)
+        else:
+            d = d.first()
 
         if ta:
             ta.end = timezone.now()
