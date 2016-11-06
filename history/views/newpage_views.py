@@ -24,12 +24,6 @@ class NewPage(APIView):
         if ta.exists():
             ta = ta.first()
 
-        # if 'chrome://' in url or 'file:///' in url:
-        #     if ta:
-        #         ta.end = timezone.now()
-        #         ta.save()
-        #         return Response(status=status.HTTP_200_OK)
-
         # Check if a tab exists with this id that is open in this session
         t = Tab.objects.filter(tab_id=t_id, closed__isnull=True)
         if t.exists():
