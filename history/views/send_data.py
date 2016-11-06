@@ -38,8 +38,7 @@ class SendTabs(APIView):
                                        Q(end__range=[start, end]))
 
             minutes_active = 0
-            # start = datetime(month=month, day=day, year=year, tzinfo=pytz.UTC)
-            # end = datetime(month=month, day=day, year=year, tzinfo=pytz.UTC) + timedelta(days=1)
+
             for a in ta:
                 if a.start < start:
                     time = a.end - start
@@ -88,4 +87,3 @@ class SendTabs(APIView):
 
 
         return HttpResponse(response)
-        # {"month": 10, "day":30, "year":2016}
