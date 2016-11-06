@@ -14,14 +14,13 @@ class SendTabs(APIView):
     Send info for lookback page
     """
     def post(self, request, format=None):
-        month = request.data['month']
-        day = request.data['day']
-        year = request.data['year']
+        start = request.data['start']
+        end = request.data['end']
 
-        pvs = PageVisit.objects.filter(visited__month=month,
-                                      visited__day=day,
-                                      visited__year=year
-                                      )
+        start = pytz.utc.localize(datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%fZ'))
+        end = pytz.utc.localize(datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%fZ'))
+
+        pvs = PageVisit.objects.filter(visited__range=[start, end])
 
         domains = set()
         tabs = set()
@@ -35,16 +34,11 @@ class SendTabs(APIView):
         # after that day but go through the whole day
         for d in domains:
             c = pvs.filter(domain=d).count()
-            ta = d.active_times.filter(Q(start__month=month,
-                                         start__day=day,
-                                         start__year=year) |
-                                       Q(end__month=month,
-                                         end__day=day,
-                                         end__year=year))
+            ta = d.active_times.filter(Q(start__range=[start, end]) |
+                                       Q(end__range=[start, end]))
 
             minutes_active = 0
-            start = datetime(month=month, day=day, year=year, tzinfo=pytz.UTC)
-            end = datetime(month=month, day=day, year=year, tzinfo=pytz.UTC) + timedelta(days=1)
+
             for a in ta:
                 if a.start < start:
                     time = a.end - start
@@ -93,4 +87,3 @@ class SendTabs(APIView):
 
 
         return HttpResponse(response)
-        # {"month": 10, "day":30, "year":2016}
