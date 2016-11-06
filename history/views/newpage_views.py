@@ -84,8 +84,11 @@ class UpdateActive(APIView):
             return Response(status=status.HTTP_200_OK)
 
         d = t.domain_set.get(closed__isnull=True)
+        try:
+            ta = TimeActive.objects.get(end__isnull=True)
+        except Exception as e:
+            return Response(status=status.HTTP_200_OK)
 
-        ta = TimeActive.objects.get(end__isnull=True)
 
         if ta.domain_set.first().tab != t:
 
