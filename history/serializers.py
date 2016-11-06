@@ -57,3 +57,24 @@ class PageSerializer(serializers.Serializer):
         instance.star = validated_data.get('star', instance.star)
         instance.save()
         return instance
+
+class TimeActiveSerializer(serializers.Serializer):
+    start = serializers.DateTimeField()
+    end = serializers.DateTimeField()
+
+class DomainSerializer(serializers.Serializer):
+    base_url = serializers.CharField(max_length=1000)
+    created = serializers.DateTimeField()
+    closed = serializers.DateTimeField()
+    title = serializers.CharField(max_length=1000)
+    favicon = serializers.CharField(max_length=1000)
+    active_times = TimeActiveSerializer(many=True)
+    pages = serializers.IntegerField()
+    minutes_active = serializers.IntegerField()
+
+class TabSerializer(serializers.Serializer):
+    domains = DomainSerializer(many=True)
+    tab_id = serializers.IntegerField()
+
+class SendTabSerializer(serializers.Serializer):
+    tabs = TabSerializer(many=True)
