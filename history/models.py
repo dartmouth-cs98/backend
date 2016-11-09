@@ -37,6 +37,8 @@ class Domain(models.Model):
     tab = models.ForeignKey('Tab')
     closed = models.DateTimeField(blank=True, null=True)
     active_times = models.ManyToManyField(TimeActive, blank=True)
+    opened_from_domain = models.ForeignKey('self', blank=True, null=True)
+    opened_from_tabid = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.title
