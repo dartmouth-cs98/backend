@@ -37,7 +37,7 @@ class NewPage(APIView):
                 ta.end = timezone.now()
                 ta.save()
 
-            if 'chrome://' not in url and 'file:///' not in url:
+            if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
                 t = Tab(tab_id=t_id)
                 t.save()
             else:
@@ -58,7 +58,7 @@ class NewPage(APIView):
                 close_domain.closed = timezone.now()
                 close_domain.save()
 
-            if 'chrome://' not in url and 'file:///' not in url:
+            if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
                 created = False
                 if t_id != prev_tab:
                     prev_t = Tab.objects.filter(tab_id=prev_tab, closed__isnull=True)
