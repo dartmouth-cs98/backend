@@ -19,6 +19,7 @@ class NewPage(APIView):
         favicon = request.data['favIconUrl']
         url = request.data['url']
         prev_tab = request.data['previousTabId']
+        active = request.data['active']
         base_url = urlparse(url).netloc
 
         # Get the currently active TimeActive (can only be one if exists)
@@ -31,7 +32,7 @@ class NewPage(APIView):
         if t.exists():
             t=t[0]
         else:
-            if ta:
+            if ta and active:
                 ta.end = timezone.now()
                 ta.save()
 
@@ -76,9 +77,10 @@ class NewPage(APIView):
                 if not created:
                     d = Domain(title=domain_title, tab=t, base_url=base_url, favicon=favicon)
                     d.save()
-                new_ta = TimeActive()
-                new_ta.save()
-                d.active_times.add(new_ta)
+                if active:
+                    new_ta = TimeActive()
+                    new_ta.save()
+                    d.active_times.add(new_ta)
             else:
                 return Response(status=status.HTTP_200_OK)
 
