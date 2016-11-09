@@ -16,7 +16,8 @@ class NewPage(APIView):
         t_id = request.data['tab']
         page_title = request.data['title']
         domain_title = request.data['domain']
-        favicon = request.data['favIconUrl']
+        if 'favIconUrl' in request.data.keys():
+            favicon = request.data['favIconUrl']
         url = request.data['url']
         prev_tab = request.data['previousTabId']
         active = request.data['active']
