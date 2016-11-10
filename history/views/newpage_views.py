@@ -16,8 +16,12 @@ class NewPage(APIView):
         t_id = request.data['tab']
         page_title = request.data['title']
         domain_title = request.data['domain']
+
         if 'favIconUrl' in request.data.keys():
             favicon = request.data['favIconUrl']
+        else:
+            favicon = ''
+
         url = request.data['url']
         prev_tab = request.data['previousTabId']
         active = request.data['active']
@@ -25,15 +29,14 @@ class NewPage(APIView):
 
         # Get the currently active TimeActive (can only be one if exists)
         ta = TimeActive.objects.filter(end__isnull=True)
-        if ta.exists():
-            ta = ta.first()
 
         # Check if a tab exists with this id that is open in this session
         t = Tab.objects.filter(tab_id=t_id, closed__isnull=True)
         if t.exists():
             t=t[0]
         else:
-            if ta and active:
+            if ta.exists() and active:
+                ta = ta.first()
                 ta.end = timezone.now()
                 ta.save()
 
@@ -47,14 +50,18 @@ class NewPage(APIView):
 
         if domains.filter(base_url=base_url, closed__isnull=True).exists():
             d = domains.get(base_url=base_url, closed__isnull=True)
-
+            if favicon != '' and favicon != d.favicon:
+                d.favicon = favicon
+                d.save()
         else:
             close_domain = domains.filter(closed__isnull=True)
 
             if close_domain.exists():
                 close_domain = close_domain[0]
-                ta.end = timezone.now()
-                ta.save()
+                if ta.exists():
+                    ta = ta.first()
+                    ta.end = timezone.now()
+                    ta.save()
                 close_domain.closed = timezone.now()
                 close_domain.save()
 
