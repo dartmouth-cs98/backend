@@ -115,6 +115,7 @@ class UpdateActive(APIView):
     def post(self, request, format=None):
 
         t_id = request.data['tab']
+        closed = request.data['closed']
 
         ta = TimeActive.objects.filter(end__isnull=True)
 
@@ -124,7 +125,7 @@ class UpdateActive(APIView):
         try:
             t = Tab.objects.get(tab_id=t_id)
         except Tab.DoesNotExist:
-            if ta:
+            if ta and not closed:
                 ta.end = timezone.now()
                 ta.save()
             return Response(status=status.HTTP_200_OK)
@@ -135,14 +136,14 @@ class UpdateActive(APIView):
 
         # means that the current page is a chrome:// or file:/// page
         if not d.exists():
-            if ta:
+            if ta and not closed:
                 ta.end = timezone.now()
                 ta.save()
             return Response(status=status.HTTP_200_OK)
         else:
             d = d.first()
 
-        if ta:
+        if ta and not closed:
             ta.end = timezone.now()
             ta.save()
 
