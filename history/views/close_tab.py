@@ -30,9 +30,10 @@ class CloseTab(APIView):
             d.save()
             ta = d.active_times.filter(end__isnull=True)
             if ta.exists():
-                ta = ta[0]
-                ta.end = time
-                ta.save()
+                ta = ta.first()
+                if ta:
+                    ta.end = time
+                    ta.save()
 
         t.closed = time
         t.save()

@@ -16,7 +16,9 @@ class NewPage(APIView):
         t_id = request.data['tab']
         page_title = request.data['title']
         domain_title = request.data['domain']
+        favicon = request.data['favIconUrl']
         url = request.data['url']
+        prev_tab = request.data['previousTabId']
         base_url = urlparse(url).netloc
 
         # Get the currently active TimeActive (can only be one if exists)
@@ -55,8 +57,25 @@ class NewPage(APIView):
                 close_domain.save()
 
             if 'chrome://' not in url and 'file:///' not in url:
-                d = Domain(title=domain_title, tab=t, base_url=base_url)
-                d.save()
+                created = False
+                if t_id != prev_tab:
+                    prev_t = Tab.objects.filter(tab_id=prev_tab, closed__isnull=True)
+                    if prev_t.exists():
+                        prev_t = prev_t.first()
+                        prev_d = prev_t.domain_set.filter(closed__isnull=True)
+                        if prev_d.exists():
+                            prev_d = prev_d.first()
+                            d = Domain(
+                                title=domain_title, tab=t, base_url=base_url,
+                                favicon=favicon, opened_from_domain=prev_d,
+                                opened_from_tabid=prev_tab
+                                )
+                            d.save()
+                            created = True
+
+                if not created:
+                    d = Domain(title=domain_title, tab=t, base_url=base_url, favicon=favicon)
+                    d.save()
                 new_ta = TimeActive()
                 new_ta.save()
                 d.active_times.add(new_ta)
@@ -87,7 +106,7 @@ class UpdateActive(APIView):
         ta = TimeActive.objects.filter(end__isnull=True)
 
         if ta.exists():
-            ta = ta[0]
+            ta = ta.first()
 
         try:
             t = Tab.objects.get(tab_id=t_id)
