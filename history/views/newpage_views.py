@@ -23,7 +23,10 @@ class NewPage(APIView):
             favicon = ''
 
         url = request.data['url']
-        prev_tab = request.data['previousTabId']
+        if 'previousTabId' in request.data.keys():
+            prev_tab = request.data['previousTabId']
+        else:
+            prev_tab = t_id
         active = request.data['active']
         base_url = urlparse(url).netloc
 
