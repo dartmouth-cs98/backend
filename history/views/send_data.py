@@ -21,6 +21,10 @@ class SendTabs(APIView):
         start = pytz.utc.localize(datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%fZ'))
         end = pytz.utc.localize(datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%fZ'))
 
+        #domains open during timeframe
+
+        import ipdb; ipdb.set_trace()
+
         pvs = PageVisit.objects.filter(visited__range=[start, end])
 
         domains = set()
