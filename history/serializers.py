@@ -66,6 +66,8 @@ class DomainSerializer(serializers.Serializer):
     favicon = serializers.CharField(max_length=1000)
     active_times = TimeActiveSerializer(many=True)
     pages = serializers.IntegerField()
+    opened_from_domain = serializers.PrimaryKeyRelatedField(read_only=True, allow_null=True)
+    opened_from_tabid = serializers.IntegerField()
     minutes_active = serializers.IntegerField()
 
 class TabSerializer(serializers.Serializer):
