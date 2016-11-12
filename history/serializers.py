@@ -2,30 +2,16 @@ from rest_framework import serializers
 from history.models import Category, Page
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ('id', 'title', 'created')
+class CategorySerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    title = serializers.CharField(max_length=1000)
 
-    def create(self, validated_data):
-        """
-        Create and return a new `Category` instance, given the validated data.
-        """
-        return Category.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing `Category` instance, given the validated data.
-        """
-        instance.title = validated_data.get('title', instance.title)
-        instance.save()
-        return instance
 
 class PageSerializer(serializers.Serializer):
     # class Meta:
     #     model = Page
     #     fields = ('id', 'title', 'url', 'star', 'categories', 'created')
-    id = serializers.IntegerField(read_only=True)
+    pk = serializers.IntegerField(read_only=True)
     title = serializers.CharField(required=True, allow_blank=False, max_length=100)
     url = serializers.CharField(required=True, allow_blank=False, max_length=1000)
     star = serializers.BooleanField()
@@ -58,11 +44,21 @@ class PageSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+class CategoryPageSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    title = serializers.CharField(max_length=1000)
+    pages = PageSerializer(many=True)
+
+class SendCategorySerializer(serializers.Serializer):
+    categories = CategoryPageSerializer(many=True)
+    starred = PageSerializer(many=True)
+
 class TimeActiveSerializer(serializers.Serializer):
     start = serializers.DateTimeField()
     end = serializers.DateTimeField()
 
 class DomainSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
     base_url = serializers.CharField(max_length=1000)
     created = serializers.DateTimeField()
     closed = serializers.DateTimeField()

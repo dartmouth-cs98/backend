@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^newpage/$', newpage_views.NewPage.as_view()),
     url(r'^tabinfo/$', send_data.SendTabs.as_view()),
     url(r'^active/$', newpage_views.UpdateActive.as_view()),
+    url(r'^getcategories/$', send_data.SendCategories.as_view()),
     url(r'^checkcategories/$', update_categories.CheckPageCategories.as_view()),
     url(r'^addcategorypage/$', update_categories.AddCategoryPage.as_view()),
     url(r'^deletecategorypage/$', update_categories.DeleteCategoryPage.as_view()),

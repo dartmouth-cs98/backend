@@ -99,6 +99,9 @@ class NewPage(APIView):
 
         if p.exists():
             p = p[0]
+            if p.title != page_title:
+                p.title = page_title
+                p.save()
         else:
             p = Page(title=page_title, url=url)
             p.save()
