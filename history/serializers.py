@@ -63,6 +63,7 @@ class TimeActiveSerializer(serializers.Serializer):
     end = serializers.DateTimeField()
 
 class DomainSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
     base_url = serializers.CharField(max_length=1000)
     created = serializers.DateTimeField()
     closed = serializers.DateTimeField()
