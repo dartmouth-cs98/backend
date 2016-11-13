@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^categories/(?P<id>[0-9]+)/$', category_views.CategoryDetail.as_view()),
     url(r'^newpage/$', newpage_views.NewPage.as_view()),
     url(r'^tabinfo/$', send_data.SendTabs.as_view()),
+    url(r'^domaininfo/$', send_data.SendDomain.as_view()),
     url(r'^active/$', newpage_views.UpdateActive.as_view()),
     url(r'^getcategories/$', send_data.SendCategories.as_view()),
     url(r'^checkcategories/$', update_categories.CheckPageCategories.as_view()),

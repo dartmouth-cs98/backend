@@ -76,3 +76,18 @@ class TabSerializer(serializers.Serializer):
 
 class SendTabSerializer(serializers.Serializer):
     tabs = TabSerializer(many=True)
+
+class PageVisitSerializer(serializers.Serializer):
+    page = PageSerializer()
+
+class SendDomainSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    base_url = serializers.CharField(max_length=1000)
+    created = serializers.DateTimeField()
+    closed = serializers.DateTimeField()
+    title = serializers.CharField(max_length=1000)
+    favicon = serializers.CharField(max_length=1000)
+    active_times = TimeActiveSerializer(many=True)
+    pages = serializers.IntegerField()
+    minutes_active = serializers.IntegerField()
+    pagevisits = PageVisitSerializer(many=True)
