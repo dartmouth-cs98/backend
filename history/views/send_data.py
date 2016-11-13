@@ -44,7 +44,7 @@ class SendTabs(APIView):
             for d in domains:
                 if d.tab == t and d not in t.domains:
 
-                    c = pvs.filter(domain=d).count()
+                    c = d.pagevisit_set.count()
 
                     # handle case where start and end time are before and
                     # after that day but go through the whole day
