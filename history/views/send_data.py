@@ -1,4 +1,4 @@
-from history.models import Tab, Domain, Page, PageVisit, TimeActive
+from history.models import Tab, Domain, Page, PageVisit, TimeActive, Category
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,7 +8,7 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 import pytz
 from django.core import serializers
-from history.serializers import SendTabSerializer
+from history.serializers import SendTabSerializer, SendCategorySerializer
 
 class SendTabs(APIView):
     """
@@ -66,5 +66,29 @@ class SendTabs(APIView):
 
         send = SendTabSerializer(holder)
 
+
+        return Response(send.data)
+
+class SendCategories(APIView):
+    """
+    Send categories with their associated pages
+    """
+    def get(self, request, format=None):
+        holder = {'categories': []}
+
+        starred = Page.objects.filter(star=True)
+
+        holder['starred'] = starred
+
+        cats = Category.objects.all()
+
+        for c in cats:
+            pages = c.page_set.all()
+
+            setattr(c, 'pages', pages)
+
+            holder['categories'].append(c)
+
+        send = SendCategorySerializer(holder)
 
         return Response(send.data)
