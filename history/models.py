@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models import Q
+from django.utils import timezone
+import math
 
 
 class Category(models.Model):
@@ -42,6 +45,37 @@ class Domain(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def pagecount(self):
+        return self.pagevisit_set.count()
+
+    def timeactive(self, start=None, end=None):
+        minutes_active = 0
+
+        if start is None or end is None:
+            ta = self.active_times.all()
+
+            for a in ta:
+                if a.end is not None:
+                    time = a.end - a.start
+                else:
+                    time = timezone.now() - a.start
+                minutes_active += math.ceil(time.seconds / 60)
+        else:
+            ta = self.active_times.filter(Q(start__range=[start, end]) |
+                                          Q(end__range=[start, end]))
+
+            for a in ta:
+                if a.start < start:
+                    time = a.end - start
+                elif a.end is None or a.end > end:
+                    time = end - a.start
+                else:
+                    time = a.end - a.start
+                minutes_active += math.ceil(time.seconds / 60)
+
+        return (minutes_active, ta)
 
     class Meta:
         ordering = ('created',)

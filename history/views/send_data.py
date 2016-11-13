@@ -8,7 +8,7 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 import pytz
 from django.core import serializers
-from history.serializers import SendTabSerializer, SendCategorySerializer
+from history.serializers import SendTabSerializer, SendCategorySerializer, SendDomainSerializer
 
 class SendTabs(APIView):
     """
@@ -44,27 +44,11 @@ class SendTabs(APIView):
             for d in domains:
                 if d.tab == t and d not in t.domains:
 
-                    c = d.pagevisit_set.count()
+                    ta = d.timeactive(start, end)
 
-                    # handle case where start and end time are before and
-                    # after that day but go through the whole day
-                    ta = d.active_times.filter(Q(start__range=[start, end]) |
-                                               Q(end__range=[start, end]))
-
-                    minutes_active = 0
-
-                    for a in ta:
-                        if a.start < start:
-                            time = a.end - start
-                        elif a.end is None or a.end > end:
-                            time = end - a.start
-                        else:
-                            time = a.end - a.start
-                        minutes_active += int(time.seconds / 60)
-
-                    setattr(d, 'pages', c)
-                    setattr(d, 'active_times', ta)
-                    setattr(d, 'minutes_active', minutes_active)
+                    setattr(d, 'pages', d.pagecount)
+                    setattr(d, 'minutes_active', ta[0])
+                    setattr(d, 'active_times', ta[1])
 
                     t.domains.append(d)
             holder['tabs'].append(t)
@@ -95,5 +79,27 @@ class SendCategories(APIView):
             holder['categories'].append(c)
 
         send = SendCategorySerializer(holder)
+
+        return Response(send.data)
+
+class SendDomain(APIView):
+    """
+    Send domain and all the pages
+    """
+    def post(self, request, format=None):
+        pk = request.data['pk']
+
+        d = Domain.objects.get(pk=pk)
+
+        pvs = d.pagevisit_set.all()
+
+        ta = d.timeactive()
+
+        setattr(d, 'pages', d.pagecount)
+        setattr(d, 'minutes_active', ta[0])
+        setattr(d, 'active_times', ta[1])
+        setattr(d, 'pagevisits', pvs)
+
+        send = SendDomainSerializer(d)
 
         return Response(send.data)
