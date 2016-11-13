@@ -21,14 +21,19 @@ class SendTabs(APIView):
         start = pytz.utc.localize(datetime.strptime(start, '%Y-%m-%dT%H:%M:%S.%fZ'))
         end = pytz.utc.localize(datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%fZ'))
 
-        pvs = PageVisit.objects.filter(visited__range=[start, end])
+        #domains open during timeframe
+        domains = Domain.objects.filter(Q(created__range=[start, end]) |
+                              Q(closed__range=[start, end]) |
+                              (Q(closed__gte=end) & Q(created__lte=start)) |
+                              (Q(created__lte=start) & Q(closed__isnull=True))
+                              )
 
-        domains = set()
+        # pvs = PageVisit.objects.filter(visited__range=[start, end])
+
         tabs = set()
 
-        for pv in pvs:
-            domains.add(pv.domain)
-            tabs.add(pv.domain.tab)
+        for d in domains:
+            tabs.add(d.tab)
 
         domains = list(domains)
         holder = {'tabs': []}
@@ -39,7 +44,7 @@ class SendTabs(APIView):
             for d in domains:
                 if d.tab == t and d not in t.domains:
 
-                    c = pvs.filter(domain=d).count()
+                    c = d.pagevisit_set.count()
 
                     # handle case where start and end time are before and
                     # after that day but go through the whole day
