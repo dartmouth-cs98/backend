@@ -22,16 +22,22 @@ class CloseTab(APIView):
         except Tab.DoesNotExist:
             return Response(status=status.HTTP_200_OK)
 
-        d = t.domain_set.get(closed__isnull=True)
+        d = t.domain_set.filter(closed__isnull=True)
 
-        ta = d.active_times.get(end__isnull=True)
-        ta.end = time
-        ta.save()
+        if d.exists():
+            d = d.first()
+            d.closed = time
+            d.save()
+            ta = d.active_times.filter(end__isnull=True)
+            if ta.exists():
+                ta = ta.first()
+                if ta:
+                    ta.end = time
+                    ta.save()
 
         t.closed = time
         t.save()
 
-        d.closed = time
-        d.save()
+
 
         return Response(status=status.HTTP_200_OK)

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'history.apps.HistoryConfig',
     'corsheaders',
     'django_extensions',
+    'pytz',
 ]
 
 MIDDLEWARE = [

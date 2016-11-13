@@ -16,55 +16,92 @@ class NewPage(APIView):
         t_id = request.data['tab']
         page_title = request.data['title']
         domain_title = request.data['domain']
+
+        if 'favIconUrl' in request.data.keys():
+            favicon = request.data['favIconUrl']
+        else:
+            favicon = ''
+
         url = request.data['url']
+        if 'previousTabId' in request.data.keys():
+            prev_tab = request.data['previousTabId']
+        else:
+            prev_tab = t_id
+        active = request.data['active']
         base_url = urlparse(url).netloc
 
-        import ipdb; ipdb.set_trace()
-
+        # Get the currently active TimeActive (can only be one if exists)
         ta = TimeActive.objects.filter(end__isnull=True)
-        if ta.exists():
-            ta = ta.first()
 
+        # Check if a tab exists with this id that is open in this session
         t = Tab.objects.filter(tab_id=t_id, closed__isnull=True)
         if t.exists():
             t=t[0]
-            #shouldn't be needed but just in case
-            if ta.domain_set.first().tab != t:
-                ta.end = timezone.now()
-                ta.save()
         else:
-            if ta:
+            if ta.exists() and active:
+                ta = ta.first()
                 ta.end = timezone.now()
                 ta.save()
-            t = Tab(tab_id=t_id)
-            t.save()
+
+            if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
+                t = Tab(tab_id=t_id)
+                t.save()
+            else:
+                return Response(status=status.HTTP_200_OK)
 
         domains = t.domain_set.all()
 
         if domains.filter(base_url=base_url, closed__isnull=True).exists():
             d = domains.get(base_url=base_url, closed__isnull=True)
-
+            if favicon != '' and favicon != d.favicon:
+                d.favicon = favicon
+                d.save()
         else:
             close_domain = domains.filter(closed__isnull=True)
 
             if close_domain.exists():
                 close_domain = close_domain[0]
-                ta.end = timezone.now()
-                ta.save()
+                if ta.exists():
+                    ta = ta.first()
+                    ta.end = timezone.now()
+                    ta.save()
                 close_domain.closed = timezone.now()
                 close_domain.save()
 
+            if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
+                created = False
+                if t_id != prev_tab:
+                    prev_t = Tab.objects.filter(tab_id=prev_tab, closed__isnull=True)
+                    if prev_t.exists():
+                        prev_t = prev_t.first()
+                        prev_d = prev_t.domain_set.filter(closed__isnull=True)
+                        if prev_d.exists():
+                            prev_d = prev_d.first()
+                            d = Domain(
+                                title=domain_title, tab=t, base_url=base_url,
+                                favicon=favicon, opened_from_domain=prev_d,
+                                opened_from_tabid=prev_tab
+                                )
+                            d.save()
+                            created = True
 
-            d = Domain(title=domain_title, tab=t, base_url=base_url)
-            d.save()
-            new_ta = TimeActive()
-            new_ta.save()
-            d.active_times.add(new_ta)
+                if not created:
+                    d = Domain(title=domain_title, tab=t, base_url=base_url, favicon=favicon)
+                    d.save()
+                if active:
+                    new_ta = TimeActive()
+                    new_ta.save()
+                    d.active_times.add(new_ta)
+            else:
+                return Response(status=status.HTTP_200_OK)
 
         p = Page.objects.filter(url=url)
 
         if p.exists():
             p = p[0]
+            if p.title != page_title:
+                p.title = page_title
+                p.save()
         else:
             p = Page(title=page_title, url=url)
             p.save()
@@ -73,6 +110,7 @@ class NewPage(APIView):
         pv.save()
         return Response(status=status.HTTP_201_CREATED)
 
+
 class UpdateActive(APIView):
     """
     Updates the domain that is active
@@ -80,24 +118,41 @@ class UpdateActive(APIView):
     def post(self, request, format=None):
 
         t_id = request.data['tab']
-        
+        closed = request.data['closed']
+
+        ta = TimeActive.objects.filter(end__isnull=True)
+
+        if ta.exists():
+            ta = ta.first()
+
         try:
             t = Tab.objects.get(tab_id=t_id)
         except Tab.DoesNotExist:
+            if ta and not closed:
+                ta.end = timezone.now()
+                ta.save()
             return Response(status=status.HTTP_200_OK)
 
-        d = t.domain_set.get(closed__isnull=True)
 
-        ta = TimeActive.objects.get(end__isnull=True)
 
-        if ta.domain_set.first().tab != t:
+        d = t.domain_set.filter(closed__isnull=True)
 
+        # means that the current page is a chrome:// or file:/// page
+        if not d.exists():
+            if ta and not closed:
+                ta.end = timezone.now()
+                ta.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+            d = d.first()
+
+        if ta and not closed:
             ta.end = timezone.now()
             ta.save()
 
-            new_ta = TimeActive()
-            new_ta.save()
+        new_ta = TimeActive()
+        new_ta.save()
 
-            d.active_times.add(new_ta)
+        d.active_times.add(new_ta)
 
         return Response(status=status.HTTP_200_OK)
