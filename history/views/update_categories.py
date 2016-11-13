@@ -14,7 +14,7 @@ class CheckPageCategories(APIView):
         url = request.data['url']
 
         try:
-            p = Page.objects.get(url=url)
+            p = Page.objects.get(url=url, owned_by=request.user)
         except Page.DoesNotExist:
             return Response(status=status.HTTP_200_OK)
 
@@ -31,13 +31,13 @@ class AddCategoryPage(APIView):
         cat = request.data['category']
         url = request.data['url']
 
-        p = Page.objects.get(url=url)
-        c = Category.objects.filter(title=cat)
+        p = Page.objects.get(url=url, owned_by=request.user)
+        c = Category.objects.filter(title=cat, owned_by=request.user)
 
         if c.exists():
             p.categories.add(c.first())
         else:
-            c = Category(title=cat)
+            c = Category(title=cat, owned_by=request.user)
             c.save()
             p.categories.add(c)
 
@@ -52,11 +52,11 @@ class DeleteCategoryPage(APIView):
         cat = request.data['category']
         url = request.data['url']
         try:
-            p = Page.objects.get(url=url)
+            p = Page.objects.get(url=url, owned_by=request.user)
         except Page.DoesNotExist:
             raise Http404
 
-        c = Category.objects.get(title=cat)
+        c = Category.objects.get(title=cat, owned_by=request.user)
 
         p.categories.remove(c)
 
@@ -70,9 +70,9 @@ class AddCategory(APIView):
     def post(self, request, format=None):
         cat = request.data['category']
         try:
-            c = Category.objects.get(title=cat)
+            c = Category.objects.get(title=cat, owned_by=request.user)
         except Category.DoesNotExist:
-            c = Category(title=cat)
+            c = Category(title=cat, owned_by=request.user)
             c.save()
 
         serializer = CategorySerializer(c)
@@ -85,7 +85,7 @@ class DeleteCategory(APIView):
     def post(self, request, format=None):
         cat = request.data['category']
         try:
-            c = Category.objects.get(title=cat)
+            c = Category.objects.get(title=cat, owned_by=request.user)
         except Category.DoesNotExist:
             raise Http404
 
@@ -101,7 +101,7 @@ class UpdateStar(APIView):
         star = request.data['star']
 
         try:
-            p = Page.objects.get(url=url)
+            p = Page.objects.get(url=url, owned_by=request.user)
         except Page.DoesNotExist:
             raise Http404
 
