@@ -1,0 +1,11 @@
+# virtual environment directory
+env
+
+# local db
+db.sqlite3
+
+## python compiled
+*.py[cod]
+
+### Git ###
+.git
