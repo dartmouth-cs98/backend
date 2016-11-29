@@ -95,12 +95,12 @@ def get_env_variable(var_name):
         raise ImproperlyConfigured(error_msg)
 
 ON_HEROKU = os.environ.get('ON_HEROKU')
-HEROKU_SERVER = os.environ.get('HEROKU_SERVER')
+# HEROKU_SERVER = os.environ.get('HEROKU_SERVER')
 
 if ON_HEROKU:
     import dj_database_url
     db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES['default'] =db_from_env
+    DATABASES = {'default': db_from_env}
 else:
     DATABASES = {
         'default': {
