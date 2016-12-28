@@ -126,7 +126,7 @@ class UpdateActive(APIView):
             ta = ta.first()
 
         try:
-            t = Tab.objects.get(tab_id=t_id)
+            t = Tab.objects.get(tab_id=t_id, closed__isnull=True)
         except Tab.DoesNotExist:
             if ta and not closed:
                 ta.end = timezone.now()
