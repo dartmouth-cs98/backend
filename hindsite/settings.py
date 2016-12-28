@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -84,9 +86,6 @@ WSGI_APPLICATION = 'hindsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-import dj_database_url
-from django.core.exceptions import ImproperlyConfigured
-
 def get_env_variable(var_name):
     try:
         return os.environ[var_name]
@@ -95,7 +94,6 @@ def get_env_variable(var_name):
         raise ImproperlyConfigured(error_msg)
 
 ON_HEROKU = os.environ.get('ON_HEROKU')
-# HEROKU_SERVER = os.environ.get('HEROKU_SERVER')
 
 if ON_HEROKU:
     import dj_database_url

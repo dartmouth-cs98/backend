@@ -82,7 +82,7 @@ class Domain(models.Model):
 
 class Page(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=1000)
     url = models.CharField(max_length=1000)
     star = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
