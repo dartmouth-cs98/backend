@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
 from urllib.parse import urlparse
-
+from history.common import shorten_url
 
 class NewPage(APIView):
     """
@@ -23,6 +23,7 @@ class NewPage(APIView):
             favicon = ''
 
         url = request.data['url']
+
         if 'previousTabId' in request.data.keys():
             prev_tab = request.data['previousTabId']
         else:
@@ -95,7 +96,9 @@ class NewPage(APIView):
             else:
                 return Response(status=status.HTTP_200_OK)
 
-        p = Page.objects.filter(url=url)
+        short_url = shorten_url(url)
+
+        p = Page.objects.filter(url=short_url)
 
         if p.exists():
             p = p[0]
@@ -103,7 +106,7 @@ class NewPage(APIView):
                 p.title = page_title
                 p.save()
         else:
-            p = Page(title=page_title, url=url)
+            p = Page(title=page_title, url=short_url)
             p.save()
 
         pv = PageVisit(page=p, domain=d)

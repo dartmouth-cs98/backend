@@ -4,7 +4,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from history.common import shorten_url
 
 class CheckPageCategories(APIView):
     """
@@ -13,8 +13,10 @@ class CheckPageCategories(APIView):
     def post(self, request, format=None):
         url = request.data['url']
 
+        short_url = shorten_url(url)
+
         try:
-            p = Page.objects.get(url=url)
+            p = Page.objects.get(url=short_url)
         except Page.DoesNotExist:
             return Response(status=status.HTTP_200_OK)
 
@@ -31,7 +33,9 @@ class AddCategoryPage(APIView):
         cat = request.data['category']
         url = request.data['url']
 
-        p = Page.objects.get(url=url)
+        short_url = shorten_url(url)
+
+        p = Page.objects.get(url=short_url)
         c = Category.objects.filter(title=cat)
 
         if c.exists():
@@ -51,8 +55,11 @@ class DeleteCategoryPage(APIView):
     def post(self, request, format=None):
         cat = request.data['category']
         url = request.data['url']
+
+        short_url = shorten_url(url)
+
         try:
-            p = Page.objects.get(url=url)
+            p = Page.objects.get(url=short_url)
         except Page.DoesNotExist:
             raise Http404
 
@@ -100,8 +107,10 @@ class UpdateStar(APIView):
         url = request.data['url']
         star = request.data['star']
 
+        short_url = shorten_url(url)
+
         try:
-            p = Page.objects.get(url=url)
+            p = Page.objects.get(url=short_url)
         except Page.DoesNotExist:
             raise Http404
 
