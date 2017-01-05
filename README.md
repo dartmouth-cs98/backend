@@ -1,12 +1,19 @@
 # hindsite backend
 
-TODO: short project description, some sample screenshots or mockups
+## Description
+
+This repo contains the logic of our server that will save browsing and categorization data to our database. It is what is/will be deployed to Heroku in order for our users to access and store their data. A list of API calls are available at https://github.com/HindsightTwentyTwenty/backend/wiki/API-Doc
 
 ## Architecture
 
 Python Django REST API Framework
 
-TODO:  descriptions of code organization and tools and libraries used
+The code is organized into two directories, hindsite and history. The hindsite directory contains importantly
+the settings.py file which has all of the necessary pieces of information for the app to run in Django. The history
+directory contains the models that our app uses as well as the views and corresponding routing which is where
+all of the logic for the API calls is stored. Finally, the requirements.txt file contains all of the external
+packages that are installed for our app to run. The important libraries are django-restframework which simplifies
+the REST calls and pytz for better time management.
 
 ## Setup
 
