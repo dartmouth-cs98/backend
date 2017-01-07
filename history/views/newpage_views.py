@@ -12,7 +12,7 @@ class NewPage(APIView):
     Handle new page coming in
     """
     def post(self, request, format=None):
-
+        user = request.user
         t_id = request.data['tab']
         page_title = request.data['title']
         domain_title = request.data['domain']
@@ -32,10 +32,10 @@ class NewPage(APIView):
         base_url = urlparse(url).netloc
 
         # Get the currently active TimeActive (can only be one if exists)
-        ta = TimeActive.objects.filter(end__isnull=True)
+        ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
 
         # Check if a tab exists with this id that is open in this session
-        t = Tab.objects.filter(tab_id=t_id, closed__isnull=True)
+        t = Tab.objects.filter(tab_id=t_id, closed__isnull=True, owned_by=user)
         if t.exists():
             t=t[0]
         else:
@@ -45,7 +45,7 @@ class NewPage(APIView):
                 ta.save()
 
             if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
-                t = Tab(tab_id=t_id)
+                t = Tab(tab_id=t_id, owned_by=user)
                 t.save()
             else:
                 return Response(status=status.HTTP_200_OK)
@@ -72,7 +72,7 @@ class NewPage(APIView):
             if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
                 created = False
                 if t_id != prev_tab:
-                    prev_t = Tab.objects.filter(tab_id=prev_tab, closed__isnull=True)
+                    prev_t = Tab.objects.filter(tab_id=prev_tab, closed__isnull=True, owned_by=user)
                     if prev_t.exists():
                         prev_t = prev_t.first()
                         prev_d = prev_t.domain_set.filter(closed__isnull=True)
@@ -81,16 +81,16 @@ class NewPage(APIView):
                             d = Domain(
                                 title=domain_title, tab=t, base_url=base_url,
                                 favicon=favicon, opened_from_domain=prev_d,
-                                opened_from_tabid=prev_tab
+                                opened_from_tabid=prev_tab, owned_by=user
                                 )
                             d.save()
                             created = True
 
                 if not created:
-                    d = Domain(title=domain_title, tab=t, base_url=base_url, favicon=favicon)
+                    d = Domain(title=domain_title, tab=t, base_url=base_url, favicon=favicon, owned_by=user)
                     d.save()
                 if active:
-                    new_ta = TimeActive()
+                    new_ta = TimeActive(owned_by=user)
                     new_ta.save()
                     d.active_times.add(new_ta)
             else:
@@ -98,7 +98,7 @@ class NewPage(APIView):
 
         short_url = shorten_url(url)
 
-        p = Page.objects.filter(url=short_url)
+        p = Page.objects.filter(url=short_url, owned_by=user)
 
         if p.exists():
             p = p[0]
@@ -106,10 +106,10 @@ class NewPage(APIView):
                 p.title = page_title
                 p.save()
         else:
-            p = Page(title=page_title, url=short_url)
+            p = Page(title=page_title, url=short_url, owned_by=user)
             p.save()
 
-        pv = PageVisit(page=p, domain=d)
+        pv = PageVisit(page=p, domain=d, owned_by=user)
         pv.save()
         return Response(status=status.HTTP_201_CREATED)
 
@@ -123,13 +123,13 @@ class UpdateActive(APIView):
         t_id = request.data['tab']
         closed = request.data['closed']
 
-        ta = TimeActive.objects.filter(end__isnull=True)
+        ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
 
         if ta.exists():
             ta = ta.first()
 
         try:
-            t = Tab.objects.get(tab_id=t_id, closed__isnull=True)
+            t = Tab.objects.get(tab_id=t_id, closed__isnull=True, owned_by=user)
         except Tab.DoesNotExist:
             if ta and not closed:
                 ta.end = timezone.now()
@@ -153,7 +153,7 @@ class UpdateActive(APIView):
             ta.end = timezone.now()
             ta.save()
 
-        new_ta = TimeActive()
+        new_ta = TimeActive(owned_by=user)
         new_ta.save()
 
         d.active_times.add(new_ta)
