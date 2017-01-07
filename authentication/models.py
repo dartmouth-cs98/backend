@@ -6,6 +6,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from django.utils.crypto import get_random_string
 
 """
 Code taken from tutorial at https://thinkster.io/django-angularjs-tutorial
@@ -36,15 +37,15 @@ class CustomUserManager(BaseUserManager):
 
         return customuser
 
-    # def make_random_password(self, length=8,
-    #     allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
-    #     """
-    #     Generates a random password with the given length and given
-    #     allowed_chars. Note that the default value of allowed_chars does not
-    #     have "I" or "O" or letters and digits that look similar -- just to
-    #     avoid confusion.
-    #     """
-    #     return get_random_string(length, allowed_chars)
+    def make_random_password(self, length=8,
+        allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
+        """
+        Generates a random password with the given length and given
+        allowed_chars. Note that the default value of allowed_chars does not
+        have "I" or "O" or letters and digits that look similar -- just to
+        avoid confusion.
+        """
+        return get_random_string(length, allowed_chars)
 
 class CustomUser(AbstractBaseUser):
     email = models.EmailField(unique=True)

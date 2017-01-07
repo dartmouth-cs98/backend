@@ -83,3 +83,15 @@ class LogoutView(views.APIView):
         logout(request)
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+class ForgotPassword(views.APIView):
+    def post(self, request, format=None):
+
+        email = request.data['email']
+
+        customuser = CustomUser.objects.filter(email=email)
+
+        if customuser.exists():
+            new_pw = customuser.objects.make_random_password()
+
+            customuser.set_password(new_pw)
