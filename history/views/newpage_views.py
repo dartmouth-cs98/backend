@@ -119,7 +119,7 @@ class UpdateActive(APIView):
     Updates the domain that is active
     """
     def post(self, request, format=None):
-
+        user = request.user
         t_id = request.data['tab']
         closed = request.data['closed']
 
