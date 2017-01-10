@@ -1,10 +1,12 @@
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from authentication.models import CustomUser
 import math
 
 
 class Category(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=50)
 
@@ -15,6 +17,7 @@ class Category(models.Model):
         ordering = ('created',)
 
 class TimeActive(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     start = models.DateTimeField(auto_now_add=True)
     end = models.DateTimeField(blank=True, null=True)
 
@@ -22,6 +25,7 @@ class TimeActive(models.Model):
         ordering = ('start',)
 
 class Tab(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     created = models.DateTimeField(auto_now_add=True)
     tab_id = models.IntegerField()
     closed = models.DateTimeField(blank=True, null=True)
@@ -33,6 +37,7 @@ class Tab(models.Model):
         ordering = ('created',)
 
 class Domain(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=1000)
     base_url = models.CharField(max_length=1000)
@@ -81,8 +86,9 @@ class Domain(models.Model):
         ordering = ('created',)
 
 class Page(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     created = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=1000)
     url = models.CharField(max_length=1000)
     star = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
@@ -94,6 +100,7 @@ class Page(models.Model):
         ordering = ('created',)
 
 class PageVisit(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     visited = models.DateTimeField(auto_now_add=True)
     page = models.ForeignKey('Page')
     domain = models.ForeignKey('Domain')
