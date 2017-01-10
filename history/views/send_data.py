@@ -22,7 +22,8 @@ class SendTabs(APIView):
         end = pytz.utc.localize(datetime.strptime(end, '%Y-%m-%dT%H:%M:%S.%fZ'))
 
         #domains open during timeframe
-        domains = Domain.objects.filter(Q(created__range=[start, end]) |
+        domains = Domain.objects.filter(owned_by=request.user).filter(
+                              Q(created__range=[start, end]) |
                               Q(closed__range=[start, end]) |
                               (Q(closed__gte=end) & Q(created__lte=start)) |
                               (Q(created__lte=start) & Q(closed__isnull=True))
@@ -69,7 +70,7 @@ class SendCategories(APIView):
 
         holder['starred'] = starred
 
-        cats = Category.objects.all()
+        cats = Category.objects.filter(owned_by=request.user)
 
         for c in cats:
             pages = c.page_set.all()
@@ -89,7 +90,7 @@ class SendDomain(APIView):
     def post(self, request, format=None):
         pk = request.data['pk']
 
-        d = Domain.objects.get(pk=pk)
+        d = Domain.objects.get(pk=pk, owned_by=request.user)
 
         pvs = d.pagevisit_set.all()
 

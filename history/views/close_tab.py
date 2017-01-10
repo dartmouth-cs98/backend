@@ -13,12 +13,13 @@ class CloseTab(APIView):
     """
 
     def post(self, request, format=None):
+        customuser = request.user
 
         t_id = request.data['tab']
         time = timezone.now()
 
         try:
-            t = Tab.objects.get(tab_id=t_id, closed__isnull=True)
+            t = Tab.objects.get(tab_id=t_id, closed__isnull=True, owned_by=customuser)
         except Tab.DoesNotExist:
             return Response(status=status.HTTP_200_OK)
 
@@ -37,7 +38,5 @@ class CloseTab(APIView):
 
         t.closed = time
         t.save()
-
-
 
         return Response(status=status.HTTP_200_OK)

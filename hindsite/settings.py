@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'history.apps.HistoryConfig',
+    'authentication',
     'corsheaders',
     'django_extensions',
     'pytz',
@@ -57,6 +59,16 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
+    )
+}
 
 CORS_ORIGIN_WHITELIST = [
     'chrome-extension://ocpchccceiphbojcehihihigmoppoflg',
@@ -112,6 +124,8 @@ else:
     }
 
 
+AUTH_USER_MODEL = 'authentication.CustomUser'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -158,3 +172,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'hindsite.help@gmail.com'
+EMAIL_HOST_PASSWORD = 'hindsite2020'
+EMAIL_PORT = 587

@@ -3,6 +3,7 @@ env
 
 # local db
 db.sqlite3
+*.sql
 
 ## python compiled
 *.py[cod]
