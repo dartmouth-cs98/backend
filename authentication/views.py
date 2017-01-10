@@ -102,6 +102,8 @@ class ForgotPassword(views.APIView):
 
             customuser.set_password(new_pw)
 
+            customuser.save()
+
             email = EmailMessage('New Password',
                     'The new password for your account is: ' + new_pw,
                     to=[email_send])
