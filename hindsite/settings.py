@@ -172,3 +172,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'hindsite.help@gmail.com'
+EMAIL_HOST_PASSWORD = 'hindsite2020'
+EMAIL_PORT = 587

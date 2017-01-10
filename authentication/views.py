@@ -7,6 +7,7 @@ from authentication.serializers import CustomUserSerializer, TokenSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
+from django.core.mail import EmailMessage
 
 
 class CreateCustomUserView(views.APIView):
@@ -85,13 +86,25 @@ class LogoutView(views.APIView):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 class ForgotPassword(views.APIView):
+    authentication_classes = ()
+    permission_classes = ()
+
     def post(self, request, format=None):
 
-        email = request.data['email']
+        email_send = request.data['email']
 
-        customuser = CustomUser.objects.filter(email=email)
+        customuser = CustomUser.objects.filter(email=email_send)
 
         if customuser.exists():
-            new_pw = customuser.objects.make_random_password()
+            customuser = customuser.first()
+
+            new_pw = CustomUser.objects.make_random_password()
 
             customuser.set_password(new_pw)
+
+            email = EmailMessage('New Password',
+                    'The new password for your account is: ' + new_pw,
+                    to=[email_send])
+
+            email.send()
+        return Response()
