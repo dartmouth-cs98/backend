@@ -99,6 +99,15 @@ class DeleteCategory(APIView):
         c.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class SendCategories(APIView):
+    """
+    Send all categories for user
+    """
+    def get(self, request, format=None):
+        c = Category.objects.filter(owned_by=request.user)
+        serializer = CategorySerializer(c, many=True)
+        return Response(serializer.data)
+
 class UpdateStar(APIView):
     """
     Update Page Star
