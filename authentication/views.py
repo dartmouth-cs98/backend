@@ -25,6 +25,9 @@ class CreateCustomUserView(views.APIView):
     #     return (permissions.IsAuthenticated(), IsCustomUserOwner(),)
 
     def post(self, request, format=None):
+
+        request.data['username'] = request.data['email']
+
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -35,6 +38,12 @@ class CreateCustomUserView(views.APIView):
             data = {'token': token.key}
 
             send = TokenSerializer(data)
+
+            email = EmailMessage('Successfully Created Account!',
+                    'Thank you for signing up to use Hindsite! \n\nThe Hindsite Team',
+                    to=[customuser.email])
+
+            email.send()
 
             return Response(send.data)
 
@@ -110,3 +119,28 @@ class ForgotPassword(views.APIView):
 
             email.send()
         return Response()
+
+class ChangePassword(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, format=None):
+
+        email = request.data['email']
+        current_pw = request.data['current_pw']
+        new_pw = request.data['new_pw']
+
+        customuser = authenticate(email=email, password=current_pw)
+
+        if customuser is not None:
+            customuser.set_password(new_pw)
+            customuser.save()
+
+            return Response({
+                'status': 'OK',
+                'message': 'Password successfully updated'
+                })
+        else:
+            return Response({
+                'status': 'Unauthorized',
+                'message': 'Current password incorrect'
+            }, status=status.HTTP_401_UNAUTHORIZED)
