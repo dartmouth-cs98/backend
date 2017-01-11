@@ -36,7 +36,7 @@ class AddCategoryPage(APIView):
         short_url = shorten_url(url)
 
         p = Page.objects.get(url=short_url, owned_by=request.user)
-        c = Category.objects.filter(title=cat, owned_by=request.user)
+        c = Category.objects.filter(title__iexact=cat, owned_by=request.user)
 
         if c.exists():
             p.categories.add(c.first())
@@ -77,7 +77,7 @@ class AddCategory(APIView):
     def post(self, request, format=None):
         cat = request.data['category']
         try:
-            c = Category.objects.get(title=cat, owned_by=request.user)
+            c = Category.objects.get(title__iexact=cat, owned_by=request.user)
         except Category.DoesNotExist:
             c = Category(title=cat, owned_by=request.user)
             c.save()
@@ -116,6 +116,15 @@ class EditCategory(APIView):
         c.save()
 
         serializer = CategorySerializer(c)
+        return Response(serializer.data)
+
+class SendCategories(APIView):
+    """
+    Send all categories for user
+    """
+    def get(self, request, format=None):
+        c = Category.objects.filter(owned_by=request.user)
+        serializer = CategorySerializer(c, many=True)
         return Response(serializer.data)
 
 class UpdateStar(APIView):
