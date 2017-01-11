@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^deletecategorypage/$', update_categories.DeleteCategoryPage.as_view()),
     url(r'^addcategory/$', update_categories.AddCategory.as_view()),
     url(r'^deletecategory/$', update_categories.DeleteCategory.as_view()),
+    url(r'^editcategory/$', update_categories.EditCategory.as_view()),
     url(r'^updatestar/$', update_categories.UpdateStar.as_view()),
     url(r'^closetab/$', close_tab.CloseTab.as_view()),
 ]
