@@ -25,6 +25,9 @@ class CreateCustomUserView(views.APIView):
     #     return (permissions.IsAuthenticated(), IsCustomUserOwner(),)
 
     def post(self, request, format=None):
+
+        request.data['username'] = request.data['email']
+
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -35,6 +38,12 @@ class CreateCustomUserView(views.APIView):
             data = {'token': token.key}
 
             send = TokenSerializer(data)
+
+            email = EmailMessage('Successfully Created Account!',
+                    'Thank you for signing up to use Hindsite! \n\nThe Hindsite Team',
+                    to=[customuser.email])
+
+            email.send()
 
             return Response(send.data)
 
