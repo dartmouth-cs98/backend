@@ -99,6 +99,25 @@ class DeleteCategory(APIView):
         c.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class EditCategory(APIView):
+    """
+    Edit Category
+    """
+    def post(self, request, format=None):
+        old_cat = request.data['old']
+        new_cat = request.data['updated']
+
+        try:
+            c = Category.objects.get(title=old_cat, owned_by=request.user)
+        except Category.DoesNotExist:
+            raise Http404
+
+        c.title = new_cat
+        c.save()
+
+        serializer = CategorySerializer(c)
+        return Response(serializer.data)
+
 class UpdateStar(APIView):
     """
     Update Page Star
