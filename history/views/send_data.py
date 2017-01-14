@@ -1,4 +1,5 @@
 from history.models import Tab, Domain, Page, PageVisit, TimeActive, Category
+from authentication.models import CustomUser
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +10,7 @@ from datetime import datetime, timedelta
 import pytz
 from django.core import serializers
 from history.serializers import SendTabSerializer, SendCategorySerializer, SendDomainSerializer
+from authentication.serializers import CustomUserSerializer
 
 class SendTabs(APIView):
     """
@@ -104,3 +106,15 @@ class SendDomain(APIView):
         send = SendDomainSerializer(d)
 
         return Response(send.data)
+
+class SendUserData(APIView):
+    """
+    Send user info
+    """
+    def get(self, request, format=None):
+
+        cu = request.user
+
+        user = CustomUserSerializer(cu)
+
+        return Response(user.data)
