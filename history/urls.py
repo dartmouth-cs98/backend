@@ -8,13 +8,8 @@ from history.views import (
 urlpatterns = [
     url(r'^pages/$', page_views.PageList.as_view()),
     url(r'^pages/(?P<id>[0-9]+)/$', page_views.PageDetail.as_view()),
+
     url(r'^categories/$', update_categories.SendCategories.as_view()),
-    url(r'^categories/(?P<id>[0-9]+)/$', category_views.CategoryDetail.as_view()),
-    url(r'^newpage/$', newpage_views.NewPage.as_view()),
-    url(r'^tabinfo/$', send_data.SendTabs.as_view()),
-    url(r'^domaininfo/$', send_data.SendDomain.as_view()),
-    url(r'^active/$', newpage_views.UpdateActive.as_view()),
-    url(r'^getcategories/$', send_data.SendCategories.as_view()),
     url(r'^checkcategories/$', update_categories.CheckPageCategories.as_view()),
     url(r'^addcategorypage/$', update_categories.AddCategoryPage.as_view()),
     url(r'^deletecategorypage/$', update_categories.DeleteCategoryPage.as_view()),
@@ -22,6 +17,15 @@ urlpatterns = [
     url(r'^deletecategory/$', update_categories.DeleteCategory.as_view()),
     url(r'^editcategory/$', update_categories.EditCategory.as_view()),
     url(r'^updatestar/$', update_categories.UpdateStar.as_view()),
+
+    url(r'^newpage/$', newpage_views.NewPage.as_view()),
+    url(r'^active/$', newpage_views.UpdateActive.as_view()),
+
+    url(r'^tabinfo/$', send_data.SendTabs.as_view()),
+    url(r'^domaininfo/$', send_data.SendDomain.as_view()),
+    url(r'^getcategories/$', send_data.SendCategories.as_view()),
+    url(r'^userinfo/$', send_data.SendUserData.as_view()),
+
     url(r'^closetab/$', close_tab.CloseTab.as_view()),
 ]
 
