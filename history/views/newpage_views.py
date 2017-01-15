@@ -6,6 +6,7 @@ from rest_framework import status
 from django.utils import timezone
 from urllib.parse import urlparse
 from history.common import shorten_url
+from history.serializers import PageSerializer
 
 class NewPage(APIView):
     """
@@ -111,7 +112,10 @@ class NewPage(APIView):
 
         pv = PageVisit(page=p, domain=d, owned_by=user)
         pv.save()
-        return Response(status=status.HTTP_201_CREATED)
+
+        page = PageSerializer(p)
+
+        return Response(page.data)
 
 
 class UpdateActive(APIView):
