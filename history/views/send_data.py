@@ -94,7 +94,7 @@ class SendDomain(APIView):
 
         d = Domain.objects.get(pk=pk, owned_by=request.user)
 
-        pvs = d.pagevisit_set.all()
+        pvs = d.pagevisit_set.all().order_by('visited')
 
         ta = d.timeactive()
 
