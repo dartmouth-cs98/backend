@@ -86,7 +86,6 @@ class LoginView(views.APIView):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 class LogoutView(views.APIView):
-    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, format=None):
 
@@ -125,11 +124,10 @@ class ChangePassword(views.APIView):
 
     def post(self, request, format=None):
 
-        email = request.data['email']
         current_pw = request.data['current_pw']
         new_pw = request.data['new_pw']
 
-        customuser = authenticate(email=email, password=current_pw)
+        customuser = authenticate(email=request.user.email, password=current_pw)
 
         if customuser is not None:
             customuser.set_password(new_pw)
