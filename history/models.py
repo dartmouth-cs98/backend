@@ -105,5 +105,8 @@ class PageVisit(models.Model):
     page = models.ForeignKey('Page')
     domain = models.ForeignKey('Domain')
 
+    def __str__(self):
+        return str(self.visited)
+
     class Meta:
         ordering = ('visited',)
