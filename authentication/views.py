@@ -133,6 +133,12 @@ class ChangePassword(views.APIView):
             customuser.set_password(new_pw)
             customuser.save()
 
+            email = EmailMessage('Changed Password',
+                    'You have successfully changed your password! \n\n If this was not you please reply to this email.\n\nThe Hindsite Team',
+                    to=[customuser.email])
+
+            email.send()
+
             return Response({
                 'status': 'OK',
                 'message': 'Password successfully updated'
