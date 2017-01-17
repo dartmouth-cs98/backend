@@ -1,4 +1,4 @@
-from history.models import Page, Category
+from history.models import Page, Category, TimeActive
 from history.serializers import PageSerializer, CategorySerializer
 from django.http import Http404
 from rest_framework.views import APIView
@@ -19,6 +19,23 @@ class CheckPageCategories(APIView):
             p = Page.objects.get(url=short_url, owned_by=request.user)
         except Page.DoesNotExist:
             return Response(status=status.HTTP_200_OK)
+
+        page = PageSerializer(p)
+
+        return Response(page.data)
+
+class ActivePageCategories(APIView):
+    """
+    Return categories and starred for a page
+    """
+    def get(self, request, format=None):
+
+        try:
+            ta = TimeActive.objects.get(end__isnull=True, owned_by=request.user)
+        except TimeActive.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        p = ta.domain_set.first().pagevisit_set.last().page
 
         page = PageSerializer(p)
 
