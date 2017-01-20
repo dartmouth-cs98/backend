@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.core.mail import EmailMessage
+from django.utils import timezone
 
 
 class CreateCustomUserView(views.APIView):
@@ -88,6 +89,22 @@ class LoginView(views.APIView):
 class LogoutView(views.APIView):
 
     def post(self, request, format=None):
+
+        cu = request.user
+
+        time = timezone.now()
+
+        for d in cu.domain_set.filter(closed__isnull=True):
+            d.closed = time
+            d.save()
+            d.tab.closed = time
+            d.tab.save()
+
+        ta = cu.timeactive_set.filter(end__isnull=True)
+
+        if ta.exists():
+            ta.end = time
+            ta.save()
 
         logout(request)
 
