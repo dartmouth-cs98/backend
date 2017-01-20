@@ -68,7 +68,7 @@ class SendCategories(APIView):
     def get(self, request, format=None):
         holder = {'categories': []}
 
-        starred = Page.objects.filter(star=True)
+        starred = Page.objects.filter(star=True, owned_by=request.user)
 
         holder['starred'] = starred
 
