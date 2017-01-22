@@ -4,7 +4,8 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from history.common import shorten_url
+from history.common import shorten_url, send_bulk
+import requests
 
 class CheckPageCategories(APIView):
     """
@@ -161,6 +162,8 @@ class UpdateStar(APIView):
 
         p.star = star
         p.save()
+
+        send_bulk(p.pagevisit_set.all())
 
         serializer = PageSerializer(p)
         return Response(serializer.data)

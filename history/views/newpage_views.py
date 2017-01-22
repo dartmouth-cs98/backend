@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
 from urllib.parse import urlparse
-from history.common import shorten_url
+from django.conf import settings
+from history.common import shorten_url, create_data
 from history.serializers import PageSerializer
+import requests
 
 class NewPage(APIView):
     """
@@ -22,6 +24,11 @@ class NewPage(APIView):
             favicon = request.data['favIconUrl']
         else:
             favicon = ''
+
+        if 'html' in request.data.keys():
+            html = request.data['html']
+        else:
+            html = ''
 
         url = request.data['url']
 
@@ -110,8 +117,14 @@ class NewPage(APIView):
             p = Page(title=page_title, url=short_url, owned_by=user)
             p.save()
 
-        pv = PageVisit(page=p, domain=d, owned_by=user)
+        pv = PageVisit(page=p, domain=d, owned_by=user, html=html)
         pv.save()
+
+        data = create_data(pv)
+
+        uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
+
+        requests.put(uri, data=data)
 
         page = PageSerializer(p)
 
