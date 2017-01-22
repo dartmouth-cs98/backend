@@ -14,6 +14,8 @@ class Category(models.Model):
         return self.title
 
     class Meta:
+        verbose_name = 'category'
+        verbose_name_plural = 'categories'
         ordering = ('created',)
 
 class TimeActive(models.Model):
@@ -104,9 +106,12 @@ class PageVisit(models.Model):
     visited = models.DateTimeField(auto_now_add=True)
     page = models.ForeignKey('Page')
     domain = models.ForeignKey('Domain')
+    html = models.TextField(default='')
 
     def __str__(self):
         return str(self.visited)
 
     class Meta:
+        verbose_name = 'pagevisit'
+        verbose_name_plural = 'pagevisits'
         ordering = ('visited',)

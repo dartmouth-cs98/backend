@@ -79,6 +79,7 @@ class SendTabSerializer(serializers.Serializer):
 
 class PageVisitSerializer(serializers.Serializer):
     page = PageSerializer()
+    html = serializers.CharField()
     visited = serializers.DateTimeField()
 
 class SendDomainSerializer(serializers.Serializer):
