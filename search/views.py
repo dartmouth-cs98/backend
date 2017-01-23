@@ -5,6 +5,7 @@ from rest_framework import status
 from django.conf import settings
 from history.models import PageVisit
 from history.serializers import PageVisitSerializer
+from django.db.models import Case, When
 import json
 import requests
 
@@ -50,7 +51,9 @@ class BasicSearch(APIView):
         for hit in results['hits']['hits']:
             hits.append(int(hit['_id']))
 
-        pvs = PageVisit.objects.filter(id__in=hits)
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(hits)])
+
+        pvs = PageVisit.objects.filter(pk__in=hits).order_by(preserved)
 
         send = PageVisitSerializer(pvs, many=True)
 
