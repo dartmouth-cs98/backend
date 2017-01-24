@@ -93,6 +93,7 @@ class Page(models.Model):
     title = models.CharField(max_length=1000)
     url = models.CharField(max_length=1000)
     star = models.BooleanField(blank=True, default=False)
+    blacklisted = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
 
     def __str__(self):
@@ -115,3 +116,11 @@ class PageVisit(models.Model):
         verbose_name = 'pagevisit'
         verbose_name_plural = 'pagevisits'
         ordering = ('visited',)
+
+class Blacklist(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
+    created = models.DateTimeField(auto_now_add=True)
+    base_url = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.base_url
