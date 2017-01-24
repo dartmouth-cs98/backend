@@ -6,7 +6,7 @@ from rest_framework import status
 from django.utils import timezone
 from urllib.parse import urlparse
 from django.conf import settings
-from history.common import shorten_url, create_data
+from history.common import shorten_url, create_data, is_blacklisted
 from history.serializers import PageSerializer
 import requests
 
@@ -16,9 +16,20 @@ class NewPage(APIView):
     """
     def post(self, request, format=None):
         user = request.user
+
+        url = request.data['url']
+        base_url = urlparse(url).netloc
+
+        if is_blacklisted(user, base_url):
+            return Response({
+                'status': 'Blacklist',
+                'message': 'This page is blacklisted.'
+            })
+
         t_id = request.data['tab']
         page_title = request.data['title']
         domain_title = request.data['domain']
+
 
         if 'favIconUrl' in request.data.keys():
             favicon = request.data['favIconUrl']
@@ -30,14 +41,12 @@ class NewPage(APIView):
         else:
             html = ''
 
-        url = request.data['url']
-
         if 'previousTabId' in request.data.keys():
             prev_tab = request.data['previousTabId']
         else:
             prev_tab = t_id
         active = request.data['active']
-        base_url = urlparse(url).netloc
+
 
         # Get the currently active TimeActive (can only be one if exists)
         ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
@@ -157,7 +166,7 @@ class UpdateActive(APIView):
 
         d = t.domain_set.filter(closed__isnull=True)
 
-        # means that the current page is a chrome:// or file:/// page
+        # means that the current page is a chrome:// or file:/// or blacklisted page
         if not d.exists():
             if ta and not closed:
                 ta.end = timezone.now()

@@ -1,10 +1,11 @@
 from history.models import Page, Category, TimeActive
 from history.serializers import PageSerializer, CategorySerializer
 from django.http import Http404
+from urllib.parse import urlparse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from history.common import shorten_url, send_bulk
+from history.common import shorten_url, send_bulk, is_blacklisted
 import requests
 
 class CheckPageCategories(APIView):
@@ -14,12 +15,21 @@ class CheckPageCategories(APIView):
     def post(self, request, format=None):
         url = request.data['url']
 
+        url = request.data['url']
+        base_url = urlparse(url).netloc
+
+        if is_blacklisted(request.user, base_url):
+            return Response({
+                'status': 'Blacklist',
+                'message': 'This page is blacklisted.'
+            })
+
         short_url = shorten_url(url)
 
         try:
             p = Page.objects.get(url=short_url, owned_by=request.user)
         except Page.DoesNotExist:
-            return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         page = PageSerializer(p)
 

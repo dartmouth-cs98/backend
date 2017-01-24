@@ -68,14 +68,14 @@ class SendCategories(APIView):
     def get(self, request, format=None):
         holder = {'categories': []}
 
-        starred = Page.objects.filter(star=True, owned_by=request.user)
+        starred = Page.objects.filter(star=True, blacklisted=False, owned_by=request.user)
 
         holder['starred'] = starred
 
         cats = Category.objects.filter(owned_by=request.user)
 
         for c in cats:
-            pages = c.page_set.all()
+            pages = c.page_set.filter(blacklisted=False)
 
             setattr(c, 'pages', pages)
 

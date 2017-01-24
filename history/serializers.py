@@ -93,3 +93,8 @@ class SendDomainSerializer(serializers.Serializer):
     pages = serializers.IntegerField()
     minutes_active = serializers.IntegerField()
     pagevisits = PageVisitSerializer(many=True)
+
+class BlacklistSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    created = serializers.DateTimeField()
+    base_url = serializers.CharField(max_length=1000)
