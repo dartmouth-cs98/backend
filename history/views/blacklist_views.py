@@ -1,4 +1,4 @@
-from history.models import Blacklist
+from history.models import Blacklist, Domain, page
 from history.serializers import BlacklistSerializer
 from django.http import Http404
 from urllib.parse import urlparse
@@ -24,6 +24,22 @@ class CreateBlacklist(APIView):
         b = Blacklist(owned_by=cu, base_url=base_url)
         b.save()
 
+        pages = []
+
+        if base_url.startswith('www.'):
+            domains = Domain.objects.filter(owned_by=user, base_url__in=[base_url, base_url[4:]])
+        else:
+            domains = Domain.objects.filter(owned_by=user, base_url=base_url)
+
+        for d in domains:
+            pages = pages + [pv.page for pv in d.pagevisit_set.all()]
+
+        pages = set(pages)
+
+        for p in pages:
+            p.blacklisted = True
+            p.save()
+
         serializer = BlacklistSerializer(b)
 
         return Response(serializer.data)
@@ -48,8 +64,42 @@ class EditBlacklist(APIView):
         except Blacklist.DoesNotExist:
             raise Http404
 
+        # Unblacklist previously blacklisted pages
+        pages = []
+
+        if b.base_url.startswith('www.'):
+            domains = Domain.objects.filter(owned_by=user, base_url__in=[b.base_url, b.base_url[4:]])
+        else:
+            domains = Domain.objects.filter(owned_by=user, base_url=b.base_url)
+
+        for d in domains:
+            pages = pages + [pv.page for pv in d.pagevisit_set.all()]
+
+        pages = set(pages)
+
+        for p in pages:
+            p.blacklisted = False
+            p.save()
+
         b.base_url = base_url
         b.save()
+
+        # blacklist all of the pages that match the current blacklist
+        pages = []
+
+        if base_url.startswith('www.'):
+            domains = Domain.objects.filter(owned_by=user, base_url__in=[base_url, base_url[4:]])
+        else:
+            domains = Domain.objects.filter(owned_by=user, base_url=base_url)
+
+        for d in domains:
+            pages = pages + [pv.page for pv in d.pagevisit_set.all()]
+
+        pages = set(pages)
+
+        for p in pages:
+            p.blacklisted = True
+            p.save()
 
         serializer = BlacklistSerializer(b)
 
@@ -68,6 +118,23 @@ class DeleteBlacklist(APIView):
             b = Blacklist.objects.get(owned_by=cu, pk=pk)
         except Blacklist.DoesNotExist:
             raise Http404
+
+        # Unblacklist previously blacklisted pages
+        pages = []
+
+        if b.base_url.startswith('www.'):
+            domains = Domain.objects.filter(owned_by=user, base_url__in=[b.base_url, b.base_url[4:]])
+        else:
+            domains = Domain.objects.filter(owned_by=user, base_url=b.base_url)
+
+        for d in domains:
+            pages = pages + [pv.page for pv in d.pagevisit_set.all()]
+
+        pages = set(pages)
+
+        for p in pages:
+            p.blacklisted = False
+            p.save()
 
         b.delete()
 

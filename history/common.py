@@ -75,29 +75,13 @@ def send_bulk(pvs):
     return results
 
 
-# curl localhost:9200/pagevisits/_search?pretty -d '
-# {
-#   "query": {
-#     "bool": {
-#       "must": [
-#         {
-#           "match": {
-#             "user_id": 1
-#           }
-#         }
-#       ],
-#       "should": [
-#         {
-#           "multi_match": {
-#             "query": "backend",
-#             "fields": [
-#               "title",
-#               "html"
-#             ]
-#           }
-#         }
-#       ]
-#     }
-#   }
-# }
-# '
+def is_blacklisted(user, domain):
+
+    blacklist = []
+
+    for b in user.blacklist_set.all():
+        blacklist.append(b.base_url)
+        if b.base_url.startswith('www.'):
+            blacklist.append(b.base_url[4:])
+
+    return domain in blacklist

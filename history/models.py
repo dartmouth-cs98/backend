@@ -93,6 +93,7 @@ class Page(models.Model):
     title = models.CharField(max_length=1000)
     url = models.CharField(max_length=1000)
     star = models.BooleanField(blank=True, default=False)
+    blacklisted = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
 
     def __str__(self):
