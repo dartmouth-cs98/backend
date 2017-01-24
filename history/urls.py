@@ -2,7 +2,7 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from history.views import (
     page_views, category_views, newpage_views, update_categories,
-    close_tab, send_data
+    close_tab, send_data, blacklist_views
     )
 
 urlpatterns = [
@@ -28,6 +28,11 @@ urlpatterns = [
     url(r'^userinfo/$', send_data.SendUserData.as_view()),
 
     url(r'^closetab/$', close_tab.CloseTab.as_view()),
+
+    url(r'^blacklists/$', blacklist_views.SendBlacklists.as_view()),
+    url(r'^addblacklist/$', blacklist_views.CreateBlacklist.as_view()),
+    url(r'^deleteblacklist/$', blacklist_views.DeleteBlacklist.as_view()),
+    url(r'^editblacklist/$', blacklist_views.EditBlacklist.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
