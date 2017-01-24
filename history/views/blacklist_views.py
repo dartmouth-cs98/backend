@@ -1,4 +1,4 @@
-from history.models import Blacklist, Domain, page
+from history.models import Blacklist, Domain, Page
 from history.serializers import BlacklistSerializer
 from django.http import Http404
 from urllib.parse import urlparse
