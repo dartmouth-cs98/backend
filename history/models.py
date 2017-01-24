@@ -43,7 +43,7 @@ class Domain(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=1000)
     base_url = models.CharField(max_length=1000)
-    favicon = models.CharField(max_length=1000, blank=True, default='')
+    favicon = models.TextField(blank=True, default='')
     tab = models.ForeignKey('Tab')
     closed = models.DateTimeField(blank=True, null=True)
     active_times = models.ManyToManyField(TimeActive, blank=True)
@@ -90,7 +90,7 @@ class Domain(models.Model):
 class Page(models.Model):
     owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     created = models.DateTimeField(auto_now_add=True)
-    title = models.CharField(max_length=1000)
+    title = models.TextField()
     url = models.CharField(max_length=1000)
     star = models.BooleanField(blank=True, default=False)
     blacklisted = models.BooleanField(blank=True, default=False)
