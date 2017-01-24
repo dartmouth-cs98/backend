@@ -27,9 +27,9 @@ class CreateBlacklist(APIView):
         pages = []
 
         if base_url.startswith('www.'):
-            domains = Domain.objects.filter(owned_by=user, base_url__in=[base_url, base_url[4:]])
+            domains = Domain.objects.filter(owned_by=cu, base_url__in=[base_url, base_url[4:]])
         else:
-            domains = Domain.objects.filter(owned_by=user, base_url=base_url)
+            domains = Domain.objects.filter(owned_by=cu, base_url=base_url)
 
         for d in domains:
             pages = pages + [pv.page for pv in d.pagevisit_set.all()]
@@ -68,9 +68,9 @@ class EditBlacklist(APIView):
         pages = []
 
         if b.base_url.startswith('www.'):
-            domains = Domain.objects.filter(owned_by=user, base_url__in=[b.base_url, b.base_url[4:]])
+            domains = Domain.objects.filter(owned_by=cu, base_url__in=[b.base_url, b.base_url[4:]])
         else:
-            domains = Domain.objects.filter(owned_by=user, base_url=b.base_url)
+            domains = Domain.objects.filter(owned_by=cu, base_url=b.base_url)
 
         for d in domains:
             pages = pages + [pv.page for pv in d.pagevisit_set.all()]
@@ -88,9 +88,9 @@ class EditBlacklist(APIView):
         pages = []
 
         if base_url.startswith('www.'):
-            domains = Domain.objects.filter(owned_by=user, base_url__in=[base_url, base_url[4:]])
+            domains = Domain.objects.filter(owned_by=cu, base_url__in=[base_url, base_url[4:]])
         else:
-            domains = Domain.objects.filter(owned_by=user, base_url=base_url)
+            domains = Domain.objects.filter(owned_by=cu, base_url=base_url)
 
         for d in domains:
             pages = pages + [pv.page for pv in d.pagevisit_set.all()]
@@ -123,9 +123,9 @@ class DeleteBlacklist(APIView):
         pages = []
 
         if b.base_url.startswith('www.'):
-            domains = Domain.objects.filter(owned_by=user, base_url__in=[b.base_url, b.base_url[4:]])
+            domains = Domain.objects.filter(owned_by=cu, base_url__in=[b.base_url, b.base_url[4:]])
         else:
-            domains = Domain.objects.filter(owned_by=user, base_url=b.base_url)
+            domains = Domain.objects.filter(owned_by=cu, base_url=b.base_url)
 
         for d in domains:
             pages = pages + [pv.page for pv in d.pagevisit_set.all()]
