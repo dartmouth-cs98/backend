@@ -127,7 +127,7 @@ else:
 # Search
 
 if ON_HEROKU:
-    SEARCH_BASE_URI = 'http://ec2-107-23-191-19.compute-1.amazonaws.com:9200/'
+    SEARCH_BASE_URI = 'http://ec2-54-165-141-8.compute-1.amazonaws.com:9200/'
 else:
     SEARCH_BASE_URI = 'http://127.0.0.1:9200/'
 

@@ -173,7 +173,5 @@ class UpdateStar(APIView):
         p.star = star
         p.save()
 
-        send_bulk(p.pagevisit_set.all())
-
         serializer = PageSerializer(p)
         return Response(serializer.data)
