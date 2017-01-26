@@ -40,7 +40,6 @@ def create_data(pv):
         "user_id": pv.owned_by.id,
         "title": pv.page.title,
         "html": strip_tags(pv.html),
-        "star": pv.page.star,
         "date": str(pv.visited)
     })
 
