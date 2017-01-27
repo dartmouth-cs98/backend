@@ -82,6 +82,10 @@ class PageVisitSerializer(serializers.Serializer):
     html = serializers.CharField()
     visited = serializers.DateTimeField()
 
+class PageVisitSerializerNoHTML(serializers.Serializer):
+    page = PageSerializer()
+    visited = serializers.DateTimeField()
+
 class SendDomainSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     base_url = serializers.CharField(max_length=1000)
@@ -92,7 +96,7 @@ class SendDomainSerializer(serializers.Serializer):
     active_times = TimeActiveSerializer(many=True)
     pages = serializers.IntegerField()
     minutes_active = serializers.IntegerField()
-    pagevisits = PageVisitSerializer(many=True)
+    pagevisits = PageVisitSerializerNoHTML(many=True)
 
 class BlacklistSerializer(serializers.Serializer):
     pk = serializers.IntegerField()

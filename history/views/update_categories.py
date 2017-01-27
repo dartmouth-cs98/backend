@@ -22,14 +22,14 @@ class CheckPageCategories(APIView):
             return Response({
                 'status': 'Blacklist',
                 'message': 'This page is blacklisted.'
-            })
+            }, status=status.HTTP_204_NO_CONTENT)
 
         short_url = shorten_url(url)
 
         try:
             p = Page.objects.get(url=short_url, owned_by=request.user)
         except Page.DoesNotExist:
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            raise Http404
 
         page = PageSerializer(p)
 
