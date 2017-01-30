@@ -1,4 +1,5 @@
 from html.parser import HTMLParser
+from search.common import datetime_formatter
 
 def shorten_url(url):
     import requests
@@ -40,7 +41,7 @@ def create_data(pv):
         "user_id": pv.owned_by.id,
         "title": pv.page.title,
         "html": strip_tags(pv.html),
-        "date": str(pv.visited)
+        "date": datetime_formatter(pv.visited)
     })
 
 def create_action(pv):
