@@ -110,7 +110,7 @@ class PageVisit(models.Model):
     html = models.TextField(default='')
 
     def __str__(self):
-        return str(self.visited)
+        return str(self.pk)
 
     class Meta:
         verbose_name = 'pagevisit'

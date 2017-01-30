@@ -4,43 +4,63 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from history.models import PageVisit
-from history.serializers import PageVisitSerializer
+from history.serializers import PageVisitSerializerNoHTML
 from django.db.models import Case, When
+from search.common import datetime_formatter
 import json
 import requests
 
-class BasicSearch(APIView):
+class Search(APIView):
 
     def post(self, request, format=None):
 
         cu = request.user
         search_query = request.data['query']
 
-        uri = settings.SEARCH_BASE_URI + 'pagevisits/_search'
+        if 'start_time' in request.data.keys():
+            start_time = request.data['time']
+        else:
+            start_time = "now-24M"
+
+        if 'end_time' in request.data.keys():
+            end_time = request.data['end_time']
+        else:
+            end_time = "now"
+
+        if 'category' in request.data.keys():
+            cat = [request.data['category']]
+        else:
+            cat = []
+
+        if 'order' in request.data.keys():
+            order = request.data['order']
+        else:
+            order = 'relevance'
+
+        uri = settings.SEARCH_BASE_URI + 'pagevisits/_search/'
+
 
         query = json.dumps({
-          "query": {
-            "bool": {
-              "must": [
-                {
-                  "match": {
-                    "user_id": cu.id
-                  }
+            "_source": ["_id"],
+            "size": 40,
+            "query": {
+                "bool": {
+                    "must": {
+                        "range": {
+                            "date": {
+                                "gte": start_time,
+                                "lte": end_time
+                            }
+                        }
+                    },
+                    "should": {
+                        "multi_match": { "query": search_query, "fields": ["title","html"] }
+                    },
+                    "filter": {
+                        "term" : {"user_id" : cu.id}
+                    }
                 }
-              ],
-              "should": [
-                {
-                  "multi_match": {
-                    "query": search_query,
-                    "fields": [
-                      "title",
-                      "html"
-                    ]
-                  }
-                }
-              ]
             }
-          }
         })
 
         response = requests.get(uri, data=query)
@@ -53,8 +73,18 @@ class BasicSearch(APIView):
 
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(hits)])
 
-        pvs = PageVisit.objects.filter(pk__in=hits).order_by(preserved)
+        if len(cat)>0:
+            unique_pvs = PageVisit.objects.filter(pk__in=hits, page__categories__title__in=cat).order_by('page_id').distinct('page_id')
+        else:
+            unique_pvs = PageVisit.objects.filter(pk__in=hits).order_by('page_id').distinct('page_id')
 
-        send = PageVisitSerializer(pvs, many=True)
+        if order == 'relevance':
+            pvs = PageVisit.objects.filter(pk__in=[pv.pk for pv in unique_pvs]).order_by(preserved)
+        elif order == 'date':
+            pvs = PageVisit.objects.filter(pk__in=[pv.pk for pv in unique_pvs])
+        else:
+            pvs = PageVisit.objects.filter(pk__in=[pv.pk for pv in unique_pvs]).order_by(preserved)
+
+        send = PageVisitSerializerNoHTML(pvs, many=True)
 
         return Response(send.data)

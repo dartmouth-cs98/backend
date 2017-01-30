@@ -103,6 +103,7 @@ class LogoutView(views.APIView):
         ta = cu.timeactive_set.filter(end__isnull=True)
 
         if ta.exists():
+            ta = ta.first()
             ta.end = time
             ta.save()
 
