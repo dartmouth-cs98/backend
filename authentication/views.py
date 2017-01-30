@@ -29,6 +29,12 @@ class CreateCustomUserView(views.APIView):
 
         request.data['username'] = request.data['email']
 
+        if CustomUser.objects.filter(email=request.data['email']).exists():
+            return Response({
+                'status': 'Account Exists',
+                'message': 'An account with this email already exists.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
