@@ -18,7 +18,7 @@ class Search(APIView):
         search_query = request.data['query']
 
         if 'start_time' in request.data.keys():
-            start_time = request.data['time']
+            start_time = request.data['start_time']
         else:
             start_time = "now-24M"
 
