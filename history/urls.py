@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^userinfo/$', send_data.SendUserData.as_view()),
 
     url(r'^closetab/$', close_tab.CloseTab.as_view()),
+    url(r'^tabupdate/$', close_tab.TabUpdate.as_view()),
 
     url(r'^blacklists/$', blacklist_views.SendBlacklists.as_view()),
     url(r'^addblacklist/$', blacklist_views.CreateBlacklist.as_view()),
