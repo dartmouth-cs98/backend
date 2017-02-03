@@ -53,17 +53,25 @@ class NewPage(APIView):
         else:
             login = False
 
-        job = django_rq.enqueue(create_page, user, url, base_url, t_id,
-                                    page_title, domain_title, favicon, html,
-                                    prev_tab, active)
+        # job = django_rq.enqueue(create_page, user, url, base_url, t_id,
+        #                             page_title, domain_title, favicon, html,
+        #                             prev_tab, active)
 
-        if login:
-            while job.result is None:
-                time.sleep(.25)
-            if not job.result:
-                return Response(status=HTTP_200_OK)
-            else:
-                return Response(job.result.data)
+        # if login:
+        #     while job.result is None:
+        #         time.sleep(.25)
+        #     if not job.result:
+        #         return Response(status=HTTP_200_OK)
+        #     else:
+        #         return Response(job.result.data)
+
+        page = create_page(user, url, base_url, t_id,
+                     page_title, domain_title, favicon, html,
+                     prev_tab, active)
+
+        if login and page:
+            return Response(page.data)
+
 
         return Response()
 
@@ -117,9 +125,13 @@ class UpdateActive(APIView):
                 prev_tab = t_id
             active = request.data['active']
 
-            job = django_rq.enqueue(create_page, user, url, base_url, t_id,
-                                        page_title, domain_title, favicon, html,
-                                        prev_tab, active)
+            # job = django_rq.enqueue(create_page, user, url, base_url, t_id,
+            #                             page_title, domain_title, favicon, html,
+            #                             prev_tab, active)
+
+            create_page(user, url, base_url, t_id,
+                         page_title, domain_title, favicon, html,
+                         prev_tab, active)
 
             return Response(status=status.HTTP_200_OK)
 
