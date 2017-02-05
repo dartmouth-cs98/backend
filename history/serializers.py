@@ -78,11 +78,13 @@ class SendTabSerializer(serializers.Serializer):
     tabs = TabSerializer(many=True)
 
 class PageVisitSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
     page = PageSerializer()
     html = serializers.CharField()
     visited = serializers.DateTimeField()
 
 class PageVisitSerializerNoHTML(serializers.Serializer):
+    pk = serializers.IntegerField()
     page = PageSerializer()
     visited = serializers.DateTimeField()
 
