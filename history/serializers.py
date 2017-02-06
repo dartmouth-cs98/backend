@@ -5,6 +5,7 @@ from history.models import Category, Page
 class CategorySerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField(max_length=1000)
+    color = serializers.CharField(max_length=7)
 
 
 class PageSerializer(serializers.Serializer):
@@ -48,6 +49,7 @@ class CategoryPageSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField(max_length=1000)
     pages = PageSerializer(many=True)
+    color = serializers.CharField(max_length=7)
 
 class SendCategorySerializer(serializers.Serializer):
     categories = CategoryPageSerializer(many=True)

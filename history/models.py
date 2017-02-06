@@ -9,6 +9,7 @@ class Category(models.Model):
     owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=50)
+    color = models.CharField(max_length=7, default='#F8A055')
 
     def __str__(self):
         return self.title
