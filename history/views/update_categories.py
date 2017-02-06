@@ -61,6 +61,11 @@ class AddCategoryPage(APIView):
         cat = request.data['category']
         url = request.data['url']
 
+        if 'color' in request.data.keys():
+            color = request.data['color']
+        else:
+            color = '#F8A055'
+
         short_url = shorten_url(url)
 
         p = Page.objects.get(url=short_url, owned_by=request.user)
@@ -69,7 +74,7 @@ class AddCategoryPage(APIView):
         if c.exists():
             p.categories.add(c.first())
         else:
-            c = Category(title=cat, owned_by=request.user)
+            c = Category(title=cat, owned_by=request.user, color=color)
             c.save()
             p.categories.add(c)
 
@@ -104,10 +109,16 @@ class AddCategory(APIView):
     """
     def post(self, request, format=None):
         cat = request.data['category']
+
+        if 'color' in request.data.keys():
+            color = request.data['color']
+        else:
+            color = '#F8A055'
+
         try:
             c = Category.objects.get(title__iexact=cat, owned_by=request.user)
         except Category.DoesNotExist:
-            c = Category(title=cat, owned_by=request.user)
+            c = Category(title=cat, owned_by=request.user, color=color)
             c.save()
 
         serializer = CategorySerializer(c)
@@ -134,6 +145,10 @@ class EditCategory(APIView):
     def post(self, request, format=None):
         old_cat = request.data['old']
         new_cat = request.data['updated']
+        if 'color' in request.data.keys():
+            color = request.data['color']
+        else:
+            color = '#F8A055'
 
         try:
             c = Category.objects.get(title=old_cat, owned_by=request.user)
@@ -141,6 +156,7 @@ class EditCategory(APIView):
             raise Http404
 
         c.title = new_cat
+        c.color = color
         c.save()
 
         serializer = CategorySerializer(c)

@@ -5,6 +5,7 @@ from history.models import Category, Page
 class CategorySerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField(max_length=1000)
+    color = serializers.CharField(max_length=7)
 
 
 class PageSerializer(serializers.Serializer):
@@ -48,6 +49,7 @@ class CategoryPageSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField(max_length=1000)
     pages = PageSerializer(many=True)
+    color = serializers.CharField(max_length=7)
 
 class SendCategorySerializer(serializers.Serializer):
     categories = CategoryPageSerializer(many=True)
@@ -70,6 +72,11 @@ class DomainSerializer(serializers.Serializer):
     opened_from_tabid = serializers.IntegerField()
     minutes_active = serializers.IntegerField()
 
+class DomainSerializerRegular(serializers.Serializer):
+    pk = serializers.IntegerField()
+    base_url = serializers.CharField(max_length=1000)
+    created = serializers.DateTimeField()
+
 class TabSerializer(serializers.Serializer):
     domains = DomainSerializer(many=True)
     tab_id = serializers.IntegerField()
@@ -77,15 +84,27 @@ class TabSerializer(serializers.Serializer):
 class SendTabSerializer(serializers.Serializer):
     tabs = TabSerializer(many=True)
 
+class SessionSerializerNoPVs(serializers.Serializer):
+    pk = serializers.IntegerField()
+    title = serializers.CharField(max_length=50)
+    created = serializers.DateTimeField()
+    start = serializers.DateTimeField()
+    end = serializers.DateTimeField()
+    active = serializers.BooleanField()
+
 class PageVisitSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     page = PageSerializer()
+    domain = DomainSerializerRegular()
+    session = SessionSerializerNoPVs()
     html = serializers.CharField()
     visited = serializers.DateTimeField()
 
 class PageVisitSerializerNoHTML(serializers.Serializer):
     pk = serializers.IntegerField()
     page = PageSerializer()
+    domain = DomainSerializerRegular()
+    session = SessionSerializerNoPVs()
     visited = serializers.DateTimeField()
 
 class SendDomainSerializer(serializers.Serializer):
@@ -104,3 +123,12 @@ class BlacklistSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     created = serializers.DateTimeField()
     base_url = serializers.CharField(max_length=1000)
+
+class SessionSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    created = serializers.DateTimeField()
+    title = serializers.CharField(max_length=50)
+    start = serializers.DateTimeField()
+    end = serializers.DateTimeField()
+    active = serializers.BooleanField()
+    pagevisits = PageVisitSerializerNoHTML(many=True)
