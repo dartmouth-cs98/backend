@@ -88,6 +88,20 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
         p.save()
 
     pv = PageVisit(page=p, domain=d, owned_by=user, html=html)
+
+    session = user.session_set.filter(active=True)
+
+    if session.exists():
+        session = session.first()
+        if session.end:
+            if session.end < timezone.now():
+                pv.session = session
+            else:
+                session.active = False
+                session.save()
+        else:
+            pv.session = session        
+
     pv.save()
 
     data = create_data(pv)
