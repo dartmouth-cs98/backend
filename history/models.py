@@ -18,6 +18,17 @@ class Category(models.Model):
         verbose_name_plural = 'categories'
         ordering = ('created',)
 
+class Session(models.Model):
+    owned_by = models.ForeignKey('authentication.CustomUser', default=None)
+    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=50, default='No Title')
+    start = models.DateTimeField()
+    end = models.DateTimeField(blank=True, null=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
 class TimeActive(models.Model):
     owned_by = models.ForeignKey('authentication.CustomUser', default=None)
     start = models.DateTimeField(auto_now_add=True)
@@ -108,6 +119,7 @@ class PageVisit(models.Model):
     page = models.ForeignKey('Page')
     domain = models.ForeignKey('Domain')
     html = models.TextField(default='')
+    session = models.ForeignKey('Session', blank=True, null=True)
 
     def __str__(self):
         return str(self.pk)
