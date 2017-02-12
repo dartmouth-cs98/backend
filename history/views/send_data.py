@@ -70,6 +70,11 @@ class SendCategories(APIView):
 
         starred = Page.objects.filter(star=True, blacklisted=False, owned_by=request.user)
 
+        for p in starred:
+            pv = p.pagevisit_set.last()
+            setattr(p, 'last_visited', pv.visited)
+            setattr(p, 'domain', pv.domain.base_url)
+
         holder['starred'] = starred
 
         cats = Category.objects.filter(owned_by=request.user)
@@ -77,6 +82,11 @@ class SendCategories(APIView):
         for c in cats:
             pages = c.page_set.filter(blacklisted=False)
 
+            for p in pages:
+                pv = p.pagevisit_set.last()
+                setattr(p, 'last_visited', pv.visited)
+                setattr(p, 'domain', pv.domain.base_url)
+                
             setattr(c, 'pages', pages)
 
             holder['categories'].append(c)
