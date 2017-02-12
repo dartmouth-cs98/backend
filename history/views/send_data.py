@@ -11,6 +11,7 @@ import pytz
 from django.core import serializers
 from history.serializers import SendTabSerializer, SendCategorySerializer, SendDomainSerializer
 from authentication.serializers import CustomUserSerializer
+from django.db.models.functions import Lower
 
 class SendTabs(APIView):
     """
@@ -77,7 +78,7 @@ class SendCategories(APIView):
 
         holder['starred'] = starred
 
-        cats = Category.objects.filter(owned_by=request.user)
+        cats = Category.objects.filter(owned_by=request.user).order_by(Lower('title'))
 
         for c in cats:
             pages = c.page_set.filter(blacklisted=False)
@@ -86,7 +87,7 @@ class SendCategories(APIView):
                 pv = p.pagevisit_set.last()
                 setattr(p, 'last_visited', pv.visited)
                 setattr(p, 'domain', pv.domain.base_url)
-                
+
             setattr(c, 'pages', pages)
 
             holder['categories'].append(c)
