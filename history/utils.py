@@ -84,7 +84,7 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
             p.title = page_title
             p.save()
     else:
-        p = Page(title=page_title, url=short_url, owned_by=user)
+        p = Page(title=page_title, url=short_url, domain=base_url, owned_by=user)
         p.save()
 
     pv = PageVisit(page=p, domain=d, owned_by=user, html=html)
@@ -100,7 +100,7 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
                 session.active = False
                 session.save()
         else:
-            pv.session = session        
+            pv.session = session
 
     pv.save()
 

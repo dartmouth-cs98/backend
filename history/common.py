@@ -85,3 +85,13 @@ def is_blacklisted(user, domain):
             blacklist.append(b.base_url[4:])
 
     return domain in blacklist
+
+def blacklist(user):
+    blacklist = []
+
+    for b in user.blacklist_set.all():
+        blacklist.append(b.base_url)
+        if b.base_url.startswith('www.'):
+            blacklist.append(b.base_url[4:])
+
+    return blacklist
