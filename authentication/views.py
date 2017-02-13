@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.core.mail import EmailMessage
 from django.utils import timezone
+from history.models import Category
 
 
 class CreateCustomUserView(views.APIView):
@@ -51,6 +52,15 @@ class CreateCustomUserView(views.APIView):
                     to=[customuser.email])
 
             email.send()
+
+            research = Category(title='Research', owned_by=customuser, color='#FA6E59')
+            cooking = Category(title='Cooking', owned_by=customuser, color='#77F200')
+            travel = Category(title='Travel', owned_by=customuser, color='#FFDB5C')
+            news = Category(title='News', owned_by=customuser, color='#F8A055')
+            research.save()
+            cooking.save()
+            travel.save()
+            news.save()
 
             return Response(send.data)
 
