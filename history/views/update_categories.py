@@ -1,5 +1,5 @@
 from history.models import Page, Category, TimeActive
-from history.serializers import PageSerializer, CategorySerializer
+from history.serializers import PageSerializer, CategorySerializer, PageInfoSerializer
 from django.http import Http404
 from urllib.parse import urlparse
 from rest_framework.views import APIView
@@ -78,7 +78,11 @@ class AddCategoryPage(APIView):
             c.save()
             p.categories.add(c)
 
-        serializer = PageSerializer(p)
+        pv = p.pagevisit_set.last()
+        setattr(p, 'last_visited', pv.visited)
+        setattr(p, 'domain', pv.domain.base_url)
+
+        serializer = PageInfoSerializer(p)
         return Response(serializer.data)
 
 class DeleteCategoryPage(APIView):
@@ -100,7 +104,11 @@ class DeleteCategoryPage(APIView):
 
         p.categories.remove(c)
 
-        serializer = PageSerializer(p)
+        pv = p.pagevisit_set.last()
+        setattr(p, 'last_visited', pv.visited)
+        setattr(p, 'domain', pv.domain.base_url)
+
+        serializer = PageInfoSerializer(p)
         return Response(serializer.data)
 
 class AddCategory(APIView):
