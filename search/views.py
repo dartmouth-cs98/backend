@@ -17,7 +17,7 @@ class GetHTML(APIView):
 
         pk = request.data['pk']
 
-        if 'page' in request.data.keys()
+        if 'page' in request.data.keys():
             is_page = request.data['page']
         else:
             is_page = False
