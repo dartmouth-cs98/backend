@@ -17,10 +17,23 @@ class GetHTML(APIView):
 
         pk = request.data['pk']
 
-        try:
-            pv = PageVisit.objects.get(owned_by=cu, pk=pk)
-        except PageVisit.DoesNotExist:
-            raise Http404
+        if 'page' in request.data.keys():
+            is_page = request.data['page']
+        else:
+            is_page = False
+
+        if not is_page:
+            try:
+                pv = PageVisit.objects.get(owned_by=cu, pk=pk)
+            except PageVisit.DoesNotExist:
+                raise Http404
+        else:
+            try:
+                page = Page.objects.get(owned_by=cu, pk=pk)
+            except PageVisit.DoesNotExist:
+                raise Http404
+
+            pv = page.pagevisit_set.last()
 
         result = PageVisitSerializer(pv)
 
