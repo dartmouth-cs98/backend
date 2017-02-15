@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
-from history.models import PageVisit
+from history.models import PageVisit, Page
 from history.serializers import PageVisitSerializerNoHTML, PageVisitSerializer
 from django.db.models import Case, When
 from search.common import datetime_formatter
