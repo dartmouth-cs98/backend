@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
+import boto3
+from botocore.client import Config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -133,6 +135,23 @@ else:
     SEARCH_BASE_URI = 'http://127.0.0.1:9200/'
 
 
+# S3
+
+AKIDAWS = 'AKIAI3PQ5JQRTXFHTV4A'
+SAKAWS = 'pyx2oP8e73YE6xK86vNh/d1LpE60FoL6+JZw74oI'
+
+if ON_HEROKU:
+    AWS_STORAGE_BUCKET_NAME = 'hindsite-production'
+    AWS_BUCKET_URL = 'https://s3.us-east-2.amazonaws.com/hindsite-production/'
+else:
+    AWS_STORAGE_BUCKET_NAME = 'hindsite-local'
+    AWS_BUCKET_URL = 'https://s3.us-east-2.amazonaws.com/hindsite-local/'
+
+S3_CLIENT = boto3.client('s3', 'us-east-1', aws_access_key_id=AKIDAWS,
+                        aws_secret_access_key=SAKAWS,
+                        config=Config(signature_version='s3v4'))
+
+
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
 
@@ -195,6 +214,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -208,7 +228,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
-
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'hindsite.help@gmail.com'

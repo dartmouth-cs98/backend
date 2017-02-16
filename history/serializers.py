@@ -78,6 +78,7 @@ class PageVisitSerializer(serializers.Serializer):
     page = PageSerializer()
     domain = DomainSerializerRegular()
     session = SessionSerializerNoPVs()
+    s3 = serializers.CharField()
     html = serializers.CharField()
     visited = serializers.DateTimeField()
 
@@ -86,6 +87,7 @@ class PageVisitSerializerNoHTML(serializers.Serializer):
     page = PageSerializer()
     domain = DomainSerializerRegular()
     session = SessionSerializerNoPVs()
+    s3 = serializers.CharField()
     visited = serializers.DateTimeField()
 
 class SendDomainSerializer(serializers.Serializer):
