@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import requests
 from django.db.models import Q
 from datetime import timedelta
+import os
 
 def create_page(user, url, base_url, t_id, page_title, domain_title,
                 favicon, html, prev_tab, active):
@@ -105,6 +106,19 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
             pv.session = session
 
     pv.save()
+
+    if len(html) > 0:
+        file_loc = 'hindsite/static/'+ str(pv.pk) + '.html'
+        aws_loc = str(user.pk) + '/' + str(pv.pk) + '.html'
+
+        open(file_loc, 'w').write(html)
+        settings.S3_CLIENT.upload_file(file_loc, settings.AWS_STORAGE_BUCKET_NAME,
+                                    aws_loc, ExtraArgs={'ContentType': 'text/html'})
+
+        os.remove(file_loc)
+
+        pv.s3 = settings.AWS_BUCKET_URL + aws_loc
+        pv.save()
 
     data = create_data(pv)
 
