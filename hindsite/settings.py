@@ -137,8 +137,8 @@ else:
 
 # S3
 
-AKIDAWS = 'AKIAI3PQ5JQRTXFHTV4A'
-SAKAWS = 'pyx2oP8e73YE6xK86vNh/d1LpE60FoL6+JZw74oI'
+AWS_ACCESS_KEY_ID = get_env_variable('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = get_env_variable('AWS_SECRET_ACCESS_KEY')
 
 if ON_HEROKU:
     AWS_STORAGE_BUCKET_NAME = 'hindsite-production'
@@ -147,8 +147,8 @@ else:
     AWS_STORAGE_BUCKET_NAME = 'hindsite-local'
     AWS_BUCKET_URL = 'https://s3.us-east-2.amazonaws.com/hindsite-local/'
 
-S3_CLIENT = boto3.client('s3', 'us-east-1', aws_access_key_id=AKIDAWS,
-                        aws_secret_access_key=SAKAWS,
+S3_CLIENT = boto3.client('s3', 'us-east-1', aws_access_key_id=AWS_ACCESS_KEY_ID,
+                        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
                         config=Config(signature_version='s3v4'))
 
 
