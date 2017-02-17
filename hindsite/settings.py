@@ -34,8 +34,6 @@ if ON_HEROKU:
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
