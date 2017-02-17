@@ -19,6 +19,7 @@ from botocore.client import Config
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+ON_HEROKU = os.environ.get('ON_HEROKU')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -27,7 +28,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'xf0#m+=ghvllbpj_q570cj!xe(z=kj^-kr8_0ke=8m0&qj4$gz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if ON_HEROKU:
+    DEBUG = False
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -109,7 +113,6 @@ def get_env_variable(var_name):
         error_msg = "Set the %s environment variable" % var_name
         raise ImproperlyConfigured(error_msg)
 
-ON_HEROKU = os.environ.get('ON_HEROKU')
 
 if ON_HEROKU:
     import dj_database_url
