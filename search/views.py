@@ -111,7 +111,7 @@ class Search(APIView):
         if order == 'relevance':
             pvs = PageVisit.objects.filter(pk__in=[pv.pk for pv in unique_pvs]).order_by(preserved)
         elif order == 'date':
-            pvs = PageVisit.objects.filter(pk__in=[pv.pk for pv in unique_pvs])
+            pvs = PageVisit.objects.filter(pk__in=[pv.pk for pv in unique_pvs]).reverse()
         else:
             pvs = PageVisit.objects.filter(pk__in=[pv.pk for pv in unique_pvs]).order_by(preserved)
 
