@@ -23,6 +23,7 @@ class PageInfoSerializer(serializers.Serializer):
     star = serializers.BooleanField()
     categories = CategorySerializer(many=True)
     domain = serializers.CharField()
+    s3 = serializers.CharField()
     last_visited = serializers.DateTimeField()
     created = serializers.DateTimeField()
 

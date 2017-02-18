@@ -78,6 +78,7 @@ class SendCategories(APIView):
             pv = p.pagevisit_set.last()
             setattr(p, 'last_visited', pv.visited)
             setattr(p, 'domain', pv.domain.base_url)
+            setattr(p, 's3', pv.s3)
 
         holder['starred'] = starred
 
@@ -90,6 +91,7 @@ class SendCategories(APIView):
                 pv = p.pagevisit_set.last()
                 setattr(p, 'last_visited', pv.visited)
                 setattr(p, 'domain', pv.domain.base_url)
+                setattr(p, 's3', pv.s3)
 
             setattr(c, 'pages', pages)
 
