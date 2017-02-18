@@ -25,7 +25,9 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
             ta.end = timezone.now()
             ta.save()
 
-        if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
+        if ('https://goo.gl/' not in url and 'hindsite-local' not in url and
+                'hindsite-production' not in url and 'chrome://' not in url and
+                'file:///' not in url and 'chrome-extension://' not in url):
             t = Tab(tab_id=t_id, owned_by=user)
             t.save()
         else:
@@ -50,7 +52,9 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
             close_domain.closed = timezone.now()
             close_domain.save()
 
-        if 'chrome://' not in url and 'file:///' not in url and 'chrome-extension://' not in url:
+        if ('https://goo.gl/' not in url and 'hindsite-local' not in url and
+                'hindsite-production' not in url and 'chrome://' not in url and
+                'file:///' not in url and 'chrome-extension://' not in url):
             created = False
             if t_id != prev_tab:
                 prev_t = Tab.objects.filter(tab_id=prev_tab, closed__isnull=True, owned_by=user)
