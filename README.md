@@ -35,7 +35,7 @@ make migrations: `python manage.py makemigrations`
 
 migrate: `python manage.py migrate`
 
-shell: `python manage.py shell`
+shell: `python manage.py shell_plus`
 
 close virtual env: `deactivate`
 
