@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^editcategory/$', update_categories.EditCategory.as_view()),
     url(r'^updatestar/$', update_categories.UpdateStar.as_view()),
 
-    #url(r'^newpage/$', newpage_views.NewPage.as_view()),
+    url(r'^newpage/$', newpage_views.NewPage.as_view()),
     #url(r'^active/$', newpage_views.UpdateActive.as_view()),
 
     url(r'^tabinfo/$', send_data.SendTabs.as_view()),
@@ -27,8 +27,8 @@ urlpatterns = [
     url(r'^getcategories/$', send_data.SendCategories.as_view()),
     url(r'^userinfo/$', send_data.SendUserData.as_view()),
 
-    #url(r'^closetab/$', close_tab.CloseTab.as_view()),
-    #url(r'^tabupdate/$', close_tab.TabUpdate.as_view()),
+    url(r'^closetab/$', close_tab.CloseTab.as_view()),
+    url(r'^tabupdate/$', close_tab.TabUpdate.as_view()),
 
     url(r'^blacklists/$', blacklist_views.SendBlacklists.as_view()),
     url(r'^addblacklist/$', blacklist_views.CreateBlacklist.as_view()),
