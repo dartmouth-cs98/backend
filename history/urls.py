@@ -6,8 +6,8 @@ from history.views import (
     )
 
 urlpatterns = [
-    #url(r'^pages/$', page_views.PageList.as_view()),
-    #url(r'^pages/(?P<id>[0-9]+)/$', page_views.PageDetail.as_view()),
+    url(r'^pages/$', page_views.PageList.as_view()),
+    url(r'^pages/(?P<id>[0-9]+)/$', page_views.PageDetail.as_view()),
 
     url(r'^categories/$', update_categories.SendCategories.as_view()),
     url(r'^checkcategories/$', update_categories.CheckPageCategories.as_view()),
