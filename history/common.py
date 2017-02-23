@@ -1,5 +1,5 @@
-from html.parser import HTMLParser
 from search.common import datetime_formatter
+from bs4 import BeautifulSoup
 
 def shorten_url(url):
     import requests
@@ -15,24 +15,16 @@ def shorten_url(url):
     else:
         return url
 
-# http://stackoverflow.com/questions/753052/strip-html-from-strings-in-python
-
-class MLStripper(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-        self.fed = ''
-        self.strict = False
-    def handle_data(self, d):
-        self.fed +=' ' + d
-    def get_data(self):
-        return self.fed
-
 def strip_tags(html):
-    s = MLStripper()
-    s.feed(html)
-    return s.get_data()
+    soup = BeautifulSoup(html, 'html.parser')
+    content = ''
 
+    for a in soup.find_all(['div', 'a', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'li', 'ol', 'span', 'strong', 'td', 'th']):
+        for s in a.strings:
+            content += s + ' '
+    content = content.replace('\n', ' ').replace("\\n", ' ').replace("\'", "'").replace("\\t", " ").replace("\\r", ' ').replace(u'\xa0', u' ')
+
+    return content
 
 def create_data(pv):
     import json
