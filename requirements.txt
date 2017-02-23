@@ -1,4 +1,5 @@
 appnope==0.1.0
+beautifulsoup4==4.5.3
 boto3==1.4.4
 botocore==1.5.12
 breadability==0.1.20
