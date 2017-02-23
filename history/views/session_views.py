@@ -1,5 +1,5 @@
 from history.models import Session
-from history.serializers import SessionSerializer, SessionSerializerNoPVs
+from history.serializers import SessionSerializer, SessionSerializerNoPVs, ActiveSessionSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -45,8 +45,10 @@ class EndSession(APIView):
     def get(self, request, format=None):
         cu = request.user
 
+        sessions = cu.session_set.all()
+
         try:
-            session = cu.session_set.get(active=True)
+            session = sessions.get(active=True)
         except:
             raise Http404
 
@@ -57,7 +59,9 @@ class EndSession(APIView):
 
         session.save()
 
-        return Response()
+        seshs = SessionSerializerNoPVs(sessions, many=True)
+
+        return Response(seshs.data)
 
 class DeleteSession(APIView):
 
@@ -110,3 +114,24 @@ class SendSessions(APIView):
         seshs = SessionSerializer(sessions, many=True)
 
         return Response(seshs.data)
+
+class SendActiveSession(APIView):
+
+    def get(self, request, format=None):
+        cu = request.user
+
+        sessions = cu.session_set.all()
+
+        curr_sesh = sessions.filter(active=True)
+
+        if curr_sesh.exists():
+            curr_sesh = curr_sesh.first()
+            sessions = sessions.exclude(active=True)
+        else:
+            curr_sesh = None
+
+        holder = {'active_session': curr_sesh, 'other_sessions': sessions}
+
+        send = ActiveSessionSerializer(holder)
+
+        return Response(send.data)
