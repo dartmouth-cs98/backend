@@ -37,3 +37,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 class TokenSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=100)
+
+class LoginSerializer(serializers.Serializer):
+    token = serializers.CharField(max_length=100)
+    key = serializers.CharField()
+    md5 = serializers.CharField()
