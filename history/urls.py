@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^editblacklist/$', blacklist_views.EditBlacklist.as_view()),
 
     url(r'^sessions/$', session_views.SendSessions.as_view()),
+    url(r'^activesession/$', session_views.SendActiveSession.as_view()),
     url(r'^addsession/$', session_views.CreateSession.as_view()),
     url(r'^endsession/$', session_views.EndSession.as_view()),
     url(r'^deletesession/$', session_views.DeleteSession.as_view()),

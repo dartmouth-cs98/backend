@@ -74,6 +74,10 @@ class SessionSerializerNoPVs(serializers.Serializer):
     end = serializers.DateTimeField()
     active = serializers.BooleanField()
 
+class ActiveSessionSerializer(serializers.Serializer):
+    active_session = SessionSerializerNoPVs()
+    other_sessions = SessionSerializerNoPVs(many=True)
+
 class PageVisitSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     page = PageSerializer()
