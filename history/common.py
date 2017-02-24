@@ -1,5 +1,6 @@
 from search.common import datetime_formatter
 from bs4 import BeautifulSoup
+import re
 
 def shorten_url(url):
     import requests
@@ -19,10 +20,16 @@ def strip_tags(html):
     soup = BeautifulSoup(html, 'html.parser')
     content = ''
 
-    for a in soup.find_all(['div', 'a', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'li', 'ol', 'span', 'strong', 'td', 'th']):
-        for s in a.strings:
-            content += s + ' '
-    content = content.replace('\n', ' ').replace("\\n", ' ').replace("\'", "'").replace("\\t", " ").replace("\\r", ' ').replace(u'\xa0', u' ')
+    for a in soup.find_all(['div','a', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'li', 'ol', 'span', 'strong', 'td', 'th']):
+            for s in a.strings:
+                if (s.find('function(')==-1 and s.find('image/jpeg')==-1 and
+                        s.find('image/png')==-1 and s.find('image/jpg')==-1 and
+                        s.find('image/gif')==-1 and s.find('{')==-1 and
+                        s.find('document.get')==-1):
+                    content += s + ' '
+
+    content = content.replace('\\n', ' ').replace("\n", ' ').replace("\\'", "'").replace("\'", "'").replace("\\t", " ").replace("\\r", ' ')
+    content = re.sub(r'[^\x00-\x7F]+',' ', content)
 
     return content
 
