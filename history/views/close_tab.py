@@ -52,16 +52,18 @@ class TabUpdate(APIView):
 
         tabs = Tab.objects.filter(closed__isnull=True).exclude(tab_id__in=t_ids)
 
-        time = timezone.now()
-
         for t in tabs:
             d = t.domain_set.last()
 
             if not d.closed:
-                d.closed = time
+                d.closed = cu.last_active
                 d.save()
 
-            t.closed = time
+            t.closed = cu.last_active
             t.save()
+
+        time = timezone.now()
+        cu.last_active = time
+        cu.save()
 
         return Response(status=status.HTTP_200_OK)
