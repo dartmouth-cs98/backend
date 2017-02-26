@@ -3,13 +3,14 @@ from rest_framework import (
 )
 from authentication.models import CustomUser
 from authentication.permissions import IsCustomUserOwner
-from authentication.serializers import CustomUserSerializer, TokenSerializer
+from authentication.serializers import CustomUserSerializer, TokenSerializer, LoginSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.core.mail import EmailMessage
 from django.utils import timezone
 from history.models import Category
+import base64, hashlib
 
 
 class CreateCustomUserView(views.APIView):
@@ -43,10 +44,6 @@ class CreateCustomUserView(views.APIView):
 
             token = Token.objects.get(user=customuser)
 
-            data = {'token': token.key}
-
-            send = TokenSerializer(data)
-
             email = EmailMessage('Successfully Created Account!',
                     'Thank you for signing up to use Hindsite! \n\nThe Hindsite Team',
                     to=[customuser.email])
@@ -61,6 +58,14 @@ class CreateCustomUserView(views.APIView):
             cooking.save()
             travel.save()
             news.save()
+
+            key = base64.b64encode(customuser.key.encode()).decode()
+            md5 = base64.b64encode(hashlib.md5(customuser.key.encode()).digest()).decode()
+            data = {'token': token.key,
+                    'key': key,
+                    'md5': md5}
+
+            send = LoginSerializer(data)
 
             return Response(send.data)
 
@@ -85,10 +90,13 @@ class LoginView(views.APIView):
                 login(request, customuser)
 
                 token = Token.objects.get(user=customuser)
+                key = base64.b64encode(customuser.key.encode()).decode()
+                md5 = base64.b64encode(hashlib.md5(customuser.key.encode()).digest()).decode()
+                data = {'token': token.key,
+                        'key': key,
+                        'md5': md5}
 
-                data = {'token': token.key}
-
-                send = TokenSerializer(data)
+                send = LoginSerializer(data)
 
                 return Response(send.data)
             else:

@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.utils.crypto import get_random_string
+import string
 
 """
 Code taken from tutorial at https://thinkster.io/django-angularjs-tutorial
@@ -25,6 +26,8 @@ class CustomUserManager(BaseUserManager):
         )
 
         customuser.set_password(password)
+        customuser.key = self.make_random_password(32,
+                string.digits+string.ascii_letters+string.punctuation)
         customuser.save()
 
         return customuser
@@ -57,6 +60,7 @@ class CustomUser(AbstractBaseUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_active = models.DateTimeField(auto_now_add=True)
+    key = models.CharField(max_length=32, default='')
 
     objects = CustomUserManager()
 
