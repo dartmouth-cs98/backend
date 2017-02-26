@@ -60,24 +60,24 @@ class NewPage(APIView):
         else:
             login = False
 
-        # job = django_rq.enqueue(create_page, user, url, base_url, t_id,
-        #                             page_title, domain_title, favicon, html,
-        #                             prev_tab, active)
+        job = django_rq.enqueue(create_page, user, url, base_url, t_id,
+                                    page_title, domain_title, favicon, html,
+                                    prev_tab, active, result_ttl=0)
 
-        # if login:
-        #     while job.result is None:
-        #         time.sleep(.25)
-        #     if not job.result:
-        #         return Response(status=HTTP_200_OK)
-        #     else:
-        #         return Response(job.result.data)
+        if login:
+            while job.result is None:
+                time.sleep(.25)
+            if not job.result:
+                return Response(status=HTTP_200_OK)
+            else:
+                return Response(job.result.data)
 
-        page = create_page(user, url, base_url, t_id,
-                     page_title, domain_title, favicon, html,
-                     prev_tab, active)
-
-        if login and page:
-            return Response(page.data)
+        # page = create_page(user, url, base_url, t_id,
+        #              page_title, domain_title, favicon, html,
+        #              prev_tab, active)
+        #
+        # if login and page:
+        #     return Response(page.data)
 
 
         return Response()
