@@ -112,14 +112,16 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
     pv.save()
 
     if len(html) > 0:
-        file_loc = 'hindsite/static/'+ str(pv.pk) + '.html'
         aws_loc = str(user.pk) + '/' + str(pv.pk) + '.html'
 
-        open(file_loc, 'w').write(html)
-        settings.S3_CLIENT.upload_file(file_loc, settings.AWS_STORAGE_BUCKET_NAME,
-                                    aws_loc, ExtraArgs={'ContentType': 'text/html'})
+        # No encryption
+        settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                    Key=aws_loc, Body=html, ContentType='text/html')
 
-        os.remove(file_loc)
+        # Encryption
+        # settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+        #                             Key=aws_loc, Body=html, SSECustomerKey=user.key,
+        #                             SSECustomerAlgorithm='AES256', ContentType='text/html')
 
         pv.s3 = settings.AWS_BUCKET_URL + aws_loc
         pv.save()

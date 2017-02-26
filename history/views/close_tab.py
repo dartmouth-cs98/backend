@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.utils import timezone
 from urllib.parse import urlparse
+from datetime import timedelta
 
 
 class CloseTab(APIView):
@@ -50,16 +51,16 @@ class TabUpdate(APIView):
 
         t_ids = request.data['tab_ids']
 
-        tabs = Tab.objects.filter(closed__isnull=True).exclude(tab_id__in=t_ids)
+        tabs = Tab.objects.filter(closed__isnull=True, owned_by=cu).exclude(tab_id__in=t_ids)
 
         for t in tabs:
             d = t.domain_set.last()
 
             if not d.closed:
-                d.closed = cu.last_active
+                d.closed = cu.last_active + timedelta(minutes=15)
                 d.save()
 
-            t.closed = cu.last_active
+            t.closed = cu.last_active + timedelta(minutes=15)
             t.save()
 
         time = timezone.now()
