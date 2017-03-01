@@ -126,13 +126,13 @@ class UpdateActive(APIView):
                 prev_tab = t_id
             active = request.data['active']
 
-            # job = django_rq.enqueue(create_page, user, url, base_url, t_id,
-            #                             page_title, domain_title, favicon, html,
-            #                             prev_tab, active)
+            create_page.delay(user.pk, url, base_url, t_id,
+                                 page_title, domain_title, favicon, html,
+                                 prev_tab, active)
 
-            create_page(user, url, base_url, t_id,
-                         page_title, domain_title, favicon, html,
-                         prev_tab, active)
+            # create_page(user, url, base_url, t_id,
+            #              page_title, domain_title, favicon, html,
+            #              prev_tab, active)
 
             return Response(status=status.HTTP_200_OK)
 

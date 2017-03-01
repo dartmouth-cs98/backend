@@ -158,12 +158,16 @@ S3_CLIENT = boto3.client('s3', 'us-east-1', aws_access_key_id=AWS_ACCESS_KEY_ID,
 
 if ON_HEROKU:
     BROKER_URL = get_env_variable('CLOUDAMQP_URL')
-    BROKER_POOL_LIMIT = 3
+    BROKER_POOL_LIMIT = 1
+    BROKER_HEARTBEAT = None # We're using TCP keep-alive instead
+    BROKER_CONNECTION_TIMEOUT = 30 # May require a long timeout due to Linux DNS timeouts etc
+    CELERY_RESULT_BACKEND = None # AMQP is not recommended as result backend as it creates thousands of queues
+    CELERY_SEND_EVENTS = False # Will not create celeryev.* queues
+    CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
 else:
     BROKER_URL = "amqp://hindsite:hindsite@localhost:5672/myvhost"
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
 
 
 AUTH_USER_MODEL = 'authentication.CustomUser'
