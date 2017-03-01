@@ -1,4 +1,5 @@
 from history.models import Tab, Domain, Page, PageVisit, TimeActive
+from authentication.models import CustomUser
 from django.utils import timezone
 from history.common import shorten_url, create_data
 from history.serializers import PageSerializer
@@ -8,9 +9,16 @@ import requests
 from django.db.models import Q
 from datetime import timedelta
 import os
+from celery import task
+from celery.decorators import periodic_task
+from celery.task.schedules import crontab
 
-def create_page_login(user, url, base_url, t_id, page_title, domain_title,
+@task
+def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
                 favicon, html, prev_tab, active):
+
+    user = CustomUser.objects.get(pk=user_pk)
+    print(user)
 
     # Get the currently active TimeActive (can only be one if exists)
     ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
@@ -132,6 +140,22 @@ def create_page_login(user, url, base_url, t_id, page_title, domain_title,
 
     requests.put(uri, data=data)
 
-    page = PageSerializer(p)
+    return True
 
-    return page
+
+@periodic_task(run_every=(crontab(hour="7", minute="0", day_of_week="*")),
+    ignore_result=True)
+def clean_up_db():
+    tw = timezone.now() - timedelta(days=14)
+
+    for user in CustomUser.objects.all():
+        for pv in user.pagevisit_set.filter(Q(visited__lte=tw)).exclude(html=''):
+            pv.html = ''
+            pv.save()
+
+            data = create_data(pv)
+
+            uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
+
+            requests.put(uri, data=data)
+    return True

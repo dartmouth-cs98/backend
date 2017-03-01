@@ -3,7 +3,10 @@ from rest_framework import (
 )
 from authentication.models import CustomUser
 from authentication.permissions import IsCustomUserOwner
-from authentication.serializers import CustomUserSerializer, TokenSerializer, LoginSerializer
+from authentication.serializers import (
+                CustomUserSerializer, TokenSerializer,
+                LoginSerializer, UserInfoSerializer
+                )
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
@@ -190,3 +193,12 @@ class ChangePassword(views.APIView):
                 'status': 'Unauthorized',
                 'message': 'Current password incorrect'
             }, status=status.HTTP_401_UNAUTHORIZED)
+
+class GetUserInfo(views.APIView):
+
+    def get(self, request, format=None):
+        cu = request.user
+
+        user = UserInfoSerializer(cu)
+
+        return Response(user.data)
