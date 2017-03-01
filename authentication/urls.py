@@ -2,7 +2,8 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.authtoken import views
 from authentication.views import (
-    CreateCustomUserView, LoginView, LogoutView, ForgotPassword, ChangePassword
+    CreateCustomUserView, LoginView, LogoutView,
+    ForgotPassword, ChangePassword, GetUserInfo
         )
 
 
@@ -13,6 +14,7 @@ urlpatterns = [
     url(r'^logout/$', LogoutView.as_view()),
     url(r'^forgot/$', ForgotPassword.as_view()),
     url(r'^change/$', ChangePassword.as_view()),
+    url(r'^userinfo/$', GetUserInfo.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
