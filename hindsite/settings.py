@@ -157,7 +157,8 @@ S3_CLIENT = boto3.client('s3', 'us-east-1', aws_access_key_id=AWS_ACCESS_KEY_ID,
 # Celery
 
 if ON_HEROKU:
-    BROKER_URL = "TBD"
+    BROKER_URL = get_env_variable('CLOUDAMQP_URL')
+    BROKER_POOL_LIMIT = 3
 else:
     BROKER_URL = "amqp://hindsite:hindsite@localhost:5672/myvhost"
 CELERY_ACCEPT_CONTENT = ['json']
