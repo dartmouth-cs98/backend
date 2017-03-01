@@ -1,2 +1,2 @@
-web: gunicorn hindsite.wsgi --log-level debug
-worker: python manage.py rqworker default
+web: gunicorn hindsite.wsgi
+worker: python manage.py celery worker -B -l info --without-gossip --without-mingle --without-heartbeat
