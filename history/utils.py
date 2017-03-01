@@ -9,7 +9,7 @@ from django.db.models import Q
 from datetime import timedelta
 import os
 
-def create_page(user, url, base_url, t_id, page_title, domain_title,
+def create_page_login(user, url, base_url, t_id, page_title, domain_title,
                 favicon, html, prev_tab, active):
 
     # Get the currently active TimeActive (can only be one if exists)
@@ -135,17 +135,3 @@ def create_page(user, url, base_url, t_id, page_title, domain_title,
     page = PageSerializer(p)
 
     return page
-
-
-def clean_up_db(user):
-    tw = timezone.now() - timedelta(days=14)
-
-    for pv in user.pagevisit_set.filter(Q(visited__lte=tw)).exclude(html=''):
-        pv.html = ''
-        pv.save()
-
-        data = create_data(pv)
-
-        uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
-
-        requests.put(uri, data=data)

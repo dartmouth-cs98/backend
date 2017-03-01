@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from django.conf import settings
 from history.common import is_blacklisted
 import time
-# from history.utils import create_page
+from history.utils import create_page_login
 from history.tasks import create_page
 
 class NewPage(APIView):
@@ -60,19 +60,17 @@ class NewPage(APIView):
         else:
             login = False
 
+        if login:
+            page = create_page(user, url, base_url, t_id,
+                         page_title, domain_title, favicon, html,
+                         prev_tab, active)
 
-        # page = create_page(user, url, base_url, t_id,
-        #              page_title, domain_title, favicon, html,
-        #              prev_tab, active)
-
-
-        create_page.delay(user.pk, url, base_url, t_id,
+            if page:
+                return Response(page.data)
+        else:
+            create_page.delay(user.pk, url, base_url, t_id,
                              page_title, domain_title, favicon, html,
                              prev_tab, active)
-
-        # if login and page:
-        #     return Response(page.data)
-
 
         return Response()
 
@@ -129,10 +127,6 @@ class UpdateActive(APIView):
             create_page.delay(user.pk, url, base_url, t_id,
                                  page_title, domain_title, favicon, html,
                                  prev_tab, active)
-
-            # create_page(user, url, base_url, t_id,
-            #              page_title, domain_title, favicon, html,
-            #              prev_tab, active)
 
             return Response(status=status.HTTP_200_OK)
 

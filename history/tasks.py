@@ -142,6 +142,7 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     return True
 
+
 @periodic_task(run_every=(crontab(hour="7", minute="0", day_of_week="*")),
     ignore_result=True)
 def clean_up_db():
