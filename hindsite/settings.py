@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'pytz',
-    'django_rq',
+    'djcelery',
 ]
 
 MIDDLEWARE = [
@@ -152,6 +152,17 @@ else:
 S3_CLIENT = boto3.client('s3', 'us-east-1', aws_access_key_id=AWS_ACCESS_KEY_ID,
                         aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
                         config=Config(signature_version='s3v4'))
+
+
+# Celery
+
+if ON_HEROKU:
+    BROKER_URL = "TBD"
+else:
+    BROKER_URL = "amqp://hindsite:hindsite@localhost:5672/myvhost"
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 
 AUTH_USER_MODEL = 'authentication.CustomUser'
