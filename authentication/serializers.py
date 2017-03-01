@@ -35,6 +35,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
             return instance
 
+class UserInfoSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    email = serializers.CharField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+
 class TokenSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=100)
 
