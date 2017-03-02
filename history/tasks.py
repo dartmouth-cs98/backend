@@ -169,12 +169,13 @@ def clean_up_db():
     return True
 
 
-@periodic_task(run_every=(crontab(hour="8", minute="0", day_of_week="*")),
+@periodic_task(run_every=(crontab(hour="8", minute="5", day_of_week="*")),
     ignore_result=True)
 def analytics():
     for user in CustomUser.objects.all():
         count = Counter(json.loads(user.word_count))
-        sort = sorted(count.items(), key=operator.itemgetter(1)).reverse()
+        sort = sorted(count.items(), key=operator.itemgetter(1))
+        sort.reverse()
 
         if len(sort) > 100:
             sort = sort[0:100]
@@ -187,8 +188,10 @@ def analytics():
         day_count = Counter(user.page_set.filter(Q(pagevisit__visited__gte=day)))
         week_count = Counter(user.page_set.filter(Q(pagevisit__visited__gte=week)))
 
-        day_sort = sorted(day_count.items(), key=operator.itemgetter(1)).reverse()
-        week_sort = sorted(week_count.items(), key=operator.itemgetter(1)).reverse()
+        day_sort = sorted(day_count.items(), key=operator.itemgetter(1))
+        day_sort.reverse()
+        week_sort = sorted(week_count.items(), key=operator.itemgetter(1))
+        week_sort.reverse()
 
         if len(day_sort) > 10:
             day_ten = day_sort[0:10]
