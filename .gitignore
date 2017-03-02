@@ -16,3 +16,6 @@ hindsite/static/*.html
 
 # aws
 accessKeys.csv
+
+# files
+words.txt

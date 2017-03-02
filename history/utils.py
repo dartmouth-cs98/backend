@@ -1,6 +1,6 @@
 from history.models import Tab, Domain, Page, PageVisit, TimeActive
 from django.utils import timezone
-from history.common import shorten_url, create_data
+from history.common import shorten_url, create_data, strip_tags, get_count
 from history.serializers import PageSerializer
 from django.conf import settings
 from urllib.parse import urlparse
@@ -8,6 +8,8 @@ import requests
 from django.db.models import Q
 from datetime import timedelta
 import os
+import json
+from collections import Counter
 
 def create_page_login(user, url, base_url, t_id, page_title, domain_title,
                 favicon, html, prev_tab, active):
@@ -126,11 +128,16 @@ def create_page_login(user, url, base_url, t_id, page_title, domain_title,
         pv.s3 = settings.AWS_BUCKET_URL + aws_loc
         pv.save()
 
-    data = create_data(pv)
+    content = strip_tags(html)
+
+    data = create_data(pv, content)
 
     uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
 
     requests.put(uri, data=data)
+
+    user.word_count = json.dumps(Counter(json.loads(user.word_count)) + get_count(content))
+    user.save()
 
     page = PageSerializer(p)
 

@@ -1,7 +1,7 @@
 from history.models import Tab, Domain, Page, PageVisit, TimeActive
 from authentication.models import CustomUser
 from django.utils import timezone
-from history.common import shorten_url, create_data
+from history.common import shorten_url, create_data, strip_tags, get_count
 from history.serializers import PageSerializer
 from django.conf import settings
 from urllib.parse import urlparse
@@ -9,6 +9,9 @@ import requests
 from django.db.models import Q
 from datetime import timedelta
 import os
+import json
+from collections import Counter
+import operator
 from celery import task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
@@ -134,11 +137,16 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
         pv.s3 = settings.AWS_BUCKET_URL + aws_loc
         pv.save()
 
-    data = create_data(pv)
+    content = strip_tags(html)
+
+    data = create_data(pv, content)
 
     uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
 
     requests.put(uri, data=data)
+
+    user.word_count = json.dumps(Counter(json.loads(user.word_count)) + get_count(content))
+    user.save()
 
     return True
 
@@ -159,3 +167,40 @@ def clean_up_db():
 
             requests.put(uri, data=data)
     return True
+
+
+@periodic_task(run_every=(crontab(hour="8", minute="0", day_of_week="*")),
+    ignore_result=True)
+def analytics():
+    for user in CustomUser.objects.all():
+        count = Counter(json.loads(user.word_count))
+        sort = sorted(count.items(), key=operator.itemgetter(1)).reverse()
+
+        if len(sort) > 100:
+            sort = sort[0:100]
+        user.top_100_words = json.dumps(dict(sort))
+        user.word_count = '{}'
+
+        day = timezone.now() - timedelta(days=1)
+        week = timezone.now() - timedelta(days=7)
+
+        day_count = Counter(user.page_set.filter(Q(pagevisit__visited__gte=day)))
+        week_count = Counter(user.page_set.filter(Q(pagevisit__visited__gte=week)))
+
+        day_sort = sorted(day_count.items(), key=operator.itemgetter(1)).reverse()
+        week_sort = sorted(week_count.items(), key=operator.itemgetter(1)).reverse()
+
+        if len(day_sort) > 10:
+            day_ten = day_sort[0:10]
+        else:
+            day_ten = day_sort
+
+        if len(week_sort) > 10:
+            week_ten = week_sort[0:10]
+        else:
+            week_ten = week_sort
+
+        user.pages_day = json.dumps({c[0].pk: c[1] for c in day_ten})
+        user.pages_week = json.dumps({c[0].pk: c[1] for c in week_ten})
+
+        user.save()
