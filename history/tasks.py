@@ -169,7 +169,7 @@ def clean_up_db():
     return True
 
 
-@periodic_task(run_every=(crontab(hour="8", minute="5", day_of_week="*")),
+@periodic_task(run_every=(crontab(hour="8", minute="10", day_of_week="*")),
     ignore_result=True)
 def analytics():
     for user in CustomUser.objects.all():
