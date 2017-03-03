@@ -13,3 +13,7 @@ db.sqlite3
 
 # aws
 accessKeys.csv
+
+# files
+words.txt
+celerybeat-schedule
