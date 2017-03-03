@@ -63,7 +63,7 @@ class TabUpdate(APIView):
             t.closed = cu.last_active + timedelta(minutes=15)
             t.save()
 
-        doms = Domain.objects.filter(closed__isnull=True owned_by=cu).exclude(tab__tab_id__in=t_ids)
+        doms = Domain.objects.filter(closed__isnull=True, owned_by=cu).exclude(tab__tab_id__in=t_ids)
 
         for dom in doms:
             dom.closed = cu.last_active + timedelta(minutes=15)
