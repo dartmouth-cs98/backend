@@ -15,9 +15,15 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from hindsite.views import home, home_files, verification_file
 
 
 urlpatterns = [
+    url(r'^$', home, name='home'),
+    url(r'^(?P<filename>(robots.txt)|(humans.txt))$',
+        home_files, name='home-files'),
+    url(r'^google0ace3af18e99d8e4.html$',
+        verification_file, name='verification_file'),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('history.urls')),
     url(r'^', include('authentication.urls')),

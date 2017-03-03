@@ -1,0 +1,19 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Zachary Tannenbaum -- Backend Developer -- zachary.tannenbaum@gmail.com
+    Thomas Kiernan -- Front End Developer -- trk.17@dartmouth.edu
+    Wanda Czerwinski -- Front End Developer -- wanda.w.czerwinski.17@dartmouth.edu
+    Shelley Garg -- Front End Developer -- shelley.garg@dartmouth.edu
+    Grace Miller -- Front End Developer -- gamiller1994@gmail.com
+
+# THANKS
+
+    Dartmouth, CS98
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    jQuery, Django
