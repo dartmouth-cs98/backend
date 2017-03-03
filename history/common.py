@@ -1,6 +1,9 @@
 from search.common import datetime_formatter
 from bs4 import BeautifulSoup
 import re
+from collections import Counter
+import operator
+from hindsite.constants import ignore_words
 
 def shorten_url(url):
     import requests
@@ -28,18 +31,27 @@ def strip_tags(html):
                         s.find('document.get')==-1):
                     content += s + ' '
 
-    content = content.replace('\\n', ' ').replace("\n", ' ').replace("\\'", "'").replace("\'", "'").replace("\\t", " ").replace("\\r", ' ')
+    content = content.replace('\\n', ' ').replace("\n", ' ').replace("\\'", "'").replace("\'", "'").replace("\\t", " ").replace("\\r", ' ').replace('*', ' ')
+    content = content.replace('. ', ' ').replace(',', '').replace('"', '').replace('!', '').replace('?', '').replace('(', '').replace(')', '').replace(':', '')
+    content = content.replace(';', '').replace('[', '').replace(']', '')
     content = re.sub(r'[^\x00-\x7F]+',' ', content)
 
     return content
 
-def create_data(pv):
+def get_count(content):
+    content = content.lower().split()
+    slim_sum = [word for word in content if word not in ignore_words]
+    counts = Counter(slim_sum)
+
+    return counts
+
+def create_data(pv, content):
     import json
 
     return json.dumps({
         "user_id": pv.owned_by.id,
         "title": pv.page.title,
-        "html": strip_tags(pv.html),
+        "html": content,
         "date": datetime_formatter(pv.visited)
     })
 
