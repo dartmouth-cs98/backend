@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block head_title %}hindsite{% endblock %}
+
+<!-- {% block navbar %}
+{% endblock %} -->
+
+{% block content %}
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="jumbotron">
+    <div class="container">
+      <img src="static/img/logo-light.png"/>
+      <h1>hindsite</h1>
+      <p>history that’s finally 20/20</p>
+      <div class="wrapper">
+        <button class="btn btn-primary btn-lg"
+            onclick="chrome.webstore.install()"
+            role="button">
+              <i class="fa fa-plus"></i> Add to Chrome
+        </button>
+      </div>
+      <script>
+          if (chrome.app.isInstalled) {
+            document.getElementById('install-button').style.display = 'none';
+          }
+      </script>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-md-4">
+        <h2>Lookback</h2>
+        <p>This feature allows you to see your history in an intuitive timeline view. It shows you when pages were opened, closed, active, where they overlap and how you moved from one page to another.</p>
+        <!-- <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p> -->
+      </div>
+      <div class="col-md-4">
+        <h2>Categories</h2>
+        <p>By using hindsite's categorization tool, you are able to easily tag pages to go back to later. When you are ready, you can go to your categories page to see all of the pages you have categorized.</p>
+        <!-- <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p> -->
+     </div>
+      <div class="col-md-4">
+        <h2>Search</h2>
+        <p>Unlike Chrome History, hindsite searches pages in your history by page content as well as by title. This means that hindsite will find your search terms anywhere they are mentioned in the pages you visited.</p>
+        <!-- <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p> -->
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -11,8 +11,5 @@ db.sqlite3
 ### Git ###
 .git
 
-# static
-hindsite/static/*.html
-
 # aws
 accessKeys.csv
