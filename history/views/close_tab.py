@@ -50,7 +50,6 @@ class TabUpdate(APIView):
         cu = request.user
 
         t_ids = request.data['tab_ids']
-        print(t_ids)
 
         tabs = Tab.objects.filter(closed__isnull=True, owned_by=cu).exclude(tab_id__in=t_ids)
 
