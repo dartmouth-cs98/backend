@@ -139,7 +139,6 @@ class LogoutView(views.APIView):
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 
 class ForgotPassword(views.APIView):
-    authentication_classes = ()
     permission_classes = ()
 
     def post(self, request, format=None):
@@ -195,9 +194,42 @@ class ChangePassword(views.APIView):
             }, status=status.HTTP_401_UNAUTHORIZED)
 
 class GetUserInfo(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None):
         cu = request.user
+
+        user = UserInfoSerializer(cu)
+
+        return Response(user.data)
+
+class ChangeTracking(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = ()
+
+    def post(self, request, format=None):
+        cu = request.user
+
+        tracking = request.data['tracking']
+
+        cu.tracking_on = tracking
+        cu.save()
+
+        if not tracking:
+            time = timezone.now()
+
+            for d in cu.domain_set.filter(closed__isnull=True):
+                d.closed = time
+                d.save()
+                d.tab.closed = time
+                d.tab.save()
+
+            ta = cu.timeactive_set.filter(end__isnull=True)
+
+            if ta.exists():
+                ta = ta.first()
+                ta.end = time
+                ta.save()
 
         user = UserInfoSerializer(cu)
 

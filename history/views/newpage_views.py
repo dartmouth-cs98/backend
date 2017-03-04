@@ -18,6 +18,12 @@ class NewPage(APIView):
     def post(self, request, format=None):
         user = request.user
 
+        if not user.tracking_on:
+            return Response({
+                'status': 'Tracking Off',
+                'message': 'hindsite is not currently tracking your history'
+            })
+
         url = request.data['url']
         base_url = urlparse(url).netloc
 
@@ -61,7 +67,7 @@ class NewPage(APIView):
             login = False
 
         if login:
-            page = create_page(user, url, base_url, t_id,
+            page = create_page_login(user, url, base_url, t_id,
                          page_title, domain_title, favicon, html,
                          prev_tab, active)
 
@@ -81,6 +87,13 @@ class UpdateActive(APIView):
     """
     def post(self, request, format=None):
         user = request.user
+
+        if not user.tracking_on:
+            return Response({
+                'status': 'Tracking Off',
+                'message': 'hindsite is not currently tracking your history'
+            })
+
         t_id = request.data['tab']
         closed = request.data['closed']
 

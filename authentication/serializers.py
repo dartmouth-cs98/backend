@@ -42,6 +42,7 @@ class UserInfoSerializer(serializers.Serializer):
     last_name = serializers.CharField()
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
+    tracking_on = serializers.BooleanField()
 
 class TokenSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=100)

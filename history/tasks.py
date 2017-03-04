@@ -21,7 +21,6 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
                 favicon, html, prev_tab, active):
 
     user = CustomUser.objects.get(pk=user_pk)
-    print(user)
 
     # Get the currently active TimeActive (can only be one if exists)
     ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
@@ -169,7 +168,7 @@ def clean_up_db():
     return True
 
 
-@periodic_task(run_every=(crontab(hour="8", minute="30", day_of_week="*")),
+@periodic_task(run_every=(crontab(hour="9", minute="0", day_of_week="*")),
     ignore_result=True)
 def analytics():
     for user in CustomUser.objects.all():
