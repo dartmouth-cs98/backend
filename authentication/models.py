@@ -65,7 +65,9 @@ class CustomUser(AbstractBaseUser):
     top_100_words = models.TextField(default='{}')
     pages_day = models.TextField(default='{}')
     pages_week = models.TextField(default='{}')
+    tracking_on = models.BooleanField(default=True)
 
+    
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
