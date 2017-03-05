@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import pytz
 from django.core import serializers
 from history.serializers import SendTabSerializer, SendCategorySerializer, SendDomainSerializer
-from authentication.serializers import CustomUserSerializer
+from authentication.serializers import UserInfoSerializer
 from django.db.models.functions import Lower
 from history.common import blacklist
 
@@ -131,6 +131,6 @@ class SendUserData(APIView):
 
         cu = request.user
 
-        user = CustomUserSerializer(cu)
+        user = UserInfoSerializer(cu)
 
         return Response(user.data)
