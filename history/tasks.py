@@ -160,7 +160,7 @@ def clean_up_db():
             pv.html = ''
             pv.save()
 
-            data = create_data(pv)
+            data = create_data(pv, '')
 
             uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
 
