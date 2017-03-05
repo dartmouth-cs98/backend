@@ -193,16 +193,6 @@ class ChangePassword(views.APIView):
                 'message': 'Current password incorrect'
             }, status=status.HTTP_401_UNAUTHORIZED)
 
-class GetUserInfo(views.APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request, format=None):
-        cu = request.user
-
-        user = UserInfoSerializer(cu)
-
-        return Response(user.data)
-
 class ChangeTracking(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = ()
