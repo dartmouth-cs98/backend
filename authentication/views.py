@@ -32,6 +32,8 @@ class CreateCustomUserView(views.APIView):
 
     def post(self, request, format=None):
 
+        request.data['email'] = request.data['email'].lower()
+
         request.data['username'] = request.data['email']
 
         if CustomUser.objects.filter(email=request.data['email']).exists():
@@ -83,7 +85,7 @@ class LoginView(views.APIView):
 
     def post(self, request, format=None):
 
-        email = request.data['email']
+        email = request.data['email'].lower()
         password = request.data['password']
 
         customuser = authenticate(email=email, password=password)
@@ -143,7 +145,7 @@ class ForgotPassword(views.APIView):
 
     def post(self, request, format=None):
 
-        email_send = request.data['email']
+        email_send = request.data['email'].lower()
 
         customuser = CustomUser.objects.filter(email=email_send)
 
