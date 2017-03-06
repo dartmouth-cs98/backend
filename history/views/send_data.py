@@ -9,10 +9,51 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 import pytz
 from django.core import serializers
-from history.serializers import SendTabSerializer, SendCategorySerializer, SendDomainSerializer
+from history.serializers import (
+        SendTabSerializer, SendCategorySerializer,
+        SendDomainSerializer, PopupInfoSerializer
+        )
 from authentication.serializers import UserInfoSerializer
 from django.db.models.functions import Lower
 from history.common import blacklist
+from urllib.parse import urlparse
+from history.common import shorten_url, send_bulk, is_blacklisted
+
+
+class SendPopupInfo(APIView):
+    """
+    Return all data for popup
+    """
+    def post(self, request, format=None):
+        url = request.data['url']
+
+        url = request.data['url']
+        base_url = urlparse(url).netloc
+
+        if is_blacklisted(request.user, base_url):
+            return Response({
+                'status': 'Blacklist',
+                'message': 'This page is blacklisted.'
+            }, status=status.HTTP_204_NO_CONTENT)
+
+        short_url = shorten_url(url)
+
+        c = Category.objects.filter(owned_by=request.user)
+
+        holder = {'categories': c, 'tracking': request.user.tracking_on}
+
+        try:
+            p = Page.objects.get(url=short_url, owned_by=request.user)
+        except Page.DoesNotExist:
+            holder['page'] = None
+            send = PopupInfoSerializer(holder)
+            return Response(send.data, status=status.HTTP_404_NOT_FOUND)
+
+        holder['page'] = p
+
+        send = PopupInfoSerializer(holder)
+
+        return Response(send.data)
 
 class SendTabs(APIView):
     """
