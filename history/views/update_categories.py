@@ -102,7 +102,7 @@ class DeleteCategoryPage(APIView):
     Delete Category from Page
     """
     def post(self, request, format=None):
-        cat = request.data['category']
+        pk = request.data['pk']
         url = request.data['url']
 
         short_url = shorten_url(url)
@@ -112,7 +112,7 @@ class DeleteCategoryPage(APIView):
         except Page.DoesNotExist:
             raise Http404
 
-        c = Category.objects.get(title=cat, owned_by=request.user)
+        c = Category.objects.get(pk=pk, owned_by=request.user)
 
         p.categories.remove(c)
 
@@ -149,9 +149,9 @@ class DeleteCategory(APIView):
     Delete Category
     """
     def post(self, request, format=None):
-        cat = request.data['category']
+        pk = request.data['pk']
         try:
-            c = Category.objects.get(title=cat, owned_by=request.user)
+            c = Category.objects.get(pk=pk, owned_by=request.user)
         except Category.DoesNotExist:
             raise Http404
 
@@ -163,11 +163,11 @@ class EditCategory(APIView):
     Edit Category
     """
     def post(self, request, format=None):
-        old_cat = request.data['old']
+        pk = request.data['pk']
         new_cat = request.data['updated']
 
         try:
-            c = Category.objects.get(title=old_cat, owned_by=request.user)
+            c = Category.objects.get(pk=pk, owned_by=request.user)
         except Category.DoesNotExist:
             raise Http404
 
