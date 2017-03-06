@@ -120,3 +120,8 @@ class SessionSerializer(serializers.Serializer):
     end = serializers.DateTimeField()
     active = serializers.BooleanField()
     pagevisits = PageVisitSerializerNoHTML(many=True)
+
+class PopupInfoSerializer(serializers.Serializer):
+    categories = CategorySerializer(many=True)
+    tracking = serializers.BooleanField()
+    page = PageSerializer()
