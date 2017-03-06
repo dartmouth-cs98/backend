@@ -68,7 +68,19 @@ class AddCategoryPage(APIView):
 
         short_url = shorten_url(url)
 
-        p = Page.objects.get(url=short_url, owned_by=request.user)
+        try:
+            p = Page.objects.get(url=short_url, owned_by=request.user)
+        except Page.DoesNotExist:
+            page_title = request.data['title']
+
+            if page_title == '':
+                page_title = 'No Title'
+
+            base_url = urlparse(url).netloc
+
+            p = Page(title=page_title, url=short_url, domain=base_url, owned_by=user)
+            p.save()
+
         c = Category.objects.filter(title__iexact=cat, owned_by=request.user)
 
         if c.exists():
@@ -153,18 +165,16 @@ class EditCategory(APIView):
     def post(self, request, format=None):
         old_cat = request.data['old']
         new_cat = request.data['updated']
-        if 'color' in request.data.keys():
-            color = request.data['color']
-        else:
-            color = '#F8A055'
 
         try:
             c = Category.objects.get(title=old_cat, owned_by=request.user)
         except Category.DoesNotExist:
             raise Http404
 
+        if 'color' in request.data.keys():
+            c.color = request.data['color']
+
         c.title = new_cat
-        c.color = color
         c.save()
 
         serializer = CategorySerializer(c)
@@ -192,7 +202,14 @@ class UpdateStar(APIView):
         try:
             p = Page.objects.get(url=short_url, owned_by=request.user)
         except Page.DoesNotExist:
-            raise Http404
+            page_title = request.data['title']
+
+            if page_title == '':
+                page_title = 'No Title'
+
+            base_url = urlparse(url).netloc
+
+            p = Page(title=page_title, url=short_url, domain=base_url, owned_by=user)
 
         p.star = star
         p.save()
