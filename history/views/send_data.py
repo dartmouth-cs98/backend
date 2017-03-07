@@ -11,7 +11,8 @@ import pytz
 from django.core import serializers
 from history.serializers import (
         SendTabSerializer, SendCategorySerializer,
-        SendDomainSerializer, PopupInfoSerializer
+        SendDomainSerializer, PopupInfoSerializer,
+        NewSendCategorySerializer
         )
 from authentication.serializers import UserInfoSerializer
 from django.db.models.functions import Lower
@@ -139,6 +140,64 @@ class SendCategories(APIView):
             holder['categories'].append(c)
 
         send = SendCategorySerializer(holder)
+
+        return Response(send.data)
+
+class NewSendCategories(APIView):
+
+    def get(self, request, format=None):
+        holder = {'categories': []}
+
+        bl = blacklist(request.user)
+
+        page_list = []
+
+        starred = Page.objects.filter(star=True, owned_by=request.user).exclude(domain__in=bl)
+        starred_pks = []
+
+        for p in starred:
+            cat_pks = []
+
+            for category in p.categories.all():
+                cat_pks.append(category.pk)
+
+            pv = p.pagevisit_set.last()
+            setattr(p, 'last_visited', pv.visited)
+            setattr(p, 'domain', pv.domain.base_url)
+            setattr(p, 's3', pv.s3)
+            setattr(p, 'cat_pks', cat_pks)
+
+            page_list.append(p)
+            starred_pks.append(p.pk)
+
+        holder['starred'] = starred_pks
+
+        cats = Category.objects.filter(owned_by=request.user).order_by(Lower('title'))
+
+        for c in cats:
+            pages = c.page_set.exclude(domain__in=bl)
+            page_pks = []
+            for p in pages:
+                cat_pks = []
+                for category in p.categories.all():
+                    cat_pks.append(category.pk)
+
+                pv = p.pagevisit_set.last()
+                setattr(p, 'last_visited', pv.visited)
+                setattr(p, 'domain', pv.domain.base_url)
+                setattr(p, 's3', pv.s3)
+                setattr(p, 'cat_pks', cat_pks)
+
+                page_pks.append(p.pk)
+                page_list.append(p)
+
+            setattr(c, 'pages', page_pks)
+
+            holder['categories'].append(c)
+
+        holder['pages'] = list(set(page_list))
+
+        send = NewSendCategorySerializer(holder)
 
         return Response(send.data)
 
