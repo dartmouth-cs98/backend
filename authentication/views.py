@@ -69,7 +69,8 @@ class CreateCustomUserView(views.APIView):
             data = {'token': token.key,
                     'key': key,
                     'md5': md5,
-                    'categories': customuser.category_set.all()}
+                    'categories': customuser.category_set.all(),
+                    'tracking': customuser.tracking_on}
 
             send = LoginSerializer(data)
 
@@ -101,7 +102,8 @@ class LoginView(views.APIView):
                 data = {'token': token.key,
                         'key': key,
                         'md5': md5,
-                        'categories': customuser.category_set.all()}
+                        'categories': customuser.category_set.all(),
+                        'tracking': customuser.tracking_on}
 
                 send = LoginSerializer(data)
 
