@@ -104,7 +104,7 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
         p = Page(title=page_title, url=short_url, domain=base_url, owned_by=user)
         p.save()
 
-    pv = PageVisit(page=p, domain=d, owned_by=user, html=html)
+    pv = PageVisit(page=p, domain=d, owned_by=user)
 
     session = user.session_set.filter(active=True)
 
@@ -154,14 +154,13 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     ignore_result=True)
 def clean_up_db():
     tw = timezone.now() - timedelta(days=14)
-    first = round(PageVisit.objects.filter(Q(visited__lte=tw)).exclude(html='').first().pk/10)
-    last = round(PageVisit.objects.filter(Q(visited__lte=tw)).exclude(html='').last().pk/10) - 1
+    first = round(PageVisit.objects.filter(Q(visited__lte=tw)).first().pk/10)
+    last = round(PageVisit.objects.filter(Q(visited__lte=tw)).last().pk/10) - 1
 
     for i in range(first, last):
-        pvs = PageVisit.objects.filter(pk__in=range(i*10, (i+1)*10)).exclude(html='')
+        pvs = PageVisit.objects.filter(pk__in=range(i*10, (i+1)*10))
 
         for pv in pvs:
-            pv.html = ''
 
             data = create_data(pv, '')
 
@@ -182,8 +181,7 @@ def clean_up_db():
 
     # for user in CustomUser.objects.all():
     #     for pv in user.pagevisit_set.filter(Q(visited__lte=tw)).exclude(html=''):
-    #         pv.html = ''
-    #         pv.save()
+    #        
     #
     #         data = create_data(pv, '')
     #

@@ -119,7 +119,6 @@ class PageVisit(models.Model):
     visited = models.DateTimeField(auto_now_add=True)
     page = models.ForeignKey('Page')
     domain = models.ForeignKey('Domain')
-    html = models.TextField(default='')
     s3 = models.CharField(default='https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html', max_length=10000)
     session = models.ForeignKey('Session', blank=True, null=True)
 
