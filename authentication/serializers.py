@@ -3,6 +3,7 @@ from django.contrib.auth import update_session_auth_hash
 from rest_framework import serializers
 
 from authentication.models import CustomUser
+from history.serializers import CategorySerializer
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -51,3 +52,4 @@ class LoginSerializer(serializers.Serializer):
     token = serializers.CharField(max_length=100)
     key = serializers.CharField()
     md5 = serializers.CharField()
+    categories = CategorySerializer(many=True)
