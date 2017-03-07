@@ -80,7 +80,9 @@ class SendTabs(APIView):
         tabs = set()
 
         for d in domains:
-            tabs.add(d.tab)
+            tabs.add(d.tab.pk)
+
+        tabs = Tab.objects.filter(pk__in=tabs)
 
         domains = list(domains)
         holder = {'tabs': []}
