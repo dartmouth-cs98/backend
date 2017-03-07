@@ -5,7 +5,7 @@ from authentication.models import CustomUser
 from authentication.permissions import IsCustomUserOwner
 from authentication.serializers import (
                 CustomUserSerializer, TokenSerializer,
-                LoginSerializer, UserInfoSerializer
+                LoginSerializer, UserInfoSerializer, KeysSerializer
                 )
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
@@ -243,6 +243,6 @@ class GetDecryption(views.APIView):
                 'key': key,
                 'md5': md5}
 
-        send = LoginSerializer(data)
+        send = KeysSerializer(data)
 
         return Response(send.data)
