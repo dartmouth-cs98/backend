@@ -118,9 +118,12 @@ class SendCategories(APIView):
 
         for p in starred:
             pv = p.pagevisit_set.last()
-            setattr(p, 'last_visited', pv.visited)
-            setattr(p, 'domain', pv.domain.base_url)
-            setattr(p, 's3', pv.s3)
+            if pv:
+                setattr(p, 'last_visited', pv.visited)
+                setattr(p, 's3', pv.s3)
+            else:
+                setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
 
         holder['starred'] = starred
 
@@ -131,9 +134,12 @@ class SendCategories(APIView):
 
             for p in pages:
                 pv = p.pagevisit_set.last()
-                setattr(p, 'last_visited', pv.visited)
-                setattr(p, 'domain', pv.domain.base_url)
-                setattr(p, 's3', pv.s3)
+                if pv:
+                    setattr(p, 'last_visited', pv.visited)
+                    setattr(p, 's3', pv.s3)
+                else:
+                    setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                    setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
 
             setattr(c, 'pages', pages)
 
@@ -162,9 +168,12 @@ class NewSendCategories(APIView):
                 cat_pks.append(category.pk)
 
             pv = p.pagevisit_set.last()
-            setattr(p, 'last_visited', pv.visited)
-            setattr(p, 'domain', pv.domain.base_url)
-            setattr(p, 's3', pv.s3)
+            if pv:
+                setattr(p, 'last_visited', pv.visited)
+                setattr(p, 's3', pv.s3)
+            else:
+                setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
             setattr(p, 'cat_pks', cat_pks)
 
             page_list.append(p)
@@ -183,9 +192,12 @@ class NewSendCategories(APIView):
                     cat_pks.append(category.pk)
 
                 pv = p.pagevisit_set.last()
-                setattr(p, 'last_visited', pv.visited)
-                setattr(p, 'domain', pv.domain.base_url)
-                setattr(p, 's3', pv.s3)
+                if pv:
+                    setattr(p, 'last_visited', pv.visited)
+                    setattr(p, 's3', pv.s3)
+                else:
+                    setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                    setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
                 setattr(p, 'cat_pks', cat_pks)
 
                 page_pks.append(p.pk)
