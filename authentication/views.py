@@ -226,3 +226,19 @@ class ChangeTracking(views.APIView):
         user = UserInfoSerializer(cu)
 
         return Response(user.data)
+
+class GetDecryption(views.APIView):
+
+    def get(self, request, format=None):
+        cu = request.user
+
+        token = Token.objects.get(user=cu)
+        key = base64.b64encode(cu.key.encode()).decode()
+        md5 = base64.b64encode(hashlib.md5(cu.key.encode()).digest()).decode()
+        data = {'token': token.key,
+                'key': key,
+                'md5': md5}
+
+        send = LoginSerializer(data)
+
+        return Response(send.data)

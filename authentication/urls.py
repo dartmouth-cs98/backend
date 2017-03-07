@@ -4,7 +4,7 @@ from rest_framework.authtoken import views
 from authentication.views import (
     CreateCustomUserView, LoginView, LogoutView,
     ForgotPassword, ChangePassword,
-    ChangeTracking
+    ChangeTracking, GetDecryption
         )
 
 
@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^forgot/$', ForgotPassword.as_view()),
     url(r'^change/$', ChangePassword.as_view()),
     url(r'^tracking/$', ChangeTracking.as_view()),
+    url(r'^decrypt/$', GetDecryption.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
