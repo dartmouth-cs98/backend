@@ -105,9 +105,6 @@ class UpdateActive(APIView):
         try:
             t = Tab.objects.get(tab_id=t_id, closed__isnull=True, owned_by=user)
         except Tab.DoesNotExist:
-            if ta and not closed:
-                ta.end = timezone.now()
-                ta.save()
             url = request.data['url']
             base_url = urlparse(url).netloc
 
@@ -116,6 +113,14 @@ class UpdateActive(APIView):
                     'status': 'Blacklist',
                     'message': 'This page is blacklisted.'
                 })
+
+            if 'html' not in request.data.keys() or 'title' not in request.data.keys():
+                raise Http404
+                
+
+            if ta and not closed:
+                ta.end = timezone.now()
+                ta.save()
 
             page_title = request.data['title']
             domain_title = request.data['domain']
