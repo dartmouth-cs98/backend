@@ -68,7 +68,8 @@ class CreateCustomUserView(views.APIView):
             md5 = base64.b64encode(hashlib.md5(customuser.key.encode()).digest()).decode()
             data = {'token': token.key,
                     'key': key,
-                    'md5': md5}
+                    'md5': md5,
+                    'categories': customuser.category_set.all()}
 
             send = LoginSerializer(data)
 
@@ -99,7 +100,8 @@ class LoginView(views.APIView):
                 md5 = base64.b64encode(hashlib.md5(customuser.key.encode()).digest()).decode()
                 data = {'token': token.key,
                         'key': key,
-                        'md5': md5}
+                        'md5': md5,
+                        'categories': customuser.category_set.all()}
 
                 send = LoginSerializer(data)
 
