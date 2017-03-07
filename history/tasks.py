@@ -161,6 +161,7 @@ def clean_up_db():
         pvs = PageVisit.objects.filter(pk__in=range(i*10, (i+1)*10)).exclude(html='')
 
         for pv in pvs:
+            pv.html = ''
 
             data = create_data(pv, '')
 
