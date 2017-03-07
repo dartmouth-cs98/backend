@@ -96,7 +96,7 @@ def create_page_login(user, url, base_url, t_id, page_title, domain_title,
         p = Page(title=page_title, url=short_url, domain=base_url, owned_by=user)
         p.save()
 
-    pv = PageVisit(page=p, domain=d, owned_by=user, html=html)
+    pv = PageVisit(page=p, domain=d, owned_by=user)
 
     session = user.session_set.filter(active=True)
 
