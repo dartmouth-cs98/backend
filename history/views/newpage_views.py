@@ -120,7 +120,9 @@ class UpdateActive(APIView):
                     'message': 'This page is blacklisted.'
                 })
 
-            if 'html' not in request.data.keys() and 'title' not in request.data.keys():
+            if ('html' not in request.data.keys()
+                    and 'title' not in request.data.keys()
+                    and 'domain' not in request.data.keys()):
                 raise Http404
 
 
@@ -128,7 +130,11 @@ class UpdateActive(APIView):
                 ta.end = timezone.now()
                 ta.save()
 
-            page_title = request.data['title']
+            if 'title' in request.data.keys():
+                page_title = request.data['title']
+            else:
+                page_title = 'No Title'
+
             domain_title = request.data['domain']
 
 
