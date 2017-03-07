@@ -54,3 +54,8 @@ class LoginSerializer(serializers.Serializer):
     md5 = serializers.CharField()
     categories = CategorySerializer(many=True)
     tracking = serializers.BooleanField()
+
+class KeysSerializer(serializers.Serializer):
+    token = serializers.CharField(max_length=100)
+    key = serializers.CharField()
+    md5 = serializers.CharField()
