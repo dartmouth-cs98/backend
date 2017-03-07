@@ -154,17 +154,44 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     ignore_result=True)
 def clean_up_db():
     tw = timezone.now() - timedelta(days=14)
+    first = round(PageVisit.objects.filter(Q(visited__lte=tw)).exclude(html='').first().pk/10)
+    last = round(PageVisit.objects.filter(Q(visited__lte=tw)).exclude(html='').last().pk/10) - 1
 
-    for user in CustomUser.objects.all():
-        for pv in user.pagevisit_set.filter(Q(visited__lte=tw)).exclude(html=''):
+    for i in range(first, last):
+        pvs = PageVisit.objects.filter(pk__in=range(i*10, (i+1)*10)).exclude(html='')
+
+        for pv in pvs:
             pv.html = ''
-            pv.save()
 
             data = create_data(pv, '')
 
             uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
 
             requests.put(uri, data=data)
+
+            # if (pv.page.pagevisit_set
+            #     .exclude(s3='https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
+            #     .count() > 1):
+            #     aws_loc = str(user.pk) + '/' + str(pv.pk) + '.html'
+            #
+            #     settings.S3_CLIENT.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=aws_loc)
+            #
+            #     pv.s3 = 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html'
+
+            pv.save()
+
+    # for user in CustomUser.objects.all():
+    #     for pv in user.pagevisit_set.filter(Q(visited__lte=tw)).exclude(html=''):
+    #         pv.html = ''
+    #         pv.save()
+    #
+    #         data = create_data(pv, '')
+    #
+    #         uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
+    #
+    #         requests.put(uri, data=data)
+
+
     return True
 
 

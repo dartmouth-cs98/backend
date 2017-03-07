@@ -24,6 +24,7 @@ ipython-genutils==0.1.0
 jmespath==0.9.1
 kombu==3.0.37
 lxml==3.7.2
+newrelic==2.80.1.61
 nltk==3.2.2
 numpy==1.12.0
 pexpect==4.2.1

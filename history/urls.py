@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^domaininfo/$', send_data.SendDomain.as_view()),
     url(r'^getcategories/$', send_data.SendCategories.as_view()),
     url(r'^userinfo/$', send_data.SendUserData.as_view()),
+    url(r'^catsandpages/$', send_data.NewSendCategories.as_view()),
 
     url(r'^closetab/$', close_tab.CloseTab.as_view()),
     url(r'^tabupdate/$', close_tab.TabUpdate.as_view()),
