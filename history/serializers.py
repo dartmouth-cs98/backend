@@ -27,11 +27,39 @@ class PageInfoSerializer(serializers.Serializer):
     last_visited = serializers.DateTimeField()
     created = serializers.DateTimeField()
 
+class PageCatPKInfoSerializer(serializers.Serializer):
+    pk = serializers.IntegerField(read_only=True)
+    title = serializers.CharField(required=True, allow_blank=False)
+    url = serializers.CharField(required=True, allow_blank=False, max_length=1000)
+    star = serializers.BooleanField()
+    cat_pks = serializers.ListField(
+            child=serializers.IntegerField()
+        )
+    domain = serializers.CharField()
+    s3 = serializers.CharField()
+    last_visited = serializers.DateTimeField()
+    created = serializers.DateTimeField()
+
 class CategoryPageSerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField(max_length=1000)
     pages = PageInfoSerializer(many=True)
     color = serializers.CharField(max_length=7)
+
+class CategoryPagePKSerializer(serializers.Serializer):
+    pk = serializers.IntegerField()
+    title = serializers.CharField(max_length=1000)
+    pages = serializers.ListField(
+            child=serializers.IntegerField()
+        )
+    color = serializers.CharField(max_length=7)
+
+class NewSendCategorySerializer(serializers.Serializer):
+    categories = CategoryPagePKSerializer(many=True)
+    starred = serializers.ListField(
+            child=serializers.IntegerField()
+        )
+    pages = PageCatPKInfoSerializer(many=True)
 
 class SendCategorySerializer(serializers.Serializer):
     categories = CategoryPageSerializer(many=True)
