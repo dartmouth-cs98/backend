@@ -122,7 +122,7 @@ class SendCategories(APIView):
                 setattr(p, 'last_visited', pv.visited)
                 setattr(p, 's3', pv.s3)
             else:
-                setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                setattr(p, 'last_visited', 'N/A')
                 setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
 
         holder['starred'] = starred
@@ -138,7 +138,7 @@ class SendCategories(APIView):
                     setattr(p, 'last_visited', pv.visited)
                     setattr(p, 's3', pv.s3)
                 else:
-                    setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                    setattr(p, 'last_visited', 'N/A')
                     setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
 
             setattr(c, 'pages', pages)
@@ -172,7 +172,7 @@ class NewSendCategories(APIView):
                 setattr(p, 'last_visited', pv.visited)
                 setattr(p, 's3', pv.s3)
             else:
-                setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                setattr(p, 'last_visited', 'N/A')
                 setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
             setattr(p, 'cat_pks', cat_pks)
 
@@ -196,7 +196,7 @@ class NewSendCategories(APIView):
                     setattr(p, 'last_visited', pv.visited)
                     setattr(p, 's3', pv.s3)
                 else:
-                    setattr(p, 'last_visited', timezone.now()-timedelta(days=7, hours=4))
+                    setattr(p, 'last_visited', 'N/A')
                     setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
                 setattr(p, 'cat_pks', cat_pks)
 
