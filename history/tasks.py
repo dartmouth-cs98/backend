@@ -125,13 +125,13 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
         aws_loc = str(user.pk) + '/' + str(pv.pk) + '.html'
 
         # No encryption
-        settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-                                    Key=aws_loc, Body=html, ContentType='text/html')
+        # settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+        #                             Key=aws_loc, Body=html, ContentType='text/html')
 
         # Encryption
-        # settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-        #                             Key=aws_loc, Body=html, SSECustomerKey=user.key,
-        #                             SSECustomerAlgorithm='AES256', ContentType='text/html')
+        settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                    Key=aws_loc, Body=html, SSECustomerKey=user.key,
+                                    SSECustomerAlgorithm='AES256', ContentType='text/html')
 
         pv.s3 = settings.AWS_BUCKET_URL + aws_loc
         pv.save()
