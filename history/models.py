@@ -120,6 +120,7 @@ class PageVisit(models.Model):
     page = models.ForeignKey('Page')
     domain = models.ForeignKey('Domain')
     s3 = models.CharField(default='https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html', max_length=10000)
+    preview = models.CharField(default='https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg', max_length=10000)
     session = models.ForeignKey('Session', blank=True, null=True)
 
     def __str__(self):

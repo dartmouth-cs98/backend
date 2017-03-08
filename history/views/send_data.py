@@ -99,6 +99,13 @@ class SendTabs(APIView):
                     setattr(d, 'minutes_active', ta[0])
                     setattr(d, 'active_times', ta[1])
 
+                    pv = (d.pagevisit_set
+                        .exclude(preview='https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg'))
+
+                    if pv.exists():
+                        setattr(d, 'preview', pv.first().preview)
+                    else:
+                        setattr(d, 'preview', None)
                     t.domains.append(d)
             holder['tabs'].append(t)
 
@@ -123,9 +130,11 @@ class SendCategories(APIView):
             if pv:
                 setattr(p, 'last_visited', pv.visited)
                 setattr(p, 's3', pv.s3)
+                setattr(p, 'preview', pv.preview)
             else:
                 setattr(p, 'last_visited', 'N/A')
                 setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
+                setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
 
         holder['starred'] = starred
 
@@ -139,9 +148,11 @@ class SendCategories(APIView):
                 if pv:
                     setattr(p, 'last_visited', pv.visited)
                     setattr(p, 's3', pv.s3)
+                    setattr(p, 'preview', pv.preview)
                 else:
                     setattr(p, 'last_visited', 'N/A')
                     setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
+                    setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
 
             setattr(c, 'pages', pages)
 
@@ -173,9 +184,11 @@ class NewSendCategories(APIView):
             if pv:
                 setattr(p, 'last_visited', pv.visited)
                 setattr(p, 's3', pv.s3)
+                setattr(p, 'preview', pv.preview)
             else:
                 setattr(p, 'last_visited', 'N/A')
                 setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
+                setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
             setattr(p, 'cat_pks', cat_pks)
 
             page_list.append(p)
@@ -197,9 +210,11 @@ class NewSendCategories(APIView):
                 if pv:
                     setattr(p, 'last_visited', pv.visited)
                     setattr(p, 's3', pv.s3)
+                    setattr(p, 'preview', pv.preview)
                 else:
                     setattr(p, 'last_visited', 'N/A')
                     setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
+                    setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
                 setattr(p, 'cat_pks', cat_pks)
 
                 page_pks.append(p.pk)

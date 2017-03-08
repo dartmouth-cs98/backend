@@ -11,6 +11,7 @@ import time
 from history.utils import create_page_login
 from history.tasks import create_page
 
+
 class NewPage(APIView):
     """
     Handle new page coming in
@@ -55,6 +56,11 @@ class NewPage(APIView):
         else:
             html = ''
 
+        if 'image' in request.data.keys():
+            image = request.data['image'].split(',')[1]
+        else:
+            image = ''
+
         if 'previousTabId' in request.data.keys():
             prev_tab = request.data['previousTabId']
         else:
@@ -76,7 +82,7 @@ class NewPage(APIView):
         else:
             create_page.delay(user.pk, url, base_url, t_id,
                              page_title, domain_title, favicon, html,
-                             prev_tab, active)
+                             image, prev_tab, active)
 
         return Response()
 
@@ -148,6 +154,11 @@ class UpdateActive(APIView):
             else:
                 html = ''
 
+            if 'image' in request.data.keys():
+                image = request.data['image'].split(',')[1]
+            else:
+                image = ''
+
             if 'previousTabId' in request.data.keys():
                 prev_tab = request.data['previousTabId']
             else:
@@ -156,7 +167,7 @@ class UpdateActive(APIView):
 
             create_page.delay(user.pk, url, base_url, t_id,
                                  page_title, domain_title, favicon, html,
-                                 prev_tab, active)
+                                 image, prev_tab, active)
 
             return Response(status=status.HTTP_200_OK)
 
