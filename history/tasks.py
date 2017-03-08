@@ -15,6 +15,7 @@ import operator
 from celery import task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
+import base64
 
 @task
 def create_page(user_pk, url, base_url, t_id, page_title, domain_title,

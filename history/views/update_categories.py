@@ -78,7 +78,7 @@ class AddCategoryPage(APIView):
 
             base_url = urlparse(url).netloc
 
-            p = Page(title=page_title, url=short_url, domain=base_url, owned_by=user)
+            p = Page(title=page_title, url=short_url, domain=base_url, owned_by=request.user)
             p.save()
 
         c = Category.objects.filter(title__iexact=cat, owned_by=request.user)
