@@ -24,6 +24,7 @@ class PageInfoSerializer(serializers.Serializer):
     categories = CategorySerializer(many=True)
     domain = serializers.CharField()
     s3 = serializers.CharField()
+    preview = serializers.CharField()
     last_visited = serializers.DateTimeField()
     created = serializers.DateTimeField()
 
@@ -37,6 +38,7 @@ class PageCatPKInfoSerializer(serializers.Serializer):
         )
     domain = serializers.CharField()
     s3 = serializers.CharField()
+    preview = serializers.CharField()
     last_visited = serializers.DateTimeField()
     created = serializers.DateTimeField()
 
