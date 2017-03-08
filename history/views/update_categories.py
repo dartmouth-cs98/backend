@@ -91,9 +91,14 @@ class AddCategoryPage(APIView):
             p.categories.add(c)
 
         pv = p.pagevisit_set.last()
-        setattr(p, 'last_visited', pv.visited)
-        setattr(p, 's3', pv.s3)
-        setattr(p, 'preview', pv.preview)
+        if pv:
+            setattr(p, 'last_visited', pv.visited)
+            setattr(p, 's3', pv.s3)
+            setattr(p, 'preview', pv.preview)
+        else:
+            setattr(p, 'last_visited', None)
+            setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
+            setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
 
         serializer = PageInfoSerializer(p)
         return Response(serializer.data)
