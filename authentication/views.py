@@ -52,11 +52,11 @@ class CreateCustomUserView(views.APIView):
 
             token = Token.objects.get(user=customuser)
 
-            email = EmailMessage('Successfully Created Account!',
-                    'Thank you for signing up to use Hindsite! \n\nThe Hindsite Team',
-                    to=[customuser.email])
+#             email = EmailMessage('Successfully Created Account!',
+#                     'Thank you for signing up to use Hindsite! \n\nThe Hindsite Team',
+#                     to=[customuser.email])
 
-            email.send()
+#             email.send()
 
             research = Category(title='Research', owned_by=customuser, color='#FA6E59')
             cooking = Category(title='Cooking', owned_by=customuser, color='#77F200')
