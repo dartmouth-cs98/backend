@@ -75,7 +75,7 @@ class NewPage(APIView):
         if login:
             page = create_page_login(user, url, base_url, t_id,
                          page_title, domain_title, favicon, html,
-                         prev_tab, active)
+                         image, prev_tab, active)
 
             if page:
                 return Response(page.data)
