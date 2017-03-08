@@ -81,6 +81,7 @@ class DomainSerializer(serializers.Serializer):
     opened_from_domain = serializers.PrimaryKeyRelatedField(read_only=True, allow_null=True)
     opened_from_tabid = serializers.IntegerField()
     minutes_active = serializers.IntegerField()
+    preview = serializers.CharField()
 
 class DomainSerializerRegular(serializers.Serializer):
     pk = serializers.IntegerField()
@@ -121,6 +122,7 @@ class PageVisitSerializerNoHTML(serializers.Serializer):
     domain = DomainSerializerRegular()
     session = SessionSerializerNoPVs()
     s3 = serializers.CharField()
+    preview = serializers.CharField()
     visited = serializers.DateTimeField()
 
 class SendDomainSerializer(serializers.Serializer):

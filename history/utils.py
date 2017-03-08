@@ -9,10 +9,11 @@ from django.db.models import Q
 from datetime import timedelta
 import os
 import json
+import base64
 from collections import Counter
 
 def create_page_login(user, url, base_url, t_id, page_title, domain_title,
-                favicon, html, prev_tab, active):
+                favicon, html, image, prev_tab, active):
 
     # Get the currently active TimeActive (can only be one if exists)
     ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
@@ -126,7 +127,19 @@ def create_page_login(user, url, base_url, t_id, page_title, domain_title,
                                     SSECustomerAlgorithm='AES256', ContentType='text/html')
 
         pv.s3 = settings.AWS_BUCKET_URL + aws_loc
-        pv.save()
+
+    if len(image) > 0:
+        img_loc = str(user.pk) + '/' + str(pv.pk) + '.jpg'
+
+        bits = base64.b64decode(image)
+
+        settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                    Key=img_loc, Body=bits, SSECustomerKey=user.key,
+                                    SSECustomerAlgorithm='AES256', ContentType='image/jpeg')
+
+        pv.preview = settings.AWS_BUCKET_URL + img_loc
+
+    pv.save()
 
     content = strip_tags(html)
 
