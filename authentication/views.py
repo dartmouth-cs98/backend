@@ -12,8 +12,11 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.core.mail import EmailMessage
 from django.utils import timezone
-from history.models import Category
+from history.models import Category, Domain
+from history.common import is_blacklisted
+from history.tasks import create_page
 import base64, hashlib
+from urllib.parse import urlparse
 
 
 class CreateCustomUserView(views.APIView):
@@ -226,6 +229,48 @@ class ChangeTracking(views.APIView):
                 ta = ta.first()
                 ta.end = time
                 ta.save()
+        else:
+            url = request.data['url']
+            base_url = urlparse(url).netloc
+
+            if not is_blacklisted(cu, base_url):
+
+                t_id = request.data['tab']
+                page_title = request.data['title']
+                domain_title = request.data['domain']
+
+                if page_title == '':
+                    page_title = 'No Title'
+
+
+                if 'favIconUrl' in request.data.keys():
+                    favicon = request.data['favIconUrl']
+                else:
+                    fav_d = Domain.objects.filter(base_url=base_url).exclude(favicon='').last()
+                    if fav_d:
+                        favicon = fav_d.favicon
+                    else:
+                        favicon = ''
+
+                if 'html' in request.data.keys():
+                    html = request.data['html']
+                else:
+                    html = ''
+
+                if 'image' in request.data.keys():
+                    image = request.data['image'].split(',')[1]
+                else:
+                    image = ''
+
+                if 'previousTabId' in request.data.keys():
+                    prev_tab = request.data['previousTabId']
+                else:
+                    prev_tab = t_id
+                active = request.data['active']
+
+                create_page.delay(cu.pk, url, base_url, t_id,
+                                 page_title, domain_title, favicon, html,
+                                 image, prev_tab, active)
 
         user = UserInfoSerializer(cu)
 
