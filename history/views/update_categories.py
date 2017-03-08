@@ -93,6 +93,7 @@ class AddCategoryPage(APIView):
         pv = p.pagevisit_set.last()
         setattr(p, 'last_visited', pv.visited)
         setattr(p, 's3', pv.s3)
+        setattr(p, 'preview', pv.preview)
 
         serializer = PageInfoSerializer(p)
         return Response(serializer.data)
@@ -119,6 +120,7 @@ class DeleteCategoryPage(APIView):
         pv = p.pagevisit_set.last()
         setattr(p, 'last_visited', pv.visited)
         setattr(p, 's3', pv.s3)
+        setattr(p, 'preview', pv.preview)
 
         serializer = PageInfoSerializer(p)
         return Response(serializer.data)
