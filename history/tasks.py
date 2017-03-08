@@ -18,7 +18,7 @@ from celery.task.schedules import crontab
 
 @task
 def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
-                favicon, html, prev_tab, active):
+                favicon, html, image, prev_tab, active):
 
     user = CustomUser.objects.get(pk=user_pk)
 
@@ -134,7 +134,19 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
                                     SSECustomerAlgorithm='AES256', ContentType='text/html')
 
         pv.s3 = settings.AWS_BUCKET_URL + aws_loc
-        pv.save()
+
+    if len(image) > 0:
+        img_loc = str(user.pk) + '/' + str(pv.pk) + '.jpg'
+
+        bits = base64.b64decode(image)
+
+        settings.S3_CLIENT.put_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                                    Key=img_loc, Body=bits, SSECustomerKey=user.key,
+                                    SSECustomerAlgorithm='AES256', ContentType='image/jpeg')
+
+        pv.preview = settings.AWS_BUCKET_URL + img_loc
+
+    pv.save()
 
     content = strip_tags(html)
 
@@ -181,7 +193,7 @@ def clean_up_db():
 
     # for user in CustomUser.objects.all():
     #     for pv in user.pagevisit_set.filter(Q(visited__lte=tw)).exclude(html=''):
-    #        
+    #
     #
     #         data = create_data(pv, '')
     #
