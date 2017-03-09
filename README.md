@@ -80,7 +80,7 @@ To run each of these in the background, enter `elasticsearch-2.3.3[-1]` and run 
 ```
 brew install rabbitmq
 ```
-add `export PATH=$PATH:/usr/local/sbin` to your `.bash_profile`, then:
+add `export PATH=$PATH:/usr/local/sbin` to your `~/.bash_profile`, then:
 
 ```
 sudo rabbitmq-server -detached
