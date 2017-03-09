@@ -35,7 +35,7 @@ class SendPopupInfo(APIView):
             return Response({
                 'status': 'Blacklist',
                 'message': 'This page is blacklisted.'
-            }, status=status.HTTP_204_NO_CONTENT)
+            }, status=status.HTTP_201_CREATED)
 
         short_url = shorten_url(url)
 
