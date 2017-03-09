@@ -32,6 +32,7 @@ unset DATABASE_USER
 unset DATABASE_PASSWORD
 unset AWS_ACCESS_KEY_ID
 unset AWS_SECRET_ACCESS_KEY
+unset EMAIL_PASSWORD
 ```
 
 And at the very bottom of the same file put:
@@ -41,7 +42,11 @@ export DATABASE_USER='hindsite'
 export DATABASE_PASSWORD='twenty20'
 export AWS_ACCESS_KEY_ID='???????????'
 export AWS_SECRET_ACCESS_KEY='??????????'
+export EMAIL_PASSWORD='???????'
 ```
+
+For vars with `'??????'` ask for the actual values or check the heroku config vars
+
 
 Now we can run:
 
@@ -73,7 +78,7 @@ To run each of these in the background, enter `elasticsearch-2.3.3[-1]` and run 
 
 ### For your celery workers:
 ```
-brew install rabbit-mq
+brew install rabbitmq
 ```
 add `export PATH=$PATH:/usr/local/sbin` to your `.bash_profile`, then:
 
