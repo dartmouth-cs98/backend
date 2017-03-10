@@ -26,6 +26,10 @@ class CustomUserManager(BaseUserManager):
         )
 
         customuser.set_password(password)
+
+        customuser.first_name = kwargs['first_name']
+        customuser.last_name = kwargs['last_name']
+
         customuser.key = self.make_random_password(32,
                 string.digits+string.ascii_letters+string.punctuation)
         customuser.save()
@@ -67,7 +71,7 @@ class CustomUser(AbstractBaseUser):
     pages_week = models.TextField(default='{}')
     tracking_on = models.BooleanField(default=True)
 
-    
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
