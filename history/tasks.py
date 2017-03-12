@@ -23,6 +23,11 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     user = CustomUser.objects.get(pk=user_pk)
 
+    if favicon == '':
+        fav_d = Domain.objects.filter(base_url=base_url).exclude(favicon='').last()
+        if fav_d:
+            favicon = fav_d.favicon
+
     # Get the currently active TimeActive (can only be one if exists)
     ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
 
