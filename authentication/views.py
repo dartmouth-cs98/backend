@@ -10,13 +10,15 @@ from authentication.serializers import (
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
-from django.core.mail import EmailMessage
 from django.utils import timezone
 from history.models import Category, Domain
 from history.common import is_blacklisted
 from history.tasks import create_page
 import base64, hashlib
 from urllib.parse import urlparse
+from authentication.tasks import (
+    complete_signup, forgot_password, change_password, close_all
+)
 
 
 class CreateCustomUserView(views.APIView):
@@ -24,14 +26,6 @@ class CreateCustomUserView(views.APIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = ()
-    # def get_permissions(self):
-    #     if self.request.method in permissions.SAFE_METHODS:
-    #         return (permissions.AllowAny(),)
-    #
-    #     if self.request.method == 'POST':
-    #         return (permissions.AllowAny(),)
-    #
-    #     return (permissions.IsAuthenticated(), IsCustomUserOwner(),)
 
     def post(self, request, format=None):
 
@@ -50,22 +44,9 @@ class CreateCustomUserView(views.APIView):
         if serializer.is_valid():
             customuser = CustomUser.objects.create_user(**serializer.validated_data)
 
+            complete_signup.delay(customuser.pk)
+
             token = Token.objects.get(user=customuser)
-
-            email = EmailMessage('Successfully Created Account!',
-                    'Thank you for signing up to use Hindsite! \n\nThe Hindsite Team',
-                    to=[customuser.email])
-
-            email.send()
-
-            research = Category(title='Research', owned_by=customuser, color='#FA6E59')
-            cooking = Category(title='Cooking', owned_by=customuser, color='#77F200')
-            travel = Category(title='Travel', owned_by=customuser, color='#FFDB5C')
-            news = Category(title='News', owned_by=customuser, color='#F8A055')
-            research.save()
-            cooking.save()
-            travel.save()
-            news.save()
 
             key = base64.b64encode(customuser.key.encode()).decode()
             md5 = base64.b64encode(hashlib.md5(customuser.key.encode()).digest()).decode()
@@ -128,20 +109,7 @@ class LogoutView(views.APIView):
 
         cu = request.user
 
-        time = timezone.now()
-
-        for d in cu.domain_set.filter(closed__isnull=True):
-            d.closed = time
-            d.save()
-            d.tab.closed = time
-            d.tab.save()
-
-        ta = cu.timeactive_set.filter(end__isnull=True)
-
-        if ta.exists():
-            ta = ta.first()
-            ta.end = time
-            ta.save()
+        close_all.delay(cu.pk)
 
         logout(request)
 
@@ -159,17 +127,8 @@ class ForgotPassword(views.APIView):
         if customuser.exists():
             customuser = customuser.first()
 
-            new_pw = CustomUser.objects.make_random_password()
+            forgot_password.delay(customuser.pk)
 
-            customuser.set_password(new_pw)
-
-            customuser.save()
-
-            email = EmailMessage('New Password',
-                    'The new password for your account is: ' + new_pw,
-                    to=[email_send])
-
-            email.send()
         return Response()
 
 class ChangePassword(views.APIView):
@@ -183,14 +142,8 @@ class ChangePassword(views.APIView):
         customuser = authenticate(email=request.user.email, password=current_pw)
 
         if customuser is not None:
-            customuser.set_password(new_pw)
-            customuser.save()
 
-            email = EmailMessage('Changed Password',
-                    'You have successfully changed your password! \n\n If this was not you please reply to this email.\n\nThe Hindsite Team',
-                    to=[customuser.email])
-
-            email.send()
+            change_password.delay(customuser.pk, new_pw)
 
             return Response({
                 'status': 'OK',
@@ -204,7 +157,6 @@ class ChangePassword(views.APIView):
 
 class ChangeTracking(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
-    # authentication_classes = ()
 
     def post(self, request, format=None):
         cu = request.user
@@ -215,42 +167,20 @@ class ChangeTracking(views.APIView):
         cu.save()
 
         if not tracking:
-            time = timezone.now()
-
-            for d in cu.domain_set.filter(closed__isnull=True):
-                d.closed = time
-                d.save()
-                d.tab.closed = time
-                d.tab.save()
-
-            ta = cu.timeactive_set.filter(end__isnull=True)
-
-            if ta.exists():
-                ta = ta.first()
-                ta.end = time
-                ta.save()
+            close_all.delay(cu.pk)
         else:
             url = request.data['url']
             base_url = urlparse(url).netloc
 
             if not is_blacklisted(cu, base_url):
-
                 t_id = request.data['tab']
                 page_title = request.data['title']
                 domain_title = request.data['domain']
 
-                if page_title == '':
-                    page_title = 'No Title'
-
-
                 if 'favIconUrl' in request.data.keys():
                     favicon = request.data['favIconUrl']
                 else:
-                    fav_d = Domain.objects.filter(base_url=base_url).exclude(favicon='').last()
-                    if fav_d:
-                        favicon = fav_d.favicon
-                    else:
-                        favicon = ''
+                    favicon = ''
 
                 if 'html' in request.data.keys():
                     html = request.data['html']
