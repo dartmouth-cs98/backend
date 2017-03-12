@@ -45,11 +45,7 @@ class NewPage(APIView):
         if 'favIconUrl' in request.data.keys():
             favicon = request.data['favIconUrl']
         else:
-            fav_d = Domain.objects.filter(base_url=base_url).exclude(favicon='').last()
-            if fav_d:
-                favicon = fav_d.favicon
-            else:
-                favicon = ''
+            favicon = ''
 
         if 'html' in request.data.keys():
             html = request.data['html']
