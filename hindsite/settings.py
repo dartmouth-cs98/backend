@@ -247,7 +247,8 @@ TEMPLATES = [
 ]
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'hindsite.help@gmail.com'
+DEFAULT_FROM_EMAIL = 'admin@hindsitehistory.com'
+EMAIL_HOST = 'smtp.zoho.com'
+EMAIL_HOST_USER = 'admin@hindsitehistory.com'
 EMAIL_HOST_PASSWORD = get_env_variable('EMAIL_PASSWORD')
 EMAIL_PORT = 587
