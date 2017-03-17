@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NavBar from './NavBar.js';
+import logo from '../static/img/logo-light.png';
 
 // example class based component (smart component)
 class LandingPage extends Component {
@@ -15,12 +16,12 @@ class LandingPage extends Component {
       <NavBar/>
       <div className="row" id="top-nav-bar">
         <div className="col-md-4" id="nav-bar-img-col">
-          <img id="nav-bar-img" src="static/img/logo-light.png"/>
+          <img id="nav-bar-img" src={logo}/>
         </div>
         <div className="col-md-4">
           <div className="wrapper">
             <button className="btn btn-primary btn-lg"
-                onclick="chrome.webstore.install()"
+                onClick="chrome.webstore.install()"
                 role="button">
                   <i className="fa fa-plus"></i> Add to Chrome
             </button>
@@ -32,12 +33,12 @@ class LandingPage extends Component {
       </div>
       <div className="jumbotron">
         <div className="container">
-          <img src="static/img/logo-light.png"/>
+          <img src={logo}/>
           <h1>hindsite</h1>
           <p>history that’s finally 20/20</p>
           <div className="wrapper">
             <button className="btn btn-primary btn-lg"
-                onclick="chrome.webstore.install()"
+                onClick="chrome.webstore.install()"
                 role="button">
                   <i className="fa fa-plus"></i> Add to Chrome
             </button>
