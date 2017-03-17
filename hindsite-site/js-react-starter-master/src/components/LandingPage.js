@@ -8,6 +8,10 @@ class LandingPage extends Component {
     this.state = {};
   }
 
+  installApp(){
+    console.log("here");
+    chrome.webstore.install();
+  }
   render() {
     return (
       <div>
@@ -17,11 +21,11 @@ class LandingPage extends Component {
             <h1>hindsite</h1>
             <p>history that’s finally 20/20</p>
             <div className="wrapper">
-              <button className="btn btn-primary btn-lg"
-                  onClick="chrome.webstore.install()"
-                  role="button">
-                    <i className="fa fa-plus"></i> Add to Chrome
-              </button>
+            <button className="btn btn-primary btn-lg"
+                onClick={chrome.webstore.install}
+                role="button">
+                  <i className="fa fa-plus"></i> Add to Chrome
+            </button>
             </div>
           </div>
         </div>
@@ -46,13 +50,6 @@ class LandingPage extends Component {
     );
   }
 }
-
-// function based "dumb" component with no state
-// const Welcome = () => {
-//   return (
-//
-//   );
-// };
 
 
 export default LandingPage;
