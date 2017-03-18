@@ -1,3 +1,6 @@
+$landing-page-background: #4897D8;
+$base-white: #FAFAFA;
+
 body {
   font-family: "Raleway";
   color: rgb(10%, 10%, 10%);
@@ -6,7 +9,9 @@ body {
 }
 
 div.jumbotron {
-   background-color: #4897D8;
+  //  background-color: #4897D8;
+  background-image: url('/src/static/img/blurry-landing.png');
+  background-size: 100%;
 }
 
 div.jumbotron h1 {
@@ -48,6 +53,10 @@ div.container p {
   font-family: 'Raleway';
 }
 
+.redirect-link:hover{
+  text-decoration: none;
+}
+
 #features {
   font-family: 'Raleway';
 }
@@ -63,4 +72,39 @@ div.container p {
 
 #nav-bar-img-col{
   height:inherit;
+}
+
+#nav-bar-container{
+  background-color: $landing-page-background;
+}
+
+#nav-bar-row{
+  height:80px;
+  font-size: 40px;
+  color: $base-white;
+  font-weight: bold;
+  font-family: 'Poiret One', cursive;
+  display: flex;
+  align-items: center;
+}
+
+#nav-bar-logo{
+  height: 50px;
+  // margin-top: 15px;
+}
+
+#nav-bar-jumbotron{
+
+}
+
+#landing-page-bck-img{
+  width: 100%;
+}
+
+#nav-bar-options{
+  font-size: 20px;
+}
+
+#use-cases-div{
+  padding-left: 50px;
 }

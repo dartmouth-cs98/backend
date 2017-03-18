@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import NavBar from './NavBar.js';
+import {Router, Route, Link, RouteHandler} from 'react-router';
 
 // example class based component (smart component)
 class LandingPage extends Component {
@@ -13,11 +15,16 @@ class LandingPage extends Component {
     chrome.webstore.install();
   }
   render() {
+    // <div id="nav-bar-jumbotron">
+
+    // <img src='src/static/img/blurry-landing.png' id="landing-page-bck-img"/>
     return (
-      <div>
+      <div id="landing-page-container">
+        <NavBar />
         <div className="jumbotron">
+
+
           <div className="container">
-            <img src='src/static/img/logo-light.png'/>
             <h1>hindsite</h1>
             <p>history that’s finally 20/20</p>
             <div className="wrapper">
