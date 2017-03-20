@@ -1,0 +1,83 @@
+body {
+  font-family: "Raleway";
+  color: #1a1a1a; }
+
+div.jumbotron {
+  background-image: url("/static/src/static/img/blurry-landing.png");
+  background-size: 100%; }
+
+div.jumbotron h1 {
+  color: #FFDB5C;
+  text-align: center;
+  font-family: 'Poiret One', cursive; }
+
+div.jumbotron img {
+  height: 150px;
+  border: black;
+  display: block;
+  margin: 0 auto;
+  margin-top: 3%; }
+
+div.jumbotron p {
+  text-align: center;
+  font-family: 'Raleway';
+  color: #F8A055; }
+
+div.wrapper {
+  text-align: center; }
+
+button.btn,
+button.btn:focus {
+  background: #FA6E59;
+  font-family: 'Raleway'; }
+
+button.btn:hover,
+button.btn:active {
+  background: #F95339; }
+
+div.container p {
+  font-family: 'Raleway'; }
+
+.redirect-link:hover {
+  text-decoration: none; }
+
+#features {
+  font-family: 'Raleway'; }
+
+#nav-bar-img {
+  height: 67px;
+  width: auto; }
+
+#top-nav-bar {
+  height: 67px; }
+
+#nav-bar-img-col {
+  height: inherit; }
+
+#nav-bar-container {
+  background-color: #4897D8; }
+
+#nav-bar-row {
+  height: 80px;
+  font-size: 40px;
+  color: #FAFAFA;
+  font-weight: bold;
+  font-family: 'Poiret One', cursive;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center; }
+
+#nav-bar-logo {
+  height: 50px; }
+
+#landing-page-bck-img {
+  width: 100%; }
+
+#nav-bar-options {
+  font-size: 20px; }
+
+#use-cases-div {
+  padding-left: 50px; }
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJidW5kbGUuY3NzIiwic291cmNlUm9vdCI6IiJ9*/

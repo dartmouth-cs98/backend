@@ -1,0 +1,108 @@
+$landing-page-background: #4897D8;
+$base-white: #FAFAFA;
+
+body {
+  font-family: "Raleway";
+  color: rgb(10%, 10%, 10%);
+}
+
+div.jumbotron {
+  //  background-color: #4897D8;
+  background-image: url('/static/src/static/img/blurry-landing.png');
+  background-size: 100%;
+}
+
+div.jumbotron h1 {
+  color: #FFDB5C;
+  text-align: center;
+  font-family: 'Poiret One', cursive;
+}
+
+div.jumbotron img {
+  height: 150px;
+  border: black;
+  display: block;
+  margin: 0 auto;
+  margin-top: 3%;
+}
+
+div.jumbotron p {
+  text-align: center;
+  font-family: 'Raleway';
+  color: #F8A055;
+}
+
+div.wrapper {
+  text-align: center;
+}
+
+button.btn,
+button.btn:focus {
+  background: #FA6E59;
+  font-family: 'Raleway';
+}
+
+button.btn:hover,
+button.btn:active {
+  background: #F95339;
+}
+
+div.container p {
+  font-family: 'Raleway';
+}
+
+.redirect-link:hover{
+  text-decoration: none;
+}
+
+#features {
+  font-family: 'Raleway';
+}
+
+#nav-bar-img{
+  height: 67px;
+  width: auto;
+}
+
+#top-nav-bar{
+  height: 67px;
+}
+
+#nav-bar-img-col{
+  height:inherit;
+}
+
+#nav-bar-container{
+  background-color: $landing-page-background;
+}
+
+#nav-bar-row{
+  height:80px;
+  font-size: 40px;
+  color: $base-white;
+  font-weight: bold;
+  font-family: 'Poiret One', cursive;
+  display: flex;
+  align-items: center;
+}
+
+#nav-bar-logo{
+  height: 50px;
+  // margin-top: 15px;
+}
+
+#nav-bar-jumbotron{
+
+}
+
+#landing-page-bck-img{
+  width: 100%;
+}
+
+#nav-bar-options{
+  font-size: 20px;
+}
+
+#use-cases-div{
+  padding-left: 50px;
+}

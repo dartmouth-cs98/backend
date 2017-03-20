@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'pytz',
     'djcelery',
+    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -229,6 +230,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'src/bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 TEMPLATES = [
     {

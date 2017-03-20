@@ -1,0 +1,1 @@
+{"status":"done","chunks":{"main":[{"name":"bundle.js","path":"hindsite/static/src/bundles/bundle.js"},{"name":"bundle.css","path":"hindsite/static/src/bundles/bundle.css"}]},"error":"ModuleNotFoundError","message":"Module not found: Error: Cannot resolve 'file' or 'directory' /components/app in /Users/zatannenbaum/Desktop/hindsite/backend/hindsite/static/src"}
