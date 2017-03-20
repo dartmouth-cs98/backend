@@ -4,6 +4,9 @@ env
 # node modules
 node_modules
 
+# bundles
+hindsite/static/src/bundles
+
 # local db
 db.sqlite3
 *.sql
