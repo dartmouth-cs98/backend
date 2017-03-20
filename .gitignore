@@ -1,6 +1,9 @@
 # virtual environment directory
 env
 
+# node modules
+node_modules
+
 # local db
 db.sqlite3
 *.sql
