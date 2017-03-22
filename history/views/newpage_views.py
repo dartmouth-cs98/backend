@@ -97,7 +97,10 @@ class UpdateActive(APIView):
             })
 
         t_id = request.data['tab']
-        closed = request.data['closed']
+        if 'closed' in request.data.keys():
+            closed = request.data['closed']
+        else:
+            closed = False
 
         ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
 
