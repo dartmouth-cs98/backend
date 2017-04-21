@@ -28,12 +28,13 @@ def strip_tags(html):
                 if (s.find('function(')==-1 and s.find('image/jpeg')==-1 and
                         s.find('image/png')==-1 and s.find('image/jpg')==-1 and
                         s.find('image/gif')==-1 and s.find('{')==-1 and
-                        s.find('document.get')==-1):
+                        s.find('document.get')==-1 and s.find('<')==-1 and
+                        s.find('>')==-1):
                     content += s + ' '
 
     content = content.replace('\\n', ' ').replace("\n", ' ').replace("\\'", "'").replace("\'", "'").replace("\\t", " ").replace("\\r", ' ').replace('*', ' ')
     content = content.replace('. ', ' ').replace(',', '').replace('"', '').replace('!', '').replace('?', '').replace('(', '').replace(')', '').replace(':', '')
-    content = content.replace(';', '').replace('[', '').replace(']', '')
+    content = content.replace(';', '').replace('[', '').replace(']', '').replace('.', '')
     content = re.sub(r'[^\x00-\x7F]+',' ', content)
 
     return content
@@ -106,3 +107,24 @@ def blacklist(user):
             blacklist.append(b.base_url[4:])
 
     return blacklist
+
+def update_stats(user, pv):
+    import json
+
+    day = user.day_set.last()
+    pages = json.loads(day.pages)
+    domains = json.loads(day.domains)
+
+    if str(pv.page_id) in pages.keys():
+        pages[str(pv.page_id)] += 1
+    else:
+        pages[str(pv.page_id)] = 1
+
+    if pv.domain.base_url in domains.keys():
+        domains[pv.domain.base_url] += 1
+    else:
+        domains[pv.domain.base_url] = 1
+
+    day.pages = json.dumps(pages)
+    day.domains = json.dumps(domains)
+    day.save()

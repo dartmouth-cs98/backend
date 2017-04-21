@@ -5,13 +5,15 @@ from authentication.models import CustomUser
 from authentication.permissions import IsCustomUserOwner
 from authentication.serializers import (
                 CustomUserSerializer, TokenSerializer,
-                LoginSerializer, UserInfoSerializer, KeysSerializer
+                LoginSerializer, UserInfoSerializer, KeysSerializer,
                 )
 from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.utils import timezone
-from history.models import Category, Domain
+from datetime import datetime, timedelta
+import json
+from history.models import Category, Domain, PageVisit
 from history.common import is_blacklisted
 from history.tasks import create_page
 import base64, hashlib
@@ -19,7 +21,7 @@ from urllib.parse import urlparse
 from authentication.tasks import (
     complete_signup, forgot_password, change_password, close_all
 )
-
+from hindsite.constants import weekdays
 
 class CreateCustomUserView(views.APIView):
     lookup_field = 'username'
@@ -32,6 +34,9 @@ class CreateCustomUserView(views.APIView):
         request.data['email'] = request.data['email'].lower()
 
         request.data['username'] = request.data['email']
+
+        if 'offset' not in request.data.keys():
+            request.data['offset'] = 0
 
         if CustomUser.objects.filter(email=request.data['email']).exists():
             return Response({
@@ -80,6 +85,10 @@ class LoginView(views.APIView):
             if customuser.is_active:
                 login(request, customuser)
 
+                if 'offset' in request.data.keys():
+                    customuser.offset = request.data['offset']
+                    customuser.save()
+                
                 token = Token.objects.get(user=customuser)
                 key = base64.b64encode(customuser.key.encode()).decode()
                 md5 = base64.b64encode(hashlib.md5(customuser.key.encode()).digest()).decode()

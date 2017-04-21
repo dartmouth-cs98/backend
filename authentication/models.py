@@ -64,6 +64,7 @@ class CustomUser(AbstractBaseUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_active = models.DateTimeField(auto_now_add=True)
+    offset = models.FloatField(default=4.0)
     key = models.CharField(max_length=32, default='')
     word_count = models.TextField(default='{}')
     top_100_words = models.TextField(default='{}')

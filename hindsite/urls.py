@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^', include('history.urls')),
     url(r'^', include('authentication.urls')),
     url(r'^', include('search.urls')),
+    url(r'^', include('analytics.urls')),
 ]

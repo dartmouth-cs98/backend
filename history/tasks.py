@@ -1,7 +1,7 @@
 from history.models import Tab, Domain, Page, PageVisit, TimeActive
 from authentication.models import CustomUser
 from django.utils import timezone
-from history.common import shorten_url, create_data, strip_tags, get_count
+from history.common import shorten_url, create_data, strip_tags, get_count, update_stats
 from history.serializers import PageSerializer
 from django.conf import settings
 from urllib.parse import urlparse
@@ -127,6 +127,7 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     pv.save()
 
+
     if len(html) > 0:
         aws_loc = str(user.pk) + '/' + str(pv.pk) + '.html'
 
@@ -162,8 +163,7 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     requests.put(uri, data=data)
 
-    user.word_count = json.dumps(Counter(json.loads(user.word_count)) + get_count(content))
-    user.save()
+    update_stats(user, pv)
 
     return True
 
@@ -191,43 +191,3 @@ def clean_up_db():
             #     pv.s3 = 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html'
 
     return True
-
-
-@periodic_task(run_every=(crontab(hour="9", minute="0", day_of_week="*")),
-    ignore_result=True)
-def analytics():
-    for user in CustomUser.objects.all():
-        count = Counter(json.loads(user.word_count))
-        sort = sorted(count.items(), key=operator.itemgetter(1))
-        sort.reverse()
-
-        if len(sort) > 100:
-            sort = sort[0:100]
-        user.top_100_words = json.dumps(dict(sort))
-        user.word_count = '{}'
-
-        day = timezone.now() - timedelta(days=1)
-        week = timezone.now() - timedelta(days=7)
-
-        day_count = Counter(user.page_set.filter(Q(pagevisit__visited__gte=day)))
-        week_count = Counter(user.page_set.filter(Q(pagevisit__visited__gte=week)))
-
-        day_sort = sorted(day_count.items(), key=operator.itemgetter(1))
-        day_sort.reverse()
-        week_sort = sorted(week_count.items(), key=operator.itemgetter(1))
-        week_sort.reverse()
-
-        if len(day_sort) > 10:
-            day_ten = day_sort[0:10]
-        else:
-            day_ten = day_sort
-
-        if len(week_sort) > 10:
-            week_ten = week_sort[0:10]
-        else:
-            week_ten = week_sort
-
-        user.pages_day = json.dumps({c[0].pk: c[1] for c in day_ten})
-        user.pages_week = json.dumps({c[0].pk: c[1] for c in week_ten})
-
-        user.save()
