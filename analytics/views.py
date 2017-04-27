@@ -37,7 +37,7 @@ class SendAnalytics(APIView):
                     }
                 }
 
-        start = timezone.now().replace(minute=0) - timedelta(hours=24)
+        start = timezone.now().replace(minute=0) - timedelta(hours=23)
         end = start + timedelta(hours=1)
 
         for i in range(24):
@@ -178,7 +178,7 @@ class SendAnalytics(APIView):
         if len(month_domains) > 10:
             other = sum([o[1] for o in month_domains[10:]])
             data['user_domains']['month'].append({'name': 'other', 'value': other})
-                
+
         send = AnalyticsSerializer(data)
 
         return Response(send.data)

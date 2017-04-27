@@ -61,10 +61,10 @@ def newday():
         #positive timezone offsets compared to UTC
         if t >= nextday and cu.offset >= 0:
             if cu.offset * 3600 > (t-nextday).seconds:
-                d = Day(owned_by=cu, date=newdate)
+                d = Day(owned_by=cu, date=newdate, weekday=newdate.weekday())
                 d.save()
         #negative timezone offsets compared to UTC
         if t < nextday and cu.offset < 0:
             if -cu.offset * 3600 - 300 < (nextday-t).seconds:
-                d = Day(owned_by=cu, date=newdate)
+                d = Day(owned_by=cu, date=newdate, weekday=newdate.weekday())
                 d.save()
