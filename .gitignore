@@ -17,3 +17,7 @@ accessKeys.csv
 # files
 words.txt
 celerybeat-schedule
+
+elasticsearch-2.3.3
+elasticsearch-2.3.3-1
+./*
