@@ -10,6 +10,7 @@ db.sqlite3
 
 ### Git ###
 .git
+.bash_profile
 
 # aws
 accessKeys.csv
@@ -17,4 +18,3 @@ accessKeys.csv
 # files
 words.txt
 celerybeat-schedule
-.bash_profile
