@@ -1,0 +1,149 @@
+[2017-03-26 15:23:41,463][INFO ][node                     ] [Fault Zone] stopping ...
+[2017-03-26 15:23:41,556][INFO ][discovery.zen            ] [Fault Zone] master_left [{Grasshopper }{nt6b75xETZiAhloioYg75w}{127.0.0.1}{127.0.0.1:9300}], reason [shut_down]
+[2017-03-26 15:23:41,562][WARN ][discovery.zen            ] [Fault Zone] master left (reason = shut_down), current nodes: {{Fault Zone}{wyLO88sUTLWMeaUNA_QpWw}{127.0.0.1}{127.0.0.1:9301},}
+[2017-03-26 15:23:41,579][INFO ][cluster.service          ] [Fault Zone] removed {{Grasshopper }{nt6b75xETZiAhloioYg75w}{127.0.0.1}{127.0.0.1:9300},}, reason: zen-disco-master_failed ({Grasshopper }{nt6b75xETZiAhloioYg75w}{127.0.0.1}{127.0.0.1:9300})
+[2017-03-26 15:23:41,604][WARN ][discovery.zen.ping.unicast] [Fault Zone] failed to send ping to [{#zen_unicast_1#}{127.0.0.1}{127.0.0.1:9300}]
+SendRequestTransportException[[Grasshopper ][127.0.0.1:9300][internal:discovery/zen/unicast]]; nested: NodeNotConnectedException[[Grasshopper ][127.0.0.1:9300] Node not connected];
+	at org.elasticsearch.transport.TransportService.sendRequest(TransportService.java:340)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.sendPingRequestToNode(UnicastZenPing.java:440)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.sendPings(UnicastZenPing.java:426)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.ping(UnicastZenPing.java:240)
+	at org.elasticsearch.discovery.zen.ping.ZenPingService.ping(ZenPingService.java:106)
+	at org.elasticsearch.discovery.zen.ping.ZenPingService.pingAndWait(ZenPingService.java:84)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.findMaster(ZenDiscovery.java:886)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.innerJoinCluster(ZenDiscovery.java:350)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.access$4800(ZenDiscovery.java:91)
+	at org.elasticsearch.discovery.zen.ZenDiscovery$JoinThreadControl$1.run(ZenDiscovery.java:1237)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: NodeNotConnectedException[[Grasshopper ][127.0.0.1:9300] Node not connected]
+	at org.elasticsearch.transport.netty.NettyTransport.nodeChannel(NettyTransport.java:1132)
+	at org.elasticsearch.transport.netty.NettyTransport.sendRequest(NettyTransport.java:819)
+	at org.elasticsearch.transport.TransportService.sendRequest(TransportService.java:329)
+	... 12 more
+[2017-03-26 15:23:41,605][WARN ][discovery.zen.ping.unicast] [Fault Zone] failed to send ping to [{#zen_unicast_2#}{127.0.0.1}{127.0.0.1:9301}]
+RemoteTransportException[[Fault Zone][127.0.0.1:9301][internal:discovery/zen/unicast]]; nested: IllegalStateException[received ping request while not started];
+Caused by: java.lang.IllegalStateException: received ping request while not started
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.handlePingRequest(UnicastZenPing.java:497)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.access$2400(UnicastZenPing.java:83)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$UnicastPingRequestHandler.messageReceived(UnicastZenPing.java:522)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$UnicastPingRequestHandler.messageReceived(UnicastZenPing.java:518)
+	at org.elasticsearch.transport.TransportRequestHandler.messageReceived(TransportRequestHandler.java:33)
+	at org.elasticsearch.transport.RequestHandlerRegistry.processMessageReceived(RequestHandlerRegistry.java:75)
+	at org.elasticsearch.transport.TransportService.sendLocalRequest(TransportService.java:370)
+	at org.elasticsearch.transport.TransportService.sendRequest(TransportService.java:327)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.sendPingRequestToNode(UnicastZenPing.java:440)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.sendPings(UnicastZenPing.java:426)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.ping(UnicastZenPing.java:240)
+	at org.elasticsearch.discovery.zen.ping.ZenPingService.ping(ZenPingService.java:106)
+	at org.elasticsearch.discovery.zen.ping.ZenPingService.pingAndWait(ZenPingService.java:84)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.findMaster(ZenDiscovery.java:886)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.innerJoinCluster(ZenDiscovery.java:350)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.access$4800(ZenDiscovery.java:91)
+	at org.elasticsearch.discovery.zen.ZenDiscovery$JoinThreadControl$1.run(ZenDiscovery.java:1237)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,619][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_3#}{127.0.0.1}{127.0.0.1:9302}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,619][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_5#}{127.0.0.1}{127.0.0.1:9304}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,619][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_4#}{127.0.0.1}{127.0.0.1:9303}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,622][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_6#}{::1}{[::1]:9300}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,622][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_9#}{::1}{[::1]:9303}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,621][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {Grasshopper }{nt6b75xETZiAhloioYg75w}{127.0.0.1}{127.0.0.1:9300}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:893)
+	at org.elasticsearch.transport.TransportService.connectToNode(TransportService.java:260)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:398)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,623][WARN ][discovery.zen.ping.unicast] [Fault Zone] failed to send ping to [{Fault Zone}{wyLO88sUTLWMeaUNA_QpWw}{127.0.0.1}{127.0.0.1:9301}]
+SendRequestTransportException[[Fault Zone][127.0.0.1:9301][internal:discovery/zen/unicast]]; nested: TransportException[TransportService is closed stopped can't send request];
+	at org.elasticsearch.transport.TransportService.sendRequest(TransportService.java:340)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.sendPingRequestToNode(UnicastZenPing.java:440)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.sendPings(UnicastZenPing.java:426)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing.ping(UnicastZenPing.java:240)
+	at org.elasticsearch.discovery.zen.ping.ZenPingService.ping(ZenPingService.java:106)
+	at org.elasticsearch.discovery.zen.ping.ZenPingService.pingAndWait(ZenPingService.java:84)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.findMaster(ZenDiscovery.java:886)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.innerJoinCluster(ZenDiscovery.java:350)
+	at org.elasticsearch.discovery.zen.ZenDiscovery.access$4800(ZenDiscovery.java:91)
+	at org.elasticsearch.discovery.zen.ZenDiscovery$JoinThreadControl$1.run(ZenDiscovery.java:1237)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: TransportException[TransportService is closed stopped can't send request]
+	at org.elasticsearch.transport.TransportService.sendRequest(TransportService.java:320)
+	... 12 more
+[2017-03-26 15:23:41,622][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_10#}{::1}{[::1]:9304}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,622][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_8#}{::1}{[::1]:9302}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,622][WARN ][discovery.zen.ping.unicast] [Fault Zone] [2] failed send ping to {#zen_unicast_7#}{::1}{[::1]:9301}
+java.lang.IllegalStateException: can't add nodes to a stopped transport
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNode(NettyTransport.java:898)
+	at org.elasticsearch.transport.netty.NettyTransport.connectToNodeLight(NettyTransport.java:888)
+	at org.elasticsearch.transport.TransportService.connectToNodeLight(TransportService.java:267)
+	at org.elasticsearch.discovery.zen.ping.unicast.UnicastZenPing$3.run(UnicastZenPing.java:395)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+[2017-03-26 15:23:41,628][INFO ][node                     ] [Fault Zone] stopped
+[2017-03-26 15:23:41,629][INFO ][node                     ] [Fault Zone] closing ...
+[2017-03-26 15:23:41,648][INFO ][node                     ] [Fault Zone] closed

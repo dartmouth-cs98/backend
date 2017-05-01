@@ -46,3 +46,16 @@
 h2, p {
   font-family: 'Raleway';
 }
+
+#nav-bar-img{
+  height: 67px;
+  width: auto;
+}
+
+#top-nav-bar{
+  height: 67px;
+}
+
+#nav-bar-img-col{
+  height:inherit;
+}
