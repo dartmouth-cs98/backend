@@ -7,6 +7,8 @@ import operator
 from django.db.models import Case, When
 from rest_framework.response import Response
 from history.models import PageVisit
+from authentication.models import CustomUser
+from analytics.models import Day
 from hindsite.constants import weekdays
 from analytics.serializers import AnalyticsSerializer
 
@@ -15,6 +17,7 @@ class SendAnalytics(APIView):
 
     def get(self, request, format=None):
         cu = request.user
+        admin = CustomUser.objects.get(email='admin@hindsitehistory.com')
 
         data = {'page_visits': {
                         'day': [],
@@ -26,6 +29,11 @@ class SendAnalytics(APIView):
                         'month': []
                     },
                     'user_domains': {
+                        'day': [],
+                        'week': [],
+                        'month': []
+                    },
+                    'hindsite_domains': {
                         'day': [],
                         'week': [],
                         'month': []
@@ -45,7 +53,7 @@ class SendAnalytics(APIView):
             pv_count = pvs.count()
             page_count = pvs.order_by().values_list('page_id').distinct().count()
 
-            data['page_visits']['day'].append({'datetime': start.strftime("%H:%M"),
+            data['page_visits']['day'].append({'datetime': (start - timedelta(hours=cu.offset)).strftime("%I%p").lstrip('0'),
                                                'pages': page_count,
                                                'pagevisits': pv_count})
             start = end
@@ -58,6 +66,13 @@ class SendAnalytics(APIView):
         last = days[7:14][::-1]
         month = days[:31]
 
+        admin_days = admin.day_set.exclude(date__gt=today.date).reverse()
+
+        admin_today = admin_days.first()
+        admin_current = admin_days[:7][::-1]
+        admin_month = admin_days[:31]
+
+
         day_pages = Counter(json.loads(today.pages))
         day_domains = Counter(json.loads(today.domains))
 
@@ -67,10 +82,13 @@ class SendAnalytics(APIView):
         day_pages.reverse()
         day_domains.reverse()
 
+        admin_day_domains = Counter(json.loads(admin_today.domains))
+
 
         pages = {}
         domains = {}
 
+        # Current Week stats for user
         for d in current:
             p = json.loads(d.pages)
             pages.update(p)
@@ -89,6 +107,17 @@ class SendAnalytics(APIView):
         week_pages.reverse()
         week_domains.reverse()
 
+        domains = {}
+
+        # Current Week stats across hindsite
+        for d in admin_current:
+            domains.update(json.loads(d.domains))
+
+        admin_week_domains = Counter(domains)
+        admin_week_domains = sorted(admin_week_domains.items(), key=operator.itemgetter(1))
+        admin_week_domains.reverse()
+
+        # Last Week stats for user
         for d in last:
             p = json.loads(d.pages)
             data['page_visits']['week']['last'].append({'datetime': weekdays[d.weekday],
@@ -147,6 +176,16 @@ class SendAnalytics(APIView):
         month_pages.reverse()
         month_domains.reverse()
 
+        domains = {}
+
+        for i in range(31):
+            if i < len(month):
+                d = month[i]
+                domains.update(json.loads(d.domains))
+
+        admin_month_domains = Counter(domains)
+        admin_month_domains = sorted(admin_month_domains.items(), key=operator.itemgetter(1))
+        admin_month_domains.reverse()
 
         d5_pages = [int(p[0]) for p in day_pages[:5]]
         preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(d5_pages)])
@@ -178,6 +217,16 @@ class SendAnalytics(APIView):
         if len(month_domains) > 10:
             other = sum([o[1] for o in month_domains[10:]])
             data['user_domains']['month'].append({'name': 'other', 'value': other})
+
+
+        if (Day.objects.filter(date=today.date)
+            .exclude(domains='{}')
+            .exclude(owned_by__email='admin@hindsitehistory.com')
+            .count() >= 10):
+            data['hindiste_domains']['day'] = [{'name': d[0], 'value': d[1]} for d in admin_day_domains[:10]]
+
+        data['hindsite_domains']['week'] = [{'name': d[0], 'value': d[1]} for d in admin_week_domains[:10]]
+        data['hindsite_domains']['month'] = [{'name': d[0], 'value': d[1]} for d in admin_month_domains[:10]]
 
         send = AnalyticsSerializer(data)
 

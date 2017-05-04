@@ -41,4 +41,5 @@ class PageVisitsSerializer(serializers.Serializer):
 class AnalyticsSerializer(serializers.Serializer):
     page_visits = PageVisitsSerializer()
     user_domains = DomainsSerializer()
+    hindsite_domains = DomainsSerializer()
     user_pages = PagesSerializer()

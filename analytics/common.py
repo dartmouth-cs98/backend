@@ -43,3 +43,33 @@ def initialize_days():
             weekday += 1
             if weekday > 6:
                 weekday = 0
+
+def initialize_admin_days():
+    admin = CustomUser.objects.get(email='admin@hindsitehistory.com')
+
+
+    t = (timezone.now() - timedelta(hours=admin.offset)).replace(minute=0)
+
+    weekday = t.weekday() - 6
+
+    if weekday < 0:
+        weekday += 7
+
+    date = datetime(t.year, t.month, t.day, tzinfo=t.tzinfo) - timedelta(days=25, hours=-admin.offset)
+
+    for i in range(15):
+        domains = {}
+        pages = {}
+
+        for day in Day.objects.filter(date=date.date()):
+            pages.update(json.loads(day.pages))
+            domains.update(json.loads(day.domains))
+
+        d = Day(owned_by=admin, date=date.date(), weekday=weekday, pages=json.dumps(pages), domains=json.dumps(domains))
+        d.save()
+
+        date += timedelta(days=1)
+
+        weekday += 1
+        if weekday > 6:
+            weekday = 0

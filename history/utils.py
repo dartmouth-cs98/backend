@@ -1,6 +1,6 @@
 from history.models import Tab, Domain, Page, PageVisit, TimeActive
 from django.utils import timezone
-from history.common import shorten_url, create_data, strip_tags, get_count
+from history.common import shorten_url, create_data, strip_tags, get_count, update_stats
 from history.serializers import PageSerializer
 from django.conf import settings
 from urllib.parse import urlparse
@@ -14,6 +14,12 @@ from collections import Counter
 
 def create_page_login(user, url, base_url, t_id, page_title, domain_title,
                 favicon, html, image, prev_tab, active):
+
+
+    if favicon == '':
+        fav_d = Domain.objects.filter(base_url=base_url).exclude(favicon='').last()
+        if fav_d:
+            favicon = fav_d.favicon
 
     # Get the currently active TimeActive (can only be one if exists)
     ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
@@ -149,9 +155,8 @@ def create_page_login(user, url, base_url, t_id, page_title, domain_title,
 
     requests.put(uri, data=data)
 
-    user.word_count = json.dumps(Counter(json.loads(user.word_count)) + get_count(content))
-    user.save()
+    update_stats(user, pv)
 
     page = PageSerializer(p)
-
+    
     return page

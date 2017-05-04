@@ -27,7 +27,7 @@ class NewPage(APIView):
 
         url = request.data['url']
         base_url = urlparse(url).netloc
-
+        
         if is_blacklisted(user, base_url):
             return Response({
                 'status': 'Blacklist',
