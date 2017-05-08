@@ -9,7 +9,7 @@ from django.conf import settings
 from history.common import is_blacklisted
 import time
 from history.utils import create_page_login
-from history.tasks import create_page
+from history.tasks import create_page, procrastination_stats
 
 
 class NewPage(APIView):
@@ -27,7 +27,9 @@ class NewPage(APIView):
 
         url = request.data['url']
         base_url = urlparse(url).netloc
-        
+
+        procrastination_stats.delay(user.pk, base_url)
+
         if is_blacklisted(user, base_url):
             return Response({
                 'status': 'Blacklist',

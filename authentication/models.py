@@ -66,10 +66,7 @@ class CustomUser(AbstractBaseUser):
     last_active = models.DateTimeField(auto_now_add=True)
     offset = models.FloatField(default=4.0)
     key = models.CharField(max_length=32, default='')
-    word_count = models.TextField(default='{}')
-    top_100_words = models.TextField(default='{}')
-    pages_day = models.TextField(default='{}')
-    pages_week = models.TextField(default='{}')
+    procrastination_sites = models.TextField(default="['www.facebook.com', 'www.twitter.com', 'www.instagram.com', 'www.netflix.com', 'play.hbogo.com', 'www.hbogo.com', 'www.pinterest.com', 'www.reddit.com']")
     tracking_on = models.BooleanField(default=True)
 
 

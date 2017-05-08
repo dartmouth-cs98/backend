@@ -49,7 +49,7 @@ from analytics.models import Day
 #
 #         user.save()
 
-@periodic_task(run_every=(crontab(hour="*", minute="9", day_of_week="*")),
+@periodic_task(run_every=(crontab(hour="*", minute="1", day_of_week="*")),
     ignore_result=True)
 def newday():
     t = timezone.now()
