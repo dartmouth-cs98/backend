@@ -106,9 +106,6 @@ class UpdateActive(APIView):
 
         ta = TimeActive.objects.filter(end__isnull=True, owned_by=user)
 
-        if ta.exists():
-            ta = ta.first()
-
         try:
             t = Tab.objects.get(tab_id=t_id, closed__isnull=True, owned_by=user)
         except Tab.DoesNotExist:
@@ -133,9 +130,10 @@ class UpdateActive(APIView):
                 raise Http404
 
 
-            if ta and not closed:
-                ta.end = timezone.now()
-                ta.save()
+            if ta.exists() and not closed:
+                timeactive = ta.first()
+                timeactive.end = timezone.now()
+                timeactive.save()
 
             if 'title' in request.data.keys():
                 page_title = request.data['title']
@@ -178,16 +176,18 @@ class UpdateActive(APIView):
 
         # means that the current page is a chrome:// or file:/// or blacklisted page
         if not d.exists():
-            if ta and not closed:
-                ta.end = timezone.now()
-                ta.save()
+            if ta.exists() and not closed:
+                timeactive = ta.first()
+                timeactive.end = timezone.now()
+                timeactive.save()
             return Response(status=status.HTTP_200_OK)
         else:
             d = d.first()
 
-        if ta and not closed:
-            ta.end = timezone.now()
-            ta.save()
+        if ta.exists() and not closed:
+            timeactive = ta.first()
+            timeactive.end = timezone.now()
+            timeactive.save()
 
         new_ta = TimeActive(owned_by=user)
         new_ta.save()

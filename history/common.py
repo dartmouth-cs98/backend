@@ -142,3 +142,28 @@ def update_stats(user, pv):
 
     admin_day.domains = json.dumps(admin_domains)
     admin_day.save()
+
+def update_timeactive_stats(d):
+    import ast
+
+    user = d.owned_by
+
+    procr_sites = ast.literal_eval(user.procrastination_sites)
+
+    day = user.day_set.last()
+
+    if d.base_url in procr_sites:
+        day.procrastination_mins = day.procrastination_mins + d.timeactive()[0]
+        day.save()
+        return True
+    else:
+        for p in procr_sites:
+            if d.base_url in p:
+                day.procrastination_mins = day.procrastination_mins + d.timeactive()[0]
+                day.save()
+                return True
+
+    day.productivity_mins = day.productivity_mins + d.timeactive()[0]
+    day.save()
+
+    return False

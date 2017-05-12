@@ -11,7 +11,7 @@ from history.models import PageVisit
 from authentication.models import CustomUser
 from analytics.models import Day
 from hindsite.constants import weekdays
-from analytics.serializers import AnalyticsSerializer
+from analytics.serializers import AnalyticsSerializer, ProcrastinationSitesSerializer
 
 
 class SendAnalytics(APIView):
@@ -46,7 +46,12 @@ class SendAnalytics(APIView):
                     },
                     'productivity': {
                         'procrastination_sites': ast.literal_eval(cu.procrastination_sites),
-                        'stats': {
+                        'visits': {
+                            'day': [],
+                            'week': [],
+                            'month': []
+                        },
+                        'minutes': {
                             'day': [],
                             'week': [],
                             'month': []
@@ -249,20 +254,73 @@ class SendAnalytics(APIView):
 
         # productivity/procrastination stats
         prod = sum([d[1] for d in day_domains]) - today.procrastination_visits
-        data['productivity']['stats']['day'] = [{'name': 'productivity', 'value': prod},
+        data['productivity']['visits']['day'] = [{'name': 'productivity', 'value': prod},
                             {'name': 'procrastination', 'value': today.procrastination_visits}]
 
         procr = sum([d.procrastination_visits for d in current])
         prod = sum([d[1] for d in week_domains]) - procr
-        data['productivity']['stats']['week'] = [{'name': 'productivity', 'value': prod},
+        data['productivity']['visits']['week'] = [{'name': 'productivity', 'value': prod},
                                                 {'name': 'procrastination', 'value': procr}]
 
         procr = sum([d.procrastination_visits for d in month])
         prod = sum([d[1] for d in month_domains]) - procr
-        data['productivity']['stats']['month'] = [{'name': 'productivity', 'value': prod},
+        data['productivity']['visits']['month'] = [{'name': 'productivity', 'value': prod},
                                                 {'name': 'procrastination', 'value': procr}]
 
+        data['productivity']['minutes']['day'] = [{'name': 'productivity', 'value': today.productivity_mins},
+                                                {'name': 'procrastination', 'value': today.procrastination_mins}]
+
+        procr = sum([d.procrastination_mins for d in current])
+        prod = sum([d.productivity_mins for d in current])
+        data['productivity']['minutes']['week'] = [{'name': 'productivity', 'value': prod},
+                                                {'name': 'procrastination', 'value': procr}]
+
+        procr = sum([d.procrastination_mins for d in month])
+        prod = sum([d.productivity_mins for d in month])
+        data['productivity']['minutes']['month'] = [{'name': 'productivity', 'value': prod},
+                                                {'name': 'procrastination', 'value': procr}]
 
         send = AnalyticsSerializer(data)
 
+        return Response(send.data)
+
+
+class AddProcrastination(APIView):
+
+    def post(self, request, format=None):
+        cu = request.user
+
+        new_site = request.data['domain']
+
+        procr_sites = ast.literal_eval(cu.procrastination_sites)
+
+        if new_site.startswith('http://'):
+            new_site = new_site[7:]
+        elif new_site.startswith('https://'):
+            new_site = new_site[8:]
+
+        if new_site not in procr_sites:
+            procr_sites.insert(0, new_site)
+            cu.procrastination_sites = str(procr_sites)
+            cu.save()
+
+        send = ProcrastinationSitesSerializer({'procrastination_sites': procr_sites})
+
+        return Response(send.data)
+
+class RemoveProcrastination(APIView):
+
+    def post(self, request, format=None):
+        cu = request.user
+
+        domain = request.data['domain']
+
+        procr_sites = ast.literal_eval(cu.procrastination_sites)
+
+        if domain in procr_sites:
+            procr_sites.remove(domain)
+            cu.procrastination_sites = str(procr_sites)
+            cu.save()
+
+        send = ProcrastinationSitesSerializer({'procrastination_sites': procr_sites})
         return Response(send.data)

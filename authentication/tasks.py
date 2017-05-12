@@ -1,7 +1,10 @@
 from celery import task
+from django.utils import timezone
+from datetime import timedelta
 from django.core.mail import EmailMessage
 from authentication.models import CustomUser
 from history.models import Category
+from analytics.models import Day
 from history.utils import create_page_login
 from django.utils import timezone
 from history.common import is_blacklisted
@@ -18,6 +21,10 @@ def complete_signup(user_pk):
 
     email.send()
 
+    date = (timezone.now() - timedelta(hours=customuser.offset)).date()
+
+    day = Day(owned_by=customuser, date=date, weekday=date.weekday())
+    day.save()
 
     research = Category(title='Research', owned_by=customuser, color='#FA6E59')
     cooking = Category(title='Cooking', owned_by=customuser, color='#77F200')
