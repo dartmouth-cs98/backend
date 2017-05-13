@@ -77,9 +77,9 @@ def initialize_admin_days():
     if weekday < 0:
         weekday += 7
 
-    date = datetime(t.year, t.month, t.day, tzinfo=t.tzinfo) - timedelta(days=25, hours=-admin.offset)
+    date = datetime(t.year, t.month, t.day, tzinfo=t.tzinfo) - timedelta(days=33, hours=-admin.offset)
 
-    for i in range(15):
+    for i in range(34):
         domains = {}
         pages = {}
 

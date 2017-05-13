@@ -11,7 +11,7 @@ from celery.task.schedules import crontab
 from analytics.models import Day
 
 
-@periodic_task(run_every=(crontab(hour="*", minute="18", day_of_week="*")),
+@periodic_task(run_every=(crontab(hour="*", minute="1", day_of_week="*")),
     ignore_result=True)
 def newday():
     t = timezone.now()
