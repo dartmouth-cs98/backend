@@ -104,38 +104,34 @@ class SendAnalytics(APIView):
         admin_day_domains.reverse()
         admin_day_domains = [a for a in admin_day_domains if a[0] is not '']
 
-        pages = {}
-        domains = {}
+        pages = Counter({})
+        domains = Counter({})
 
         # Current Week stats for user
         for d in current:
-            p = json.loads(d.pages)
-            pages.update(p)
-            domains.update(json.loads(d.domains))
+            p = Counter(json.loads(d.pages))
+            pages += p
+            domains += Counter(json.loads(d.domains))
             data['page_visits']['week']['current'].append({'datetime': weekdays[d.weekday],
                                                            'pages': len(p.keys()),
                                                            'pagevisits': sum(p.values())
                                                            })
 
-        week_pages = Counter(pages)
-        week_domains = Counter(domains)
-
-        week_pages = sorted(week_pages.items(), key=operator.itemgetter(1))
-        week_domains = sorted(week_domains.items(), key=operator.itemgetter(1))
+        week_pages = sorted(pages.items(), key=operator.itemgetter(1))
+        week_domains = sorted(domains.items(), key=operator.itemgetter(1))
 
         week_pages.reverse()
 
         week_domains.reverse()
         week_domains = [a for a in week_domains if a[0] is not '']
 
-        domains = {}
+        domains = Counter({})
 
         # Current Week stats across hindsite
         for d in admin_current:
-            domains.update(json.loads(d.domains))
+            domains += Counter(json.loads(d.domains))
 
-        admin_week_domains = Counter(domains)
-        admin_week_domains = sorted(admin_week_domains.items(), key=operator.itemgetter(1))
+        admin_week_domains = sorted(domains.items(), key=operator.itemgetter(1))
         admin_week_domains.reverse()
         admin_week_domains = [a for a in admin_week_domains if a[0] is not '']
 
@@ -168,16 +164,16 @@ class SendAnalytics(APIView):
                                                             'pagevisits': total_pvs/num_days
                                                            })
 
-        pages = {}
-        domains = {}
+        pages = Counter({})
+        domains = Counter({})
 
         for i in range(31):
             if i < len(month):
                 d = month[i]
                 date = d.date
-                p = json.loads(d.pages)
-                pages.update(p)
-                domains.update(json.loads(d.domains))
+                p = Counter(json.loads(d.pages))
+                pages += p
+                domains += Counter(json.loads(d.domains))
                 data['page_visits']['month'].insert(0, {'datetime': date.strftime("%a %m/%d"),
                                                             'pages': len(p.keys()),
                                                             'pagevisits': sum(p.values())
@@ -189,26 +185,22 @@ class SendAnalytics(APIView):
                                                             'pagevisits': 0
                                                             })
 
-        month_pages = Counter(pages)
-        month_domains = Counter(domains)
-
-        month_pages = sorted(month_pages.items(), key=operator.itemgetter(1))
-        month_domains = sorted(month_domains.items(), key=operator.itemgetter(1))
+        month_pages = sorted(pages.items(), key=operator.itemgetter(1))
+        month_domains = sorted(domains.items(), key=operator.itemgetter(1))
 
         month_pages.reverse()
 
         month_domains.reverse()
         month_domains = [a for a in month_domains if a[0] is not '']
 
-        domains = {}
+        domains = Counter({})
 
         for i in range(31):
             if i < len(month):
                 d = month[i]
-                domains.update(json.loads(d.domains))
+                domains += Counter(json.loads(d.domains))
 
-        admin_month_domains = Counter(domains)
-        admin_month_domains = sorted(admin_month_domains.items(), key=operator.itemgetter(1))
+        admin_month_domains = sorted(domains.items(), key=operator.itemgetter(1))
         admin_month_domains.reverse()
         admin_month_domains = [a for a in admin_month_domains if a[0] is not '']
 
