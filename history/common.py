@@ -2,6 +2,7 @@ from search.common import datetime_formatter
 from bs4 import BeautifulSoup
 import re
 from collections import Counter
+from authentication.models import CustomUser
 import operator
 from hindsite.constants import ignore_words
 
@@ -111,9 +112,14 @@ def blacklist(user):
 def update_stats(user, pv):
     import json
 
+    admin = CustomUser.objects.get(email='admin@hindsitehistory.com')
+
     day = user.day_set.last()
     pages = json.loads(day.pages)
     domains = json.loads(day.domains)
+
+    admin_day = admin.day_set.get(date=day.date)
+    admin_domains = json.loads(admin_day.domains)
 
     if str(pv.page_id) in pages.keys():
         pages[str(pv.page_id)] += 1
@@ -125,6 +131,39 @@ def update_stats(user, pv):
     else:
         domains[pv.domain.base_url] = 1
 
+    if pv.domain.base_url in admin_domains.keys():
+        admin_domains[pv.domain.base_url] += 1
+    else:
+        admin_domains[pv.domain.base_url] = 1
+
     day.pages = json.dumps(pages)
     day.domains = json.dumps(domains)
     day.save()
+
+    admin_day.domains = json.dumps(admin_domains)
+    admin_day.save()
+
+def update_timeactive_stats(d):
+    import ast
+
+    user = d.owned_by
+
+    procr_sites = ast.literal_eval(user.procrastination_sites)
+
+    day = user.day_set.last()
+
+    if d.base_url in procr_sites:
+        day.procrastination_mins = day.procrastination_mins + d.timeactive()[0]
+        day.save()
+        return True
+    else:
+        for p in procr_sites:
+            if d.base_url in p:
+                day.procrastination_mins = day.procrastination_mins + d.timeactive()[0]
+                day.save()
+                return True
+
+    day.productivity_mins = day.productivity_mins + d.timeactive()[0]
+    day.save()
+
+    return False

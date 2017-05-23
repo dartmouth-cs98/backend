@@ -1,7 +1,7 @@
 from history.models import Tab, Domain, Page, PageVisit, TimeActive
 from authentication.models import CustomUser
 from django.utils import timezone
-from history.common import shorten_url, create_data, strip_tags, get_count, update_stats
+from history.common import shorten_url, create_data, strip_tags, get_count, update_stats, update_timeactive_stats
 from history.serializers import PageSerializer
 from django.conf import settings
 from urllib.parse import urlparse
@@ -10,6 +10,7 @@ from django.db.models import Q
 from datetime import timedelta
 import os
 import json
+import ast
 from collections import Counter
 import operator
 from celery import task
@@ -67,6 +68,8 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
                 ta.save()
             close_domain.closed = timezone.now()
             close_domain.save()
+            
+            update_timeactive_stats(close_domain)
 
         if ('https://goo.gl/' not in url and 'hindsite-local' not in url and
                 'hindsite-production' not in url and 'chrome://' not in url and
@@ -166,6 +169,28 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     update_stats(user, pv)
 
     return True
+
+
+@task
+def procrastination_stats(user_pk, base_url):
+    user = CustomUser.objects.get(pk=user_pk)
+
+    procr_sites = ast.literal_eval(user.procrastination_sites)
+
+    day = user.day_set.last()
+
+    if base_url in procr_sites:
+        day.procrastination_visits = day.procrastination_visits + 1
+        day.save()
+        return True
+    else:
+        for p in procr_sites:
+            if p in base_url:
+                day.procrastination_visits = day.procrastination_visits + 1
+                day.save()
+                return True
+
+    return False
 
 
 @periodic_task(run_every=(crontab(hour="7", minute="0", day_of_week="*")),

@@ -38,7 +38,17 @@ class PageVisitsSerializer(serializers.Serializer):
     week = WeeksPVSerializer()
     month = PVSerializer(many=True)
 
+class ProductivitySerializer(serializers.Serializer):
+    procrastination_sites = serializers.ListField(child=serializers.CharField())
+    visits = DomainsSerializer()
+    minutes = DomainsSerializer()
+
+class ProcrastinationSitesSerializer(serializers.Serializer):
+    procrastination_sites = serializers.ListField(child=serializers.CharField())
+
 class AnalyticsSerializer(serializers.Serializer):
     page_visits = PageVisitsSerializer()
     user_domains = DomainsSerializer()
+    hindsite_domains = DomainsSerializer()
     user_pages = PagesSerializer()
+    productivity = ProductivitySerializer()

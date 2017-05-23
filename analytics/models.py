@@ -7,6 +7,9 @@ class Day(models.Model):
     weekday = models.IntegerField()
     pages = models.TextField(default='{}')
     domains = models.TextField(default='{}')
+    procrastination_visits = models.IntegerField(default=0)
+    productivity_mins = models.IntegerField(default=0)
+    procrastination_mins = models.IntegerField(default=0)
     categories = models.TextField(default='{}')
 
     def __str__(self):
