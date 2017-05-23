@@ -13,6 +13,7 @@ class PageSerializer(serializers.Serializer):
     title = serializers.CharField(required=True, allow_blank=False)
     url = serializers.CharField(required=True, allow_blank=False, max_length=1000)
     star = serializers.BooleanField()
+    note = serializers.CharField()
     categories = CategorySerializer(many=True)
     created = serializers.DateTimeField()
 
@@ -24,6 +25,7 @@ class PageInfoSerializer(serializers.Serializer):
     categories = CategorySerializer(many=True)
     domain = serializers.CharField()
     s3 = serializers.CharField()
+    note = serializers.CharField()
     preview = serializers.CharField()
     last_visited = serializers.DateTimeField()
     created = serializers.DateTimeField()
@@ -37,6 +39,7 @@ class PageCatPKInfoSerializer(serializers.Serializer):
             child=serializers.IntegerField()
         )
     domain = serializers.CharField()
+    note = serializers.CharField()
     s3 = serializers.CharField()
     preview = serializers.CharField()
     last_visited = serializers.DateTimeField()

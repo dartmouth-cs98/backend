@@ -113,6 +113,7 @@ class Page(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.TextField()
     url = models.CharField(max_length=1000)
+    note = models.TextField(default='')
     star = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
     domain = models.CharField(max_length=1000, default='')
