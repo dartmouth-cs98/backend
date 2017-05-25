@@ -6,6 +6,8 @@ class CategorySerializer(serializers.Serializer):
     pk = serializers.IntegerField()
     title = serializers.CharField(max_length=1000)
     color = serializers.CharField(max_length=7)
+    keywords = serializers.CharField(default='{}')
+
 
 
 class PageSerializer(serializers.Serializer):
@@ -16,6 +18,8 @@ class PageSerializer(serializers.Serializer):
     note = serializers.CharField()
     categories = CategorySerializer(many=True)
     created = serializers.DateTimeField()
+    keywords = serializers.CharField(default='{}')
+
 
 class PageInfoSerializer(serializers.Serializer):
     pk = serializers.IntegerField(read_only=True)
@@ -29,6 +33,7 @@ class PageInfoSerializer(serializers.Serializer):
     preview = serializers.CharField()
     last_visited = serializers.DateTimeField()
     created = serializers.DateTimeField()
+
 
 class PageCatPKInfoSerializer(serializers.Serializer):
     pk = serializers.IntegerField(read_only=True)

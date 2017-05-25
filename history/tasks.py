@@ -17,6 +17,7 @@ from celery import task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 import base64
+import ipdb
 
 @task
 def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
@@ -102,6 +103,8 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     short_url = shorten_url(url)
 
+    # TODO- gam this is the page where i need to edit?
+
     p = Page.objects.filter(url=short_url, owned_by=user)
 
     if p.exists():
@@ -158,7 +161,19 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     pv.save()
 
-    content = strip_tags(html)
+    #TODO: gam- this is the content, this is tags stripped words
+    # content = strip_tags(html)
+    # word_counts = get_count(content)
+    # word_counts = sorted(word_counts.items(), key=operator.itemgetter(1))
+    # #TODO: gam- CHANGE THE NUMBER OF KEY WORDS
+    # word_counts = word_counts.reverse()[:20]
+    # p.keywords = json.dumps(word_counts)
+    #
+    # p.save()
+    #
+    # ipdb.set_trace()
+    # ipdb> p
+
 
     data = create_data(pv, content)
 
@@ -167,11 +182,6 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     requests.put(uri, data=data)
 
     update_stats(user, pv)
-
-
-    # counts = get_count(content)
-    # counts = sorted....
-
 
     return True
 
