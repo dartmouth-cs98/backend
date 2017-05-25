@@ -10,6 +10,7 @@ class Category(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=50)
     color = models.CharField(max_length=7, default='#F8A055')
+    keywords = models.TextField(default='{}')
 
     def __str__(self):
         return self.title
@@ -117,6 +118,7 @@ class Page(models.Model):
     star = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
     domain = models.CharField(max_length=1000, default='')
+    keywords = models.TextField(default='{}')
 
     def __str__(self):
         return self.title

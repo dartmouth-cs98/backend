@@ -43,7 +43,6 @@ class NewPage(APIView):
         if page_title == '':
             page_title = 'No Title'
 
-
         if 'favIconUrl' in request.data.keys():
             favicon = request.data['favIconUrl']
         else:
