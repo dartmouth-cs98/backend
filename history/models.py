@@ -117,6 +117,7 @@ class Page(models.Model):
     star = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
     domain = models.CharField(max_length=1000, default='')
+    topwords = models.TextField(default='{}')
 
     def __str__(self):
         return self.title

@@ -16,6 +16,7 @@ class PageSerializer(serializers.Serializer):
     note = serializers.CharField()
     categories = CategorySerializer(many=True)
     created = serializers.DateTimeField()
+    topwords = serializers.CharField()
 
 class PageInfoSerializer(serializers.Serializer):
     pk = serializers.IntegerField(read_only=True)
