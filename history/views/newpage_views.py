@@ -73,11 +73,10 @@ class NewPage(APIView):
             page = create_page_login(user, url, base_url, t_id,
                          page_title, domain_title, favicon, html,
                          image, prev_tab, active)
-
             if page:
                 return Response(page.data)
         else:
-            create_page.delay(user.pk, url, base_url, t_id,
+            page = create_page.delay(user.pk, url, base_url, t_id,
                              page_title, domain_title, favicon, html,
                              image, prev_tab, active)
 

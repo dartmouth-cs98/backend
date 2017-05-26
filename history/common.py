@@ -20,7 +20,7 @@ def shorten_url(url):
     else:
         return url
 
-def strip_tags(html):
+def strip_tags(html):    
     soup = BeautifulSoup(html, 'html.parser')
     content = ''
 
