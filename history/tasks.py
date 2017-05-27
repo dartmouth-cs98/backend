@@ -113,27 +113,24 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     p = Page.objects.filter(url=short_url, owned_by=user)
 
     if p.exists():
-        logger.info('p exists')
         p = p[0]
         p.save()
         if p.title != page_title:
             p.title = page_title
             p.save()
     else:
-        logger.info('p does not exist')
         p = Page(title=page_title, url=short_url, domain=base_url, owned_by=user)
+        #TODO: gam- CHANGE THE NUMBER OF KEY WORDS
+        content = strip_tags(html)
+        word_counts = get_count(content)
+        sorted(word_counts.items(), key=operator.itemgetter(1))
+        word_counts = word_counts.most_common(20)
+        p.keywords = json.dumps(word_counts)
+
+        logger.info('this is the keyword {0}'.format(p.keywords))
         p.save()
 
-    #TODO: gam- this is the content, this is tags stripped words
-    #TODO: gam- CHANGE THE NUMBER OF KEY WORDS
-    content = strip_tags(html)
-    word_counts = get_count(content)
-    logger.info('word count is made')
-    sorted(word_counts.items(), key=operator.itemgetter(1))
-    word_counts = word_counts.most_common(20)
-    p.keywords = json.dumps(word_counts)
 
-    logger.info('this is the keyword {0}'.format(p.keywords))
 
 
     p.save()
@@ -195,6 +192,7 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     requests.put(uri, data=data)
 
+    #TODO: gam- UNCOMMENT UPDATE_STATS
     # update_stats(user, pv)
 
     logger.info('got to end of func')
