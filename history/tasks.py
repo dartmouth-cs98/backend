@@ -115,6 +115,7 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     if p.exists():
         logger.info('p exists')
         p = p[0]
+        p.save()
         if p.title != page_title:
             p.title = page_title
             p.save()
@@ -194,7 +195,7 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     requests.put(uri, data=data)
 
-    update_stats(user, pv)
+    # update_stats(user, pv)
 
     logger.info('got to end of func')
 
