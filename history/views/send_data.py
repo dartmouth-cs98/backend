@@ -38,7 +38,9 @@ class SendPopupInfo(APIView):
 
         short_url = shorten_url(url)
 
+
         c = Category.objects.filter(owned_by=request.user)
+
 
         holder = {'categories': c, 'tracking': request.user.tracking_on}
 
