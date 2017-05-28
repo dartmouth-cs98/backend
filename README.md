@@ -87,6 +87,7 @@ sudo rabbitmq-server -detached
 sudo rabbitmqctl add_user hindsite hindsite
 sudo rabbitmqctl add_vhost myvhost
 sudo rabbitmqctl set_permissions -p myvhost hindsite ".*" ".*" ".*"
+sudo rabbitmq-server start
 ```
 
 ## Deploy your server and workers:
