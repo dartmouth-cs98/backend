@@ -16,4 +16,5 @@ accessKeys.csv
 
 # files
 words.txt
+celerybeat-schedule.db
 celerybeat-schedule
