@@ -7,6 +7,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from history.common import shorten_url, send_bulk, is_blacklisted
 import requests
+import json
+from collections import Counter
+
+
 
 class CheckPageCategories(APIView):
     """
@@ -90,6 +94,20 @@ class AddCategoryPage(APIView):
             c.save()
             p.categories.add(c)
 
+        #calculate the freq words
+        #check if there is the page keywords
+        #if so, go through each word and if its in
+        #TODO: gam- check this logic
+        if p.keywords != '{}':
+            cat = c.first()
+            page_keywords = json.loads(p.keywords)
+            # page_keywords = Counter(page_keywords)
+            # cat_keywords = Counter(c.keywords)
+            # new_cat_keywords = page_keywords + cat.keywords
+            import ipdb; ipdb.set_trace()
+            cat.keywords = new_cat_keywords
+            cat.num_pages = cat.num_pages + 1
+
         pv = p.pagevisit_set.last()
         if pv:
             setattr(p, 'last_visited', pv.visited)
@@ -121,6 +139,14 @@ class DeleteCategoryPage(APIView):
         c = Category.objects.get(title=cat, owned_by=request.user)
 
         p.categories.remove(c)
+
+        if p.keywords != '{}':
+            page_keywords = json.loads(p.keywords)
+            page_keywords = Counter(page_keywords)
+            cat_keywords = Counter(c.keywords)
+            new_cat_keywords = page_keywords + cat_keywords
+            c.keywords = new_cat_keywords
+            c.num_pages = c.num_pages - 1
 
         pv = p.pagevisit_set.last()
         setattr(p, 'last_visited', pv.visited)

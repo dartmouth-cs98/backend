@@ -40,7 +40,7 @@ def initialize_days():
             doms = cu.domain_set.filter(closed__range=(start, end))
             procr_mins = 0
             prod_mins = 0
-            for d in domains:
+            for d in doms:
                 prod = True
                 if d.base_url in procr_sites:
                     procr_mins += d.timeactive()[0]

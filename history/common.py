@@ -5,6 +5,9 @@ from collections import Counter
 from authentication.models import CustomUser
 import operator
 from hindsite.constants import ignore_words
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
 
 def shorten_url(url):
     import requests
@@ -20,7 +23,7 @@ def shorten_url(url):
     else:
         return url
 
-def strip_tags(html):    
+def strip_tags(html):
     soup = BeautifulSoup(html, 'html.parser')
     content = ''
 
@@ -44,6 +47,8 @@ def get_count(content):
     content = content.lower().split()
     slim_sum = [word for word in content if word not in ignore_words]
     counts = Counter(slim_sum)
+    # logger.info('COUNTS {0}'.format(counts))
+
 
     return counts
 

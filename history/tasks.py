@@ -123,9 +123,18 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
         #TODO: gam- CHANGE THE NUMBER OF KEY WORDS
         content = strip_tags(html)
         word_counts = get_count(content)
-        sorted(word_counts.items(), key=operator.itemgetter(1))
-        word_counts = word_counts.most_common(20)
-        p.keywords = json.dumps(word_counts)
+        # word_counts = dict(word_counter)
+        sort = sorted(word_counts.items(), key=operator.itemgetter(1))
+        sort.reverse()
+        sort = sort[0:20]
+        # word_counts.reverse()
+        # word_counts = word_counts[0:20]
+        # first2pairs = {k: word_counts[k] for k in list(word_counts.keys()[:2])}
+        # word_counts = word_counts.most_common(20)
+        # word_counts = dict(word_counts)
+        # logger.info('this is the word coutn dict {0}'.format(word_counts))
+
+        p.keywords = json.dumps(sort)
 
         logger.info('this is the keyword {0}'.format(p.keywords))
         p.save()
@@ -188,9 +197,9 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     logger.info('got here2')
 
 
-    uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
-
-    requests.put(uri, data=data)
+    # uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
+    #
+    # requests.put(uri, data=data)
 
     #TODO: gam- UNCOMMENT UPDATE_STATS
     # update_stats(user, pv)
