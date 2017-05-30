@@ -62,6 +62,7 @@ class AddCategoryPage(APIView):
     Add Category to Page
     """
     def post(self, request, format=None):
+        # import ipdb; ipdb.set_trace()
         cat = request.data['category']
         url = request.data['url']
 
@@ -100,13 +101,15 @@ class AddCategoryPage(APIView):
         #TODO: gam- check this logic
         if p.keywords != '{}':
             cat = c.first()
-            page_keywords = json.loads(p.keywords)
-            # page_keywords = Counter(page_keywords)
-            # cat_keywords = Counter(c.keywords)
-            # new_cat_keywords = page_keywords + cat.keywords
-            import ipdb; ipdb.set_trace()
-            cat.keywords = new_cat_keywords
+            page_keywords = Counter(json.loads(p.keywords))
+            cat_keywords = Counter(json.loads(cat.keywords))
+
+            new_cat_keywords = page_keywords + cat_keywords
+            cat.keywords = json.dumps(new_cat_keywords)
             cat.num_pages = cat.num_pages + 1
+            cat.save()
+
+
 
         pv = p.pagevisit_set.last()
         if pv:
@@ -119,6 +122,7 @@ class AddCategoryPage(APIView):
             setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
 
         serializer = PageInfoSerializer(p)
+        # import ipdb; ipdb.set_trace()
         return Response(serializer.data)
 
 class DeleteCategoryPage(APIView):
@@ -140,13 +144,15 @@ class DeleteCategoryPage(APIView):
 
         p.categories.remove(c)
 
+
         if p.keywords != '{}':
-            page_keywords = json.loads(p.keywords)
-            page_keywords = Counter(page_keywords)
-            cat_keywords = Counter(c.keywords)
-            new_cat_keywords = page_keywords + cat_keywords
-            c.keywords = new_cat_keywords
+            page_keywords = Counter(json.loads(p.keywords))
+            cat_keywords = Counter(json.loads(c.keywords))
+
+            new_cat_keywords = cat_keywords - page_keywords
+            c.keywords = json.dumps(new_cat_keywords)
             c.num_pages = c.num_pages - 1
+            c.save()
 
         pv = p.pagevisit_set.last()
         setattr(p, 'last_visited', pv.visited)

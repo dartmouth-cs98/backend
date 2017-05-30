@@ -179,16 +179,17 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
 
     logger.info('got here2')
 
-    if p.keywords == '{}':
-        #TODO: gam- CHANGE THE NUMBER OF KEY WORDS
-        word_counts = get_count(content)
-        sort = sorted(word_counts.items(), key=operator.itemgetter(1))
-        sort.reverse()
-        sort = sort[0:20]
-        sort = {a[0]:a[1] for a in sort}
+    # TODO- gam add this check after things are cleaned up
+    # if p.keywords == '{}':
+    #TODO: gam- CHANGE THE NUMBER OF KEY WORDS
+    word_counts = get_count(content)
+    sort = sorted(word_counts.items(), key=operator.itemgetter(1))
+    sort.reverse()
+    sort = sort[0:20]
+    sort = {a[0]:a[1] for a in sort}
 
-        p.keywords = json.dumps(sort)
-        p.save()
+    p.keywords = json.dumps(sort)
+    p.save()
 
     logger.info('this is the keyword {0}'.format(p.keywords))
 

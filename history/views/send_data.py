@@ -18,13 +18,15 @@ from authentication.serializers import UserInfoSerializer
 from django.db.models.functions import Lower
 from history.common import blacklist
 from urllib.parse import urlparse
-from history.common import shorten_url, send_bulk, is_blacklisted
+from history.common import shorten_url, send_bulk, is_blacklisted, calc_cat_score
+import json
 
 
 class SendPopupInfo(APIView):
     """
     Return all data for popup
     """
+
     def post(self, request, format=None):
         url = request.data['url']
 
@@ -40,7 +42,9 @@ class SendPopupInfo(APIView):
 
         c = Category.objects.filter(owned_by=request.user)
 
-        holder = {'categories': c, 'tracking': request.user.tracking_on}
+
+
+        holder = { 'categories': c,'tracking': request.user.tracking_on}
 
         try:
             p = Page.objects.get(url=short_url, owned_by=request.user)
@@ -49,10 +53,15 @@ class SendPopupInfo(APIView):
             send = PopupInfoSerializer(holder)
             return Response(send.data, status=status.HTTP_404_NOT_FOUND)
 
+        checked = p.categories.all()
+        ordered_score = calc_cat_score(c, p, checked)
+
+        holder['categories'] = ordered_score
         holder['page'] = p
 
-        send = PopupInfoSerializer(holder)
 
+        send = PopupInfoSerializer(holder)
+        # import ipdb; ipdb.set_trace()
         return Response(send.data)
 
 class SendTabs(APIView):
@@ -138,6 +147,8 @@ class SendCategories(APIView):
         holder['starred'] = starred
 
         cats = Category.objects.filter(owned_by=request.user).order_by(Lower('title'))
+        # checked = p.categories.all()
+        # ordered_score = calc_cat_score(c, p, checked)
 
         for c in cats:
             pages = c.page_set.exclude(domain__in=bl)
