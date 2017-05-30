@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^deletecategory/$', update_categories.DeleteCategory.as_view()),
     url(r'^editcategory/$', update_categories.EditCategory.as_view()),
     url(r'^updatestar/$', update_categories.UpdateStar.as_view()),
+    url(r'^updatenote/$', update_categories.UpdateNote.as_view()),
 
     url(r'^newpage/$', newpage_views.NewPage.as_view()),
     url(r'^active/$', newpage_views.UpdateActive.as_view()),

@@ -28,7 +28,6 @@ class SendPopupInfo(APIView):
     def post(self, request, format=None):
         url = request.data['url']
 
-        url = request.data['url']
         base_url = urlparse(url).netloc
 
         if is_blacklisted(request.user, base_url):

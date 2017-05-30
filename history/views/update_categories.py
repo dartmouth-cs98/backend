@@ -223,3 +223,42 @@ class UpdateStar(APIView):
 
         serializer = PageSerializer(p)
         return Response(serializer.data)
+
+class UpdateNote(APIView):
+    """
+    Update Page Note
+    """
+    def post(self, request, format=None):
+        url = request.data['url']
+        note = request.data['note']
+
+        short_url = shorten_url(url)
+
+        try:
+            p = Page.objects.get(url=short_url, owned_by=request.user)
+        except Page.DoesNotExist:
+            page_title = request.data['title']
+
+            if page_title == '':
+                page_title = 'No Title'
+
+            base_url = urlparse(url).netloc
+
+            p = Page(title=page_title, url=short_url, domain=base_url, owned_by=request.user)
+            p.save()
+
+        p.note = note
+        p.save()
+
+        pv = p.pagevisit_set.last()
+        if pv:
+            setattr(p, 'last_visited', pv.visited)
+            setattr(p, 's3', pv.s3)
+            setattr(p, 'preview', pv.preview)
+        else:
+            setattr(p, 'last_visited', None)
+            setattr(p, 's3', 'https://s3.us-east-2.amazonaws.com/hindsite-production/404_not_found.html')
+            setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
+
+        serializer = PageInfoSerializer(p)
+        return Response(serializer.data)

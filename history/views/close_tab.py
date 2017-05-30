@@ -6,6 +6,7 @@ from rest_framework import status
 from django.utils import timezone
 from urllib.parse import urlparse
 from datetime import timedelta
+from history.common import update_timeactive_stats
 
 
 class CloseTab(APIView):
@@ -36,6 +37,7 @@ class CloseTab(APIView):
                 if ta:
                     ta.end = time
                     ta.save()
+            update_timeactive_stats(d)
 
         t.closed = time
         t.save()
@@ -60,6 +62,8 @@ class TabUpdate(APIView):
                 d.closed = cu.last_active + timedelta(minutes=15)
                 d.save()
 
+            update_timeactive_stats(d)
+
             t.closed = cu.last_active + timedelta(minutes=15)
             t.save()
 
@@ -68,6 +72,8 @@ class TabUpdate(APIView):
         for dom in doms:
             dom.closed = cu.last_active + timedelta(minutes=15)
             dom.save()
+
+            update_timeactive_stats(dom)
 
         time = timezone.now()
         cu.last_active = time

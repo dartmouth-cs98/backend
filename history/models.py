@@ -71,6 +71,7 @@ class Domain(models.Model):
 
     def timeactive(self, start=None, end=None):
         minutes_active = 0
+        now = timezone.now()
 
         if start is None or end is None:
             ta = self.active_times.all()
@@ -79,7 +80,7 @@ class Domain(models.Model):
                 if a.end is not None:
                     time = a.end - a.start
                 else:
-                    time = timezone.now() - a.start
+                    time = now - a.start
                 minutes_active += math.ceil(time.seconds / 60)
         else:
             ta = self.active_times.filter(Q(start__range=[start, end]) |
@@ -94,6 +95,14 @@ class Domain(models.Model):
                     time = a.end - a.start
                 minutes_active += math.ceil(time.seconds / 60)
 
+        if self.closed:
+            dom_length = math.ceil((self.closed - self.created).seconds / 60)
+        else:
+            dom_length = math.ceil((now - self.created).seconds / 60)
+
+        if dom_length < minutes_active:
+            minutes_active = dom_length
+
         return (minutes_active, ta)
 
     class Meta:
@@ -104,6 +113,7 @@ class Page(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.TextField()
     url = models.CharField(max_length=1000)
+    note = models.TextField(default='')
     star = models.BooleanField(blank=True, default=False)
     categories = models.ManyToManyField(Category, blank=True)
     domain = models.CharField(max_length=1000, default='')
