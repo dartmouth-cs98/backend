@@ -176,7 +176,6 @@ def update_timeactive_stats(d):
 def calc_cat_score(cats, page, checked):
     import json
     page_keywords = json.loads(page.keywords)
-    #list of categories to send
     scored_cats = []
     ranked_cats = {}
     empty_cats = []
@@ -198,28 +197,10 @@ def calc_cat_score(cats, page, checked):
     sorted_cats = sorted(ranked_cats.items(), key=operator.itemgetter(1))
 
     for c in checked:
-        # import ipdb; ipdb.set_trace()
         scored_cats.append(c)
     for c in sorted_cats:
         scored_cats.append(c[0])
     for c in empty_cats:
         scored_cats.append(c)
 
-    # import ipdb; ipdb.set_trace()
     return scored_cats
-
-
-
-
-    #
-    #for each list
-        #if not a checked
-        #for each keyword in the page
-            #calc score
-        #put score in dictionary
-
-    #sort the dictionary
-    #add the checked and then the dictionary to list
-
-
-    #for each category

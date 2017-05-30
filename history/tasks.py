@@ -17,16 +17,13 @@ from celery import task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 import base64
-import ipdb
 from celery.utils.log import get_task_logger
-
 logger = get_task_logger(__name__)
 
 
 @task
 def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
                 favicon, html, image, prev_tab, active):
-    logger.info('LOGGINNG SOMETHING HERE HERE ')
 
     user = CustomUser.objects.get(pk=user_pk)
 
@@ -171,27 +168,21 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
         pv.preview = settings.AWS_BUCKET_URL + img_loc
 
     pv.save()
-    logger.info('got here')
 
     content = strip_tags(html)
 
     data = create_data(pv, content)
 
-    logger.info('got here2')
-
-    # TODO- gam add this check after things are cleaned up
-    # if p.keywords == '{}':
     #TODO: gam- CHANGE THE NUMBER OF KEY WORDS
     word_counts = get_count(content)
     sort = sorted(word_counts.items(), key=operator.itemgetter(1))
     sort.reverse()
-    sort = sort[0:20]
+    sort = sort[0:30]
     sort = {a[0]:a[1] for a in sort}
 
     p.keywords = json.dumps(sort)
     p.save()
-
-    logger.info('this is the keyword {0}'.format(p.keywords))
+    # logger.info('this is the keyword {0}'.format(p.keywords))
 
 
     uri = settings.SEARCH_BASE_URI + 'pagevisits/pagevisit/' + str(pv.id)
@@ -199,9 +190,6 @@ def create_page(user_pk, url, base_url, t_id, page_title, domain_title,
     requests.put(uri, data=data)
 
     update_stats(user, pv)
-
-    logger.info('got to end of func')
-
 
     return True
 

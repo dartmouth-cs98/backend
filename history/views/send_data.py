@@ -61,7 +61,6 @@ class SendPopupInfo(APIView):
 
 
         send = PopupInfoSerializer(holder)
-        # import ipdb; ipdb.set_trace()
         return Response(send.data)
 
 class SendTabs(APIView):

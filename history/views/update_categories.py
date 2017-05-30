@@ -62,7 +62,6 @@ class AddCategoryPage(APIView):
     Add Category to Page
     """
     def post(self, request, format=None):
-        # import ipdb; ipdb.set_trace()
         cat = request.data['category']
         url = request.data['url']
 
@@ -95,10 +94,7 @@ class AddCategoryPage(APIView):
             c.save()
             p.categories.add(c)
 
-        #calculate the freq words
-        #check if there is the page keywords
-        #if so, go through each word and if its in
-        #TODO: gam- check this logic
+        #updating keywords
         if p.keywords != '{}':
             cat = c.first()
             page_keywords = Counter(json.loads(p.keywords))
@@ -122,7 +118,6 @@ class AddCategoryPage(APIView):
             setattr(p, 'preview', 'https://s3.us-east-2.amazonaws.com/hindsite-production/default-image.jpg')
 
         serializer = PageInfoSerializer(p)
-        # import ipdb; ipdb.set_trace()
         return Response(serializer.data)
 
 class DeleteCategoryPage(APIView):
