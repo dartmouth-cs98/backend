@@ -239,7 +239,7 @@ class SendAnalytics(APIView):
             .exclude(domains='{}')
             .exclude(owned_by__email='admin@hindsitehistory.com')
             .count() >= 10):
-            data['hindiste_domains']['day'] = [{'name': d[0], 'value': d[1]} for d in admin_day_domains[:10]]
+            data['hindsite_domains']['day'] = [{'name': d[0], 'value': d[1]} for d in admin_day_domains[:10]]
 
         data['hindsite_domains']['week'] = [{'name': d[0], 'value': d[1]} for d in admin_week_domains[:10]]
         data['hindsite_domains']['month'] = [{'name': d[0], 'value': d[1]} for d in admin_month_domains[:10]]
