@@ -46,6 +46,9 @@ class ProductivitySerializer(serializers.Serializer):
 class ProcrastinationSitesSerializer(serializers.Serializer):
     procrastination_sites = serializers.ListField(child=serializers.CharField())
 
+# class ProcrastinationSitesSerializer(serializers.Serializer):
+#     productivity = ProductivitySerializer()
+
 class AnalyticsSerializer(serializers.Serializer):
     page_visits = PageVisitsSerializer()
     user_domains = DomainsSerializer()

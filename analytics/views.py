@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import json
 from collections import Counter
 import operator
-import ast
+import ast, pytz
 from django.db.models import Case, When
 from rest_framework.response import Response
 from history.models import PageVisit
@@ -296,6 +296,81 @@ class AddProcrastination(APIView):
             cu.procrastination_sites = str(procr_sites)
             cu.save()
 
+        # days = cu.day_set.all()
+        #
+        # for d in days:
+        #     start = datetime(month=d.date.month, day=d.date.day, year=d.date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        #     end = start + timedelta(hours=24)
+        #     procr_doms = cu.domain_set.filter(closed__range=(start, end), base_url=new_site)
+        #
+        #     procr_mins = 0
+        #     procr_visits = 0
+        #     for dom in procr_doms:
+        #         procr_mins += dom.timeactive()[0]
+        #         procr_visits += dom.pagecount
+        #
+        #     d.procrastination_mins = d.procrastination_mins + procr_mins
+        #     d.productivity_mins = d.productivity_mins - procr_mins
+        #     d.procrastination_visits = d.procrastination_visits + procr_visits
+        #     d.save()
+        #
+        #
+        # data = {'productivity': {
+        #             'procrastination_sites': procr_sites,
+        #             'visits': {
+        #                 'day': [],
+        #                 'week': [],
+        #                 'month': []
+        #             },
+        #             'minutes': {
+        #                 'day': [],
+        #                 'week': [],
+        #                 'month': []
+        #             }
+        #         }
+        #     }
+        #
+        # days = days.reverse()
+        #
+        # today = days.first()
+        # week = days[:7][::-1]
+        # last = days[7:14][::-1]
+        # month = days[:31]
+        #
+        # today_start = datetime(month=today.date.month, day=today.date.day, year=today.date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        # week_start = datetime(month=week[6].date.month, day=week[6].date.day, year=week[6].date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        # month_start = datetime(month=month[30].date.month, day=month[30].date.day, year=month[30].date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        #
+        # pvs_day = cu.pagevisit_set.filter(visited__gt=today_start).count()
+        # pvs_week = cu.pagevisit_set.filter(visited__gt=week_start).count()
+        # pvs_month = cu.pagevisit_set.filter(visited__gt=month_start).count()
+        #
+        # data['productivity']['visits']['day'] = [{'name': 'productivity', 'value': pvs_day - today.procrastination_visits},
+        #                     {'name': 'procrastination', 'value': today.procrastination_visits}]
+        #
+        # procr = sum([d.procrastination_visits for d in week])
+        # data['productivity']['visits']['week'] = [{'name': 'productivity', 'value': pvs_week - procr},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # procr = sum([d.procrastination_visits for d in month])
+        # data['productivity']['visits']['month'] = [{'name': 'productivity', 'value': pvs_month - procr},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # data['productivity']['minutes']['day'] = [{'name': 'productivity', 'value': today.productivity_mins},
+        #                                         {'name': 'procrastination', 'value': today.procrastination_mins}]
+        #
+        # procr = sum([d.procrastination_mins for d in week])
+        # prod = sum([d.productivity_mins for d in week])
+        # data['productivity']['minutes']['week'] = [{'name': 'productivity', 'value': prod},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # procr = sum([d.procrastination_mins for d in month])
+        # prod = sum([d.productivity_mins for d in month])
+        # data['productivity']['minutes']['month'] = [{'name': 'productivity', 'value': prod},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # send = ProcrastinationSitesSerializer(data)
+
         send = ProcrastinationSitesSerializer({'procrastination_sites': procr_sites})
 
         return Response(send.data)
@@ -314,5 +389,80 @@ class RemoveProcrastination(APIView):
             cu.procrastination_sites = str(procr_sites)
             cu.save()
 
+        # days = cu.day_set.all()
+        #
+        # for d in days:
+        #     start = datetime(month=d.date.month, day=d.date.day, year=d.date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        #     end = start + timedelta(hours=24)
+        #     procr_doms = cu.domain_set.filter(closed__range=(start, end), base_url=domain)
+        #
+        #     procr_mins = 0
+        #     procr_visits = 0
+        #     for dom in procr_doms:
+        #         procr_mins += dom.timeactive()[0]
+        #         procr_visits += dom.pagecount
+        #
+        #     d.procrastination_mins = d.procrastination_mins - procr_mins
+        #     d.productivity_mins = d.productivity_mins + procr_mins
+        #     d.procrastination_visits = d.procrastination_visits - procr_visits
+        #     d.save()
+        #
+        # data = {'productivity': {
+        #             'procrastination_sites': procr_sites,
+        #             'visits': {
+        #                 'day': [],
+        #                 'week': [],
+        #                 'month': []
+        #             },
+        #             'minutes': {
+        #                 'day': [],
+        #                 'week': [],
+        #                 'month': []
+        #             }
+        #         }
+        #     }
+        #
+        # days = days.reverse()
+        #
+        # today = days.first()
+        # week = days[:7][::-1]
+        # last = days[7:14][::-1]
+        # month = days[:31]
+        #
+        # today_start = datetime(month=today.date.month, day=today.date.day, year=today.date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        # week_start = datetime(month=week[6].date.month, day=week[6].date.day, year=week[6].date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        # month_start = datetime(month=month[30].date.month, day=month[30].date.day, year=month[30].date.year, tzinfo=pytz.UTC) - timedelta(hours=cu.offset)
+        #
+        # pvs_day = cu.pagevisit_set.filter(visited__gt=today_start).count()
+        # pvs_week = cu.pagevisit_set.filter(visited__gt=week_start).count()
+        # pvs_month = cu.pagevisit_set.filter(visited__gt=month_start).count()
+        #
+        # data['productivity']['visits']['day'] = [{'name': 'productivity', 'value': pvs_day - today.procrastination_visits},
+        #                     {'name': 'procrastination', 'value': today.procrastination_visits}]
+        #
+        # procr = sum([d.procrastination_visits for d in week])
+        # data['productivity']['visits']['week'] = [{'name': 'productivity', 'value': pvs_week - procr},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # procr = sum([d.procrastination_visits for d in month])
+        # data['productivity']['visits']['month'] = [{'name': 'productivity', 'value': pvs_month - procr},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # data['productivity']['minutes']['day'] = [{'name': 'productivity', 'value': today.productivity_mins},
+        #                                         {'name': 'procrastination', 'value': today.procrastination_mins}]
+        #
+        # procr = sum([d.procrastination_mins for d in week])
+        # prod = sum([d.productivity_mins for d in week])
+        # data['productivity']['minutes']['week'] = [{'name': 'productivity', 'value': prod},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # procr = sum([d.procrastination_mins for d in month])
+        # prod = sum([d.productivity_mins for d in month])
+        # data['productivity']['minutes']['month'] = [{'name': 'productivity', 'value': prod},
+        #                                         {'name': 'procrastination', 'value': procr}]
+        #
+        # send = ProcrastinationSitesSerializer(data)
+
         send = ProcrastinationSitesSerializer({'procrastination_sites': procr_sites})
+
         return Response(send.data)
