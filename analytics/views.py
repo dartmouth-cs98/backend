@@ -196,8 +196,8 @@ class SendAnalytics(APIView):
         domains = Counter({})
 
         for i in range(31):
-            if i < len(month):
-                d = month[i]
+            if i < len(admin_month):
+                d = admin_month[i]
                 domains += Counter(json.loads(d.domains))
 
         admin_month_domains = sorted(domains.items(), key=operator.itemgetter(1))
